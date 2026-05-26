@@ -33,16 +33,17 @@
   --league-AL: #d50032;
   --league-NL: #002d72;
 
-  /* Per-team primary colors (30 teams). Naming: --team-{ABBR} uppercase. */
+  /* Per-team primary colors (30 teams). Naming: --team-{ABBR} uppercase.
+     rev-2: ARI / DET / NYY refreshed to match CDN logo extraction. */
   --team-LAA: #BA0021;
-  --team-ARI: #A71930;
+  --team-ARI: #AA182C;
   --team-BAL: #DF4601;
   --team-BOS: #BD3039;
   --team-CHC: #0E3386;
   --team-CIN: #C6011F;
   --team-CLE: #00385D;
   --team-COL: #333366;
-  --team-DET: #0C2340;
+  --team-DET: #0C2C56;
   --team-HOU: #002D62;
   --team-KC:  #004687;
   --team-LAD: #005A9C;
@@ -62,7 +63,7 @@
   --team-ATL: #CE1141;
   --team-CWS: #27251F;
   --team-MIA: #00A3E0;
-  --team-NYY: #003087;
+  --team-NYY: #132448;
   --team-MIL: #12284B;
 }
 
@@ -649,3 +650,82 @@ table.trends-standings .streak-l { color: var(--trends-bad); font-weight: 700; }
 
 /* Chart.js canvases */
 .trends-surface canvas { max-width: 100%; }
+
+/* ====================================================================
+   Team logos (rev-2) — sourced from https://www.mlbstatic.com/team-logos/
+   ==================================================================== */
+.logo-img {
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+  background: transparent;
+}
+
+/* Daily tab — standings row + sparkline row + upcoming chip */
+.team-cell .logo-img.team-logo-sm {
+  width: 24px; height: 24px; margin-right: 2px;
+}
+.trend-row .logo-img.team-logo-xs {
+  width: 20px; height: 20px;
+}
+.team-cell .logo-img.team-logo-xs {
+  width: 18px; height: 18px; margin-right: 2px;
+}
+
+/* Trends KPI cards — primary logo with abbr caption */
+.trends-kpi-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 6px;
+}
+.logo-img.trends-kpi-logo {
+  width: 32px; height: 32px;
+}
+.trends-kpi-abbr {
+  font-size: 11px;
+  letter-spacing: .06em;
+  font-weight: 700;
+  color: var(--trends-text-2);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Trends standings cell */
+.trends-team-cell .logo-img.trends-team-logo {
+  width: 24px; height: 24px; flex-shrink: 0;
+}
+
+/* Trends leaderboard — restructured into a logo+abbr team div */
+.trends-lb-row { grid-template-columns: 28px 84px 1fr 88px; }
+.trends-lb-team {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.logo-img.trends-lb-logo {
+  width: 20px; height: 20px; flex-shrink: 0;
+}
+
+/* Home/Road custom logo strip beneath the chart */
+.trends-homeroad-logos {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+  margin-top: 4px;
+  padding: 0 6px;
+}
+.trends-homeroad-logo-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-img.trends-homeroad-logo {
+  width: 18px; height: 18px;
+}
+
+/* Heatmap row team cell */
+.trends-heatmap-team-cell .logo-img.trends-heatmap-logo {
+  width: 18px; height: 18px; flex-shrink: 0;
+}

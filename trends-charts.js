@@ -10,7 +10,8 @@
 // standalone mlb-trends-dashboard.html used (so the widget code is a
 // near-verbatim lift).
 
-import { teamMeta, TEAM_META } from "./teams.js";
+import { teamMeta, TEAM_META, getLogoUrl } from "./teams.js";
+import { preloadLogos, getLogoImg, logoImgHtml } from "./logo-helpers.js";
 
 // MLB Stats API division.id → "AL East" / "NL Central" / ...
 const DIVISION_BY_ID = {
@@ -42,8 +43,24 @@ let initialized = false;
 export function initTrendsView({ teams, standings, hitting, pitching, recentGames }) {
   MLB_DATA = buildMergedData({ teams, standings, hitting, pitching, recentGames });
   wireFilterChips();
+  // Render once immediately (charts may show colored bubbles until logos load).
   renderAll();
   initialized = true;
+
+  // Kick off a preload of cap + primary logos. When done, re-render the
+  // three scatter charts so their pointStyle picks up the now-cached images.
+  const ids = MLB_DATA.teams.map((t) => t.id);
+  Promise.all([
+    preloadLogos(ids, "cap"),
+    preloadLogos(ids, "primary")
+  ]).then(() => {
+    // Re-render only what benefits from synchronous image refs.
+    renderRSRA();
+    renderOpsEra();
+    renderPowerDisc();
+    renderKpis();
+    renderHomeRoad();
+  }).catch(() => { /* decorative — never block on logos */ });
 }
 
 export function isTrendsInitialized() {
@@ -179,15 +196,19 @@ function renderKpis() {
   const bestOps = [...teams].sort((a, b) => b.ops - a.ops)[0];
   const bestPct = [...teams].sort((a, b) => b.pct - a.pct)[0];
   const kpis = [
-    { label: "Best Record", val: `${bestPct.abbr} ${bestPct.w}-${bestPct.l}`, meta: `.${(bestPct.pct * 1000).toFixed(0)} win pct` },
-    { label: "Top Run Diff", val: `${bestDiff.abbr} ${bestDiff.diff >= 0 ? "+" : ""}${bestDiff.diff}`, meta: `${bestDiff.rs} RS / ${bestDiff.ra} RA` },
-    { label: "Worst Run Diff", val: `${worstDiff.abbr} ${worstDiff.diff}`, meta: `${worstDiff.rs} RS / ${worstDiff.ra} RA` },
-    { label: "Best ERA", val: `${bestEra.abbr} ${bestEra.era.toFixed(2)}`, meta: `WHIP ${bestEra.whip.toFixed(2)}` },
-    { label: "Top OPS", val: `${bestOps.abbr} ${bestOps.ops.toFixed(3)}`, meta: `${bestOps.hr} HR` }
+    { label: "Best Record",    team: bestPct,   val: `${bestPct.w}-${bestPct.l}`,                                   meta: `.${(bestPct.pct * 1000).toFixed(0)} win pct` },
+    { label: "Top Run Diff",   team: bestDiff,  val: `${bestDiff.diff >= 0 ? "+" : ""}${bestDiff.diff}`,           meta: `${bestDiff.rs} RS / ${bestDiff.ra} RA` },
+    { label: "Worst Run Diff", team: worstDiff, val: `${worstDiff.diff}`,                                          meta: `${worstDiff.rs} RS / ${worstDiff.ra} RA` },
+    { label: "Best ERA",       team: bestEra,   val: `${bestEra.era.toFixed(2)}`,                                  meta: `WHIP ${bestEra.whip.toFixed(2)}` },
+    { label: "Top OPS",        team: bestOps,   val: `${bestOps.ops.toFixed(3)}`,                                  meta: `${bestOps.hr} HR` }
   ];
   const html = kpis.map((k) => `
     <div class="trends-kpi">
       <div class="label">${k.label}</div>
+      <div class="trends-kpi-logo-wrap">
+        ${logoImgHtml(k.team.id, "primary", 32, "trends-kpi-logo")}
+        <span class="trends-kpi-abbr">${k.team.abbr}</span>
+      </div>
       <div class="val">${k.val}</div>
       <div class="meta">${k.meta}</div>
     </div>
@@ -233,7 +254,7 @@ function renderStandings() {
   const rows = sorted.map((t) => {
     const cells = COLS.map((c) => {
       if (c.key === "team") {
-        return `<td class="team-cell-wrap"><div class="trends-team-cell"><div class="trends-swatch" style="background:${t.color}"></div><span class="trends-abbr">${t.abbr}</span><span class="trends-name">${t.name}</span></div></td>`;
+        return `<td class="team-cell-wrap"><div class="trends-team-cell">${logoImgHtml(t.id, "cap", 24, "trends-team-logo")}<span class="trends-abbr">${t.abbr}</span><span class="trends-name">${t.name}</span></div></td>`;
       }
       const v = c.get(t);
       const cls = (c.numeric ? "numeric " : "") + (c.classify ? c.classify(t[c.key] ?? v, t) : "");
@@ -267,7 +288,10 @@ function renderLast10() {
     return `
       <div class="trends-lb-row">
         <div class="trends-lb-rank">${i + 1}.</div>
-        <div class="trends-lb-abbr" style="color:${t.color}">${t.abbr}</div>
+        <div class="trends-lb-team">
+          ${logoImgHtml(t.id, "cap", 20, "trends-lb-logo")}
+          <span class="trends-lb-abbr" style="color:${t.color}">${t.abbr}</span>
+        </div>
         <div class="trends-lb-bar"><div class="trends-lb-bar-fill" style="width:${pct}%;background:${t.color}"></div></div>
         <div class="trends-lb-val">${t.last10W}-${t.last10L} <span style="color:var(--trends-text-3)">(${t.streak})</span></div>
       </div>`;
@@ -301,13 +325,24 @@ function renderRSRA() {
   if (teams.length === 0) return;
   const max = Math.max(...teams.map((t) => Math.max(t.rs, t.ra))) + 10;
   const min = Math.min(...teams.map((t) => Math.min(t.rs, t.ra))) - 10;
-  const datasets = teams.map((t) => ({
-    label: t.abbr,
-    data: [{ x: t.ra, y: t.rs, r: Math.max(6, t.w * 0.35) }],
-    backgroundColor: t.color + "cc",
-    borderColor: t.color,
-    borderWidth: 1.5
-  }));
+  const datasets = teams.map((t) => {
+    const img = getLogoImg(t.id, "cap");
+    const ds = {
+      label: t.abbr,
+      data: [{ x: t.ra, y: t.rs }],
+      backgroundColor: t.color + "cc",
+      borderColor: t.color,
+      borderWidth: 1.5
+    };
+    if (img && img.complete) {
+      ds.pointStyle = img;
+      ds.pointRadius = 16;
+      ds.pointHoverRadius = 20;
+    } else {
+      ds.data[0].r = Math.max(6, t.w * 0.35);
+    }
+    return ds;
+  });
   datasets.push({
     type: "line", label: "Even",
     data: [{ x: min, y: min }, { x: max, y: max }],
@@ -328,24 +363,7 @@ function renderRSRA() {
           return `${t.abbr} - ${t.w}-${t.l} - ${t.rs} RS / ${t.ra} RA (diff ${t.diff >= 0 ? "+" : ""}${t.diff})`;
         }}}
       }
-    },
-    plugins: [{
-      id: "labels",
-      afterDatasetsDraw(chart) {
-        const ctx = chart.ctx;
-        ctx.save();
-        ctx.font = "700 10px " + chartFont.family;
-        teams.forEach((t, i) => {
-          const ds = chart.getDatasetMeta(i);
-          if (!ds || !ds.data[0]) return;
-          const p = ds.data[0];
-          ctx.fillStyle = "#e6edf7";
-          ctx.textAlign = "center"; ctx.textBaseline = "middle";
-          ctx.fillText(t.abbr, p.x, p.y);
-        });
-        ctx.restore();
-      }
-    }]
+    }
   });
 }
 
@@ -356,13 +374,24 @@ function renderOpsEra() {
   destroyChart("opsera");
   const teams = filterTeams();
   if (teams.length === 0) return;
-  const datasets = teams.map((t) => ({
-    label: t.abbr,
-    data: [{ x: t.era, y: t.ops, r: 7 }],
-    backgroundColor: t.color + "cc",
-    borderColor: t.color,
-    borderWidth: 1.5
-  }));
+  const datasets = teams.map((t) => {
+    const img = getLogoImg(t.id, "cap");
+    const ds = {
+      label: t.abbr,
+      data: [{ x: t.era, y: t.ops }],
+      backgroundColor: t.color + "cc",
+      borderColor: t.color,
+      borderWidth: 1.5
+    };
+    if (img && img.complete) {
+      ds.pointStyle = img;
+      ds.pointRadius = 16;
+      ds.pointHoverRadius = 20;
+    } else {
+      ds.data[0].r = 7;
+    }
+    return ds;
+  });
   charts.opsera = new window.Chart(document.getElementById("ops-era-chart"), {
     type: "bubble",
     data: { datasets },
@@ -376,21 +405,7 @@ function renderOpsEra() {
         const t = teams[ctx.datasetIndex]; if (!t) return "";
         return `${t.abbr} - OPS ${t.ops.toFixed(3)} - ERA ${t.era.toFixed(2)}`;
       }}}}
-    },
-    plugins: [{
-      id: "labels",
-      afterDatasetsDraw(chart) {
-        const ctx = chart.ctx; ctx.save(); ctx.font = "700 10px " + chartFont.family;
-        teams.forEach((t, i) => {
-          const ds = chart.getDatasetMeta(i); if (!ds || !ds.data[0]) return;
-          const p = ds.data[0];
-          ctx.fillStyle = "#e6edf7";
-          ctx.textAlign = "center"; ctx.textBaseline = "middle";
-          ctx.fillText(t.abbr, p.x, p.y);
-        });
-        ctx.restore();
-      }
-    }]
+    }
   });
 }
 
@@ -404,13 +419,17 @@ function renderHomeRoad() {
   const labels = teams.map((t) => t.abbr);
   const homeData = teams.map((t) => t.homeW ?? 0);
   const roadData = teams.map((t) => t.awayW ?? 0);
+  // Color each team's pair using its primary color (home full, road @50% alpha)
+  // so the bars remain solid primaries but the pair is still distinguishable.
+  const homeColors = teams.map((t) => t.color);
+  const roadColors = teams.map((t) => t.color + "66");
   charts.homeroad = new window.Chart(document.getElementById("home-road-chart"), {
     type: "bar",
     data: {
       labels,
       datasets: [
-        { label: "Home wins", data: homeData, backgroundColor: "#4f9cf9" },
-        { label: "Road wins", data: roadData, backgroundColor: "#f1c40f" }
+        { label: "Home wins", data: homeData, backgroundColor: homeColors },
+        { label: "Road wins", data: roadData, backgroundColor: roadColors }
       ]
     },
     options: {
@@ -419,9 +438,29 @@ function renderHomeRoad() {
         x: { grid: { display: false }, ticks: { autoSkip: false, font: { size: 10 } } },
         y: { stacked: true, grid: { color: chartColors.grid }, title: { display: true, text: "Wins (14-day window)", color: chartColors.label } }
       },
-      plugins: { legend: { display: true, position: "top", labels: { color: chartColors.text, boxWidth: 12, font: { size: 11 } } } }
+      plugins: {
+        legend: { display: true, position: "top", labels: { color: chartColors.text, boxWidth: 12, font: { size: 11 } } },
+        tooltip: { callbacks: { title: (ctxs) => {
+          const t = teams[ctxs[0]?.dataIndex]; return t ? `${t.abbr} (${t.name})` : "";
+        }}}
+      }
     }
   });
+
+  // Render a small logo strip beneath the canvas as a custom x-axis label row.
+  // Lives in a sibling <div> so Chart.js's responsive sizing isn't disrupted.
+  const canvas = document.getElementById("home-road-chart");
+  if (canvas && canvas.parentElement) {
+    let strip = canvas.parentElement.querySelector(".trends-homeroad-logos");
+    if (!strip) {
+      strip = document.createElement("div");
+      strip.className = "trends-homeroad-logos";
+      canvas.parentElement.appendChild(strip);
+    }
+    strip.innerHTML = teams.map((t) =>
+      `<span class="trends-homeroad-logo-cell" title="${t.abbr} - ${t.name}">${logoImgHtml(t.id, "cap", 18, "trends-homeroad-logo")}</span>`
+    ).join("");
+  }
 }
 
 // ============================================================
@@ -431,12 +470,23 @@ function renderPowerDisc() {
   destroyChart("powerdisc");
   const teams = filterTeams();
   if (teams.length === 0) return;
-  const datasets = teams.map((t) => ({
-    label: t.abbr,
-    data: [{ x: t.kp9 / Math.max(t.bbp9, 0.1), y: t.hr, r: 7 }],
-    backgroundColor: t.color + "cc",
-    borderColor: t.color, borderWidth: 1.5
-  }));
+  const datasets = teams.map((t) => {
+    const img = getLogoImg(t.id, "cap");
+    const ds = {
+      label: t.abbr,
+      data: [{ x: t.kp9 / Math.max(t.bbp9, 0.1), y: t.hr }],
+      backgroundColor: t.color + "cc",
+      borderColor: t.color, borderWidth: 1.5
+    };
+    if (img && img.complete) {
+      ds.pointStyle = img;
+      ds.pointRadius = 16;
+      ds.pointHoverRadius = 20;
+    } else {
+      ds.data[0].r = 7;
+    }
+    return ds;
+  });
   charts.powerdisc = new window.Chart(document.getElementById("power-disc-chart"), {
     type: "bubble",
     data: { datasets },
@@ -450,20 +500,7 @@ function renderPowerDisc() {
         const t = teams[ctx.datasetIndex]; if (!t) return "";
         return `${t.abbr} - ${t.hr} HR - K/BB ${(t.kp9 / Math.max(t.bbp9, 0.1)).toFixed(2)}`;
       }}}}
-    },
-    plugins: [{
-      id: "labels",
-      afterDatasetsDraw(chart) {
-        const ctx = chart.ctx; ctx.save(); ctx.font = "700 10px " + chartFont.family;
-        teams.forEach((t, i) => {
-          const ds = chart.getDatasetMeta(i); if (!ds || !ds.data[0]) return;
-          const p = ds.data[0];
-          ctx.fillStyle = "#e6edf7"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-          ctx.fillText(t.abbr, p.x, p.y);
-        });
-        ctx.restore();
-      }
-    }]
+    }
   });
 }
 
@@ -489,7 +526,7 @@ function renderHeatmap() {
     return `<tr>
       <td class="team">
         <div class="trends-heatmap-team-cell">
-          <div class="trends-swatch" style="background:${t.color}"></div>
+          ${logoImgHtml(t.id, "cap", 18, "trends-heatmap-logo")}
           <span class="trends-abbr">${t.abbr}</span>
         </div>
       </td>

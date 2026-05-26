@@ -1,10 +1,10 @@
 {
   "role": "Integrator",
   "version": 1,
-  "revision": "rev-1",
+  "revision": "rev-2",
   "run_slug": "mlb-daily-dashboard",
   "created_at": "2026-05-26T15:17:00Z",
-  "completed_at": "2026-05-26T18:30:00Z",
+  "completed_at": "2026-05-26T19:45:00Z",
   "deliverable_kind": "web_app",
   "entry_point": "index.html",
   "files": [
@@ -17,13 +17,15 @@
     {"path": "rankings-engine.js", "source_section": "rankings-engine", "source_builder": "builder-rankings-engine-1"},
     {"path": "stats-client.js",    "source_section": "data-client",     "source_builder": "rev-1-extension", "added_in": "rev-1"},
     {"path": "trends-charts.js",   "source_section": "ui-render",       "source_builder": "rev-1-extension", "added_in": "rev-1"},
+    {"path": "logo-helpers.js",    "source_section": "ui-render",       "source_builder": "rev-2-extension", "added_in": "rev-2"},
     {"path": "divergence-from-integration.json", "source_section": "orchestrator", "source_builder": "rev-1-extension", "added_in": "rev-1"}
   ],
   "module_graph": {
-    "app.js": ["./data-client.js", "./stats-client.js", "./trends-engine.js", "./rankings-engine.js", "./teams.js", "./trends-charts.js"],
+    "app.js": ["./data-client.js", "./stats-client.js", "./trends-engine.js", "./rankings-engine.js", "./teams.js", "./trends-charts.js", "./logo-helpers.js"],
     "data-client.js": ["./teams.js"],
     "stats-client.js": ["./teams.js"],
-    "trends-charts.js": ["./teams.js"],
+    "trends-charts.js": ["./teams.js", "./logo-helpers.js"],
+    "logo-helpers.js": ["./teams.js"],
     "trends-engine.js": [],
     "rankings-engine.js": [],
     "teams.js": []
@@ -39,6 +41,14 @@
       "load_strategy": "lazy",
       "trigger": "first activation of Trends tab",
       "rationale": "Keeps initial paint (Daily tab) free of Chart.js overhead; only loaded if user opens Trends."
+    },
+    {
+      "name": "MLB Team Logos CDN",
+      "version": "n/a",
+      "url": "https://www.mlbstatic.com/team-logos/",
+      "load_strategy": "preload-on-fetchTeams + lazy <img> elsewhere",
+      "trigger": "init() after fetchTeams resolves; individual <img loading=\"lazy\"> for below-the-fold instances",
+      "rationale": "rev-2 — official MLB SVG team logos used inline (Daily standings + trends + upcoming) and as Chart.js pointStyle on the three scatter charts. CORS: Allow-Origin *, verified. Cache: 14-day TTL on edge. Avg payload 1–2 KB per logo."
     }
   ],
   "contracts_satisfied": [
@@ -51,6 +61,7 @@
   ],
   "notes": {
     "trends_view_added": "rev-1 adds a Trends tab with 7 widgets (KPI strip, sortable standings, last-10 leaderboard, RS-vs-RA bubble scatter, OPS-vs-ERA scatter, home/road grouped bar, power/discipline scatter, 14-day W/L heatmap). All widgets driven by live fetches via data-client.js + stats-client.js; no inlined data. Daily tab behavior unchanged.",
+    "logos_added": "rev-2 integrates MLB CDN team logos across Daily and Trends tabs (9+ surfaces: rankings rows, sparkline rows, upcoming-game chips, KPI cards, standings table, last-10 leaderboard, three scatter point markers, home/road logo strip, heatmap rows). New logo-helpers.js module owns preload + cached HTMLImageElement supply. teams.js gains getLogoUrl(id, variant) and refreshed primary colors for ARI / DET / NYY to match the actual CDN logo extraction. Existing color swatches replaced with logos throughout.",
     "divergence": "final/ diverges from integration/ — see divergence-from-integration.json."
   }
 }

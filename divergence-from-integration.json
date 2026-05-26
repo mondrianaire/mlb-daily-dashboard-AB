@@ -4,46 +4,68 @@
   "reason": "other",
   "trigger": {
     "type": "user_requested_feature_extension",
-    "evidence_pointer": "history/log.jsonl (rev-1 entry 2026-05-26)",
-    "summary": "User requested merging the standalone mlb-trends-dashboard.html widgets into the live daily dashboard as a second tab. integration/ remains the original 3-panel build; final/ adds the Trends tab and supporting modules."
+    "evidence_pointer": "history/log.jsonl (rev-1 + rev-2 entries 2026-05-26)",
+    "summary": "rev-1 merged the standalone mlb-trends-dashboard.html widgets into the live daily dashboard as a Trends tab. rev-2 added MLB CDN team logos across all widgets and refreshed primary colors against the authoritative logo SVGs."
   },
-  "added_files": [
+  "revisions": [
     {
-      "path": "stats-client.js",
-      "rationale": "New fetcher module: GET /teams/stats?group=hitting and /teams/stats?group=pitching plus a 14-day schedule call for the W/L heatmap. Mirrors data-client.js's DataClientError pattern with a sibling StatsClientError."
+      "revision": "rev-1",
+      "shipped_at": "2026-05-26T18:30:00Z",
+      "added_files": [
+        {"path": "stats-client.js",                "rationale": "New fetcher module: GET /teams/stats?group=hitting and /teams/stats?group=pitching plus a 14-day schedule call for the W/L heatmap. Mirrors data-client.js's DataClientError pattern with a sibling StatsClientError."},
+        {"path": "trends-charts.js",               "rationale": "Renders the 7 trend widgets (KPI strip, sortable standings, last-10 leaderboard, RS-vs-RA scatter, OPS-vs-ERA scatter, home/road bars, power/discipline scatter, 14-day heatmap). Lifted from mlb-trends-dashboard.html and re-wired to consume live fetched data instead of an inlined MLB_DATA blob."},
+        {"path": "divergence-from-integration.json", "rationale": "This file."}
+      ],
+      "modified_files": [
+        {"path": "index.html",   "lines_changed": 70,  "diff_summary": "Added tab nav, wrapped 3 panels in tab-daily section, added tab-trends section with filter chips + 7 widget containers. Chart.js script tag NOT in HTML — lazy-loaded by app.js on first Trends activation."},
+        {"path": "app.js",       "lines_changed": 120, "diff_summary": "Added imports from stats-client.js, dailyFetchCache so Trends reuses teams+standings, TRENDS state object, loadChartJs(), ensureTrendsView(), activateTab(), wireTabs(). Bootstrap now calls wireTabs() before init(). Daily tab render path unchanged."},
+        {"path": "styles.css",   "lines_changed": 240, "diff_summary": "Appended .tabs / .tab-button styling and a fully namespaced .trends-* style block. Trends surface uses its own dark CSS variables."},
+        {"path": "manifest.json","lines_changed": 30,  "diff_summary": "Added revision: rev-1. Listed new files. Updated module_graph. Added external_runtime_dependencies for Chart.js 4.4.0 (lazy-loaded). Added notes.trends_view_added."}
+      ],
+      "removed_files": []
     },
     {
-      "path": "trends-charts.js",
-      "rationale": "Renders the 7 trend widgets (KPI strip, sortable standings, last-10 leaderboard, RS-vs-RA scatter, OPS-vs-ERA scatter, home/road bars, power/discipline scatter, 14-day heatmap). Lifted verbatim from mlb-trends-dashboard.html and re-wired to consume live fetched data instead of an inlined MLB_DATA blob."
-    },
-    {
-      "path": "divergence-from-integration.json",
-      "rationale": "This file."
+      "revision": "rev-2",
+      "shipped_at": "2026-05-26T19:45:00Z",
+      "trigger_summary": "User requested: integrate full MLB team logos throughout the UI; ensure logo colors are consistent and accurate. Logos sourced from https://www.mlbstatic.com/team-logos/ (cap variant for inline UI elements, primary variant for KPI heroes and scatter point markers). 30/30 team IDs verified 200 OK. CORS Allow-Origin: *. Colors refreshed where pixel-extracted logo fill diverged from the prior teams.js value.",
+      "added_files": [
+        {"path": "logo-helpers.js", "rationale": "New utility module exporting preloadLogos(ids, variant), getLogoImg(id, variant) for synchronous Chart.js pointStyle access, logoElement(id, variant, sizePx) and logoImgHtml() for DOM/HTML emission. Owns the per-(id,variant) HTMLImageElement cache so Chart.js custom point markers don't flicker on first paint."}
+      ],
+      "modified_files": [
+        {
+          "path": "teams.js",
+          "lines_changed": 22,
+          "diff_summary": "Added getLogoUrl(teamId, variant) export returning the MLB CDN URL ('cap' or 'primary'). Refreshed primaryColor for ARI (#A71930 -> #AA182C, Sedona Red), DET (#0C2340 -> #0C2C56, true Tigers navy), NYY (#003087 -> #132448, true Yankees logo navy). Refreshed secondaryColor for ARI (#000000 -> #3EC1CC Sonoran Teal), BOS (#0C2340 -> #0D2B56), CLE (#E50022 -> #E31937), NYY (#0C2340 -> #C4CED4 Yankees silver). Each color change carries a `// source:` comment citing the rev-2 logo extraction."
+        },
+        {
+          "path": "app.js",
+          "lines_changed": 35,
+          "diff_summary": "Imported getLogoUrl from teams.js and preloadLogos/logoImgHtml from logo-helpers.js. init() now fire-and-forgets preloadLogos(ALL_TEAM_IDS, 'cap'|'primary') after fetchTeams resolves. renderDivisionBlock row swaps the color swatch for a 24px cap logo. renderTrends row swaps the swatch for a 20px cap logo. teamChip() now takes teamId and renders an 18px cap logo for upcoming-game cells; renderGameRow passes away/home teamId through."
+        },
+        {
+          "path": "trends-charts.js",
+          "lines_changed": 110,
+          "diff_summary": "Imported getLogoUrl + logo-helpers. initTrendsView now triggers a logo preload then re-renders the 3 scatter charts + KPIs + home/road once images are cached. KPI cards now show a 32px primary logo above the value with the team abbr as a small caption. Standings table team cell swaps swatch for a 24px cap logo. Last-10 leaderboard row now has a logo+abbr team div with a 20px cap logo. RS-vs-RA / OPS-vs-ERA / Power-vs-Discipline scatters set Chart.js dataset.pointStyle = HTMLImageElement (cap logo, 16px radius) when the preload has resolved; falls back to colored bubbles before then. Home/Road bar chart now colors each pair by the team primary (full alpha for home, 40% for road) and emits a separate logo strip below the canvas as a custom x-axis label row. Heatmap team cell swaps swatch for an 18px cap logo. Old afterDatasetsDraw text-label plugins removed from the 3 scatters (the logos themselves identify the teams)."
+        },
+        {
+          "path": "styles.css",
+          "lines_changed": 75,
+          "diff_summary": "Refreshed --team-ARI / --team-DET / --team-NYY CSS custom properties to match teams.js. Added a .logo-img base class plus six size-variant rules (team-logo-sm 24px, team-logo-xs 18-20px, trends-kpi-logo 32px, trends-team-logo 24px, trends-lb-logo 20px, trends-homeroad-logo 18px, trends-heatmap-logo 18px). Added .trends-kpi-logo-wrap flex layout, .trends-homeroad-logos grid container for the home/road x-axis strip, and adjusted .trends-lb-row grid-template-columns to accommodate the new logo+abbr team div."
+        },
+        {
+          "path": "index.html",
+          "lines_changed": 0,
+          "diff_summary": "No structural change (rev-2 is JS+CSS only)."
+        },
+        {
+          "path": "manifest.json",
+          "lines_changed": 25,
+          "diff_summary": "Bumped revision to rev-2. Added logo-helpers.js to files[] and module_graph. Added MLB Team Logos CDN to external_runtime_dependencies. Added notes.logos_added describing the 9+ logo surfaces."
+        }
+      ],
+      "removed_files": []
     }
   ],
-  "modified_files": [
-    {
-      "path": "index.html",
-      "lines_changed": 70,
-      "diff_summary": "Added tab nav (Daily / Trends), wrapped existing 3 panels in <section id=\"tab-daily\">, added new <section id=\"tab-trends\" hidden> with filter chips + 7 widget containers (kpis, standings-table, last10-board, rsra-chart, ops-era-chart, home-road-chart, power-disc-chart, heatmap-body). Chart.js script tag NOT included in HTML — lazy-loaded by app.js on first Trends activation."
-    },
-    {
-      "path": "app.js",
-      "lines_changed": 120,
-      "diff_summary": "Added imports from stats-client.js. Added dailyFetchCache so the Trends tab reuses the teams+standings already fetched by the Daily tab. Added TRENDS state object, loadChartJs(), ensureTrendsView(), activateTab(), wireTabs(). Bootstrap now calls wireTabs() before init(). Daily tab render path is unchanged."
-    },
-    {
-      "path": "styles.css",
-      "lines_changed": 240,
-      "diff_summary": "Appended .tabs / .tab-button styling and a fully namespaced .trends-* style block (filterbar, chips, KPIs, cards, sortable standings, leaderboard, heatmap). Trends surface uses its own dark CSS variables so it has visual identity without clashing with the Daily light theme."
-    },
-    {
-      "path": "manifest.json",
-      "lines_changed": 30,
-      "diff_summary": "Added revision: rev-1. Listed new files (stats-client.js, trends-charts.js, divergence-from-integration.json). Updated module_graph. Added external_runtime_dependencies entry for Chart.js 4.4.0 (lazy-loaded). Added notes.trends_view_added describing the extension. Added completed_at."
-    }
-  ],
-  "removed_files": [],
   "approved_by_role": "orchestrator",
-  "rationale": "User-requested feature extension: merged trends-dashboard widgets into the daily dashboard adding a Trends tab. final/ now diverges from integration/ by addition of new modules and modifications to index.html/app.js/styles.css. Original Daily tab experience is preserved byte-for-byte in behavior — only structural HTML changed (wrapped in a tab-panel section); the JS render path is untouched. Re-integration would require an Integrator pass on the new files, but per Maintenance precedent for incremental revisions to delivered builds, this divergence is recorded here without re-running integration."
+  "rationale": "rev-2 honors a user-requested visual upgrade. Logos are decorative augmentation (each is paired with the existing team abbr text), CORS-verified, and lazy-loaded; first paint timing is unaffected because preload is fire-and-forget. Color refreshes are sourced from the actual MLB CDN logo SVGs that the dashboard now renders, so the color stripe and the logo are visually consistent. Daily tab functional behavior unchanged. integration/ remains the original 3-panel build; final/ is the divergent rev-2 deliverable."
 }

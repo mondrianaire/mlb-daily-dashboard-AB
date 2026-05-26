@@ -19,7 +19,8 @@ import {
 } from "./stats-client.js";
 import { computeWeeklyTrends } from "./trends-engine.js";
 import { computeRankings } from "./rankings-engine.js";
-import { TEAM_META, ALL_TEAM_IDS, teamMeta } from "./teams.js";
+import { TEAM_META, ALL_TEAM_IDS, teamMeta, getLogoUrl } from "./teams.js";
+import { preloadLogos, logoImgHtml } from "./logo-helpers.js";
 
 // ----- Required DOM IDs (per ui-shell--ui-render contract) -----
 const ID = {
@@ -76,6 +77,16 @@ export async function init() {
 
     // Cache the heavy responses so the Trends tab doesn't have to refetch.
     dailyFetchCache = { teams, standings, schedule, recentResults };
+
+    // Fire-and-forget logo preload (rev-2) — keeps the MLB CDN responses in
+    // the browser HTTP cache so Chart.js custom point markers and inline imgs
+    // paint without a flash on first use. We don't await: rendering the Daily
+    // tab is the critical path; logos load over the network in parallel and
+    // the <img> tags below also work fine if the preload is still in flight.
+    try {
+      preloadLogos(ALL_TEAM_IDS, "cap");
+      preloadLogos(ALL_TEAM_IDS, "primary");
+    } catch (_) { /* logos are decorative; never block on them */ }
 
     renderRankings(rankings, teams);
     renderTrends(trends, teams);
@@ -161,10 +172,11 @@ function renderDivisionBlock(title, entries, teamById, compact = false) {
     const teamInfo = teamById.get(t.teamId) || teamMeta(t.teamId);
     const abbr = teamInfo?.abbreviation || teamInfo?.abbr || t.teamAbbreviation || "—";
     const color = teamInfo?.primaryColor || `var(--team-${abbr})`;
+    const logo = logoImgHtml(t.teamId, "cap", 24, "team-logo-sm");
     tr.innerHTML = `
       <td>
         <span class="team-cell" style="color: ${color}">
-          <span class="team-swatch" aria-hidden="true"></span>
+          ${logo}
           <span class="team-abbr" style="color: var(--fg)">${escapeHtml(abbr)}</span>
         </span>
       </td>
@@ -203,11 +215,14 @@ function renderTrends(trends, teams) {
     const row = document.createElement("div");
     row.className = "trend-row";
 
-    const swatch = document.createElement("span");
-    swatch.className = "team-swatch";
-    swatch.setAttribute("aria-hidden", "true");
-    swatch.style.color = color;
-    swatch.style.background = color;
+    const logo = document.createElement("img");
+    logo.src = getLogoUrl(trend.teamId, "cap");
+    logo.alt = "";
+    logo.width = 20;
+    logo.height = 20;
+    logo.loading = "lazy";
+    logo.decoding = "async";
+    logo.className = "logo-img team-logo-xs";
 
     const abbrEl = document.createElement("span");
     abbrEl.className = "trend-abbr";
@@ -224,7 +239,7 @@ function renderTrends(trends, teams) {
     rundiff.className = `trend-rundiff ${rd > 0 ? "positive" : rd < 0 ? "negative" : ""}`;
     rundiff.textContent = `${rd > 0 ? "+" : ""}${rd}`;
 
-    row.appendChild(swatch);
+    row.appendChild(logo);
     row.appendChild(abbrEl);
     row.appendChild(sparkSvg);
     row.appendChild(record);
@@ -340,12 +355,12 @@ function renderGameRow(game) {
 
   const away = game.awayTeam || {};
   const home = game.homeTeam || {};
-  matchup.appendChild(teamChip(away.teamAbbreviation));
+  matchup.appendChild(teamChip(away.teamAbbreviation, away.teamId));
   const at = document.createElement("span");
   at.className = "upcoming-at";
   at.textContent = "@";
   matchup.appendChild(at);
-  matchup.appendChild(teamChip(home.teamAbbreviation));
+  matchup.appendChild(teamChip(home.teamAbbreviation, home.teamId));
 
   const right = document.createElement("div");
   if (game.status && game.status !== "Scheduled" && game.status !== "Pre-Game") {
@@ -365,14 +380,17 @@ function renderGameRow(game) {
   return row;
 }
 
-function teamChip(abbr) {
+function teamChip(abbr, teamId) {
   const span = document.createElement("span");
   span.className = "team-cell";
   const safeAbbr = abbr || "—";
   const color = `var(--team-${safeAbbr.toUpperCase()})`;
   span.style.color = color;
+  const logo = teamId
+    ? logoImgHtml(teamId, "cap", 18, "team-logo-xs")
+    : `<span class="team-swatch" style="background: ${color}"></span>`;
   span.innerHTML = `
-    <span class="team-swatch" style="background: ${color}"></span>
+    ${logo}
     <span class="team-abbr" style="color: var(--fg)">${escapeHtml(safeAbbr)}</span>
   `;
   return span;
