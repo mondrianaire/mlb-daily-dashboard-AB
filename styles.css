@@ -1,0 +1,382 @@
+/* ====================================================================
+   MLB Daily Dashboard — styles.css
+   Vanilla CSS, no framework. Responsive grid: 3-col desktop / 1-col mobile.
+   Honors prefers-color-scheme. Per-team color custom properties exposed.
+   ==================================================================== */
+
+:root {
+  /* Layout tokens */
+  --max-width: 1400px;
+  --gap: 1.25rem;
+  --radius: 10px;
+  --border-thin: 1px solid var(--border-color);
+
+  /* Type tokens */
+  --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --mono-stack: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Light theme defaults */
+  --bg: #f6f7f9;
+  --bg-elevated: #ffffff;
+  --fg: #1a1d22;
+  --fg-muted: #5b6573;
+  --border-color: #e3e6eb;
+  --border-strong: #c8cdd4;
+  --accent: #0c2340;
+  --error-bg: #fdecea;
+  --error-fg: #8b1a14;
+  --empty-fg: #8a93a0;
+  --row-hover: #f0f2f6;
+
+  /* League colors */
+  --league-AL: #d50032;
+  --league-NL: #002d72;
+
+  /* Per-team primary colors (30 teams). Naming: --team-{ABBR} uppercase. */
+  --team-LAA: #BA0021;
+  --team-ARI: #A71930;
+  --team-BAL: #DF4601;
+  --team-BOS: #BD3039;
+  --team-CHC: #0E3386;
+  --team-CIN: #C6011F;
+  --team-CLE: #00385D;
+  --team-COL: #333366;
+  --team-DET: #0C2340;
+  --team-HOU: #002D62;
+  --team-KC:  #004687;
+  --team-LAD: #005A9C;
+  --team-WSH: #AB0003;
+  --team-NYM: #002D72;
+  --team-ATH: #003831;
+  --team-PIT: #FDB827;
+  --team-SD:  #2F241D;
+  --team-SEA: #0C2C56;
+  --team-SF:  #FD5A1E;
+  --team-STL: #C41E3A;
+  --team-TB:  #092C5C;
+  --team-TEX: #003278;
+  --team-TOR: #134A8E;
+  --team-MIN: #002B5C;
+  --team-PHI: #E81828;
+  --team-ATL: #CE1141;
+  --team-CWS: #27251F;
+  --team-MIA: #00A3E0;
+  --team-NYY: #003087;
+  --team-MIL: #12284B;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1216;
+    --bg-elevated: #181c22;
+    --fg: #e7ebf0;
+    --fg-muted: #99a3b0;
+    --border-color: #262b32;
+    --border-strong: #383e47;
+    --accent: #6ea8ff;
+    --error-bg: #3a1a17;
+    --error-fg: #ffb4ad;
+    --empty-fg: #6f7785;
+    --row-hover: #1f242b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-stack);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ----------- Header ----------- */
+.site-header {
+  background: var(--bg-elevated);
+  border-bottom: var(--border-thin);
+  padding: 1.5rem 1.5rem 1.25rem;
+}
+.site-header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+.site-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.site-subtitle {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 0.95rem;
+}
+.last-updated-wrap {
+  margin-left: 0.75rem;
+  font-family: var(--mono-stack);
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+/* ----------- Error banner ----------- */
+.error-banner {
+  max-width: var(--max-width);
+  margin: 1rem auto 0;
+  padding: 0.85rem 1.1rem;
+  background: var(--error-bg);
+  color: var(--error-fg);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.error-banner[hidden] { display: none !important; }
+.error-banner-text { font-weight: 500; }
+.error-banner-retry {
+  appearance: none;
+  border: 1px solid var(--error-fg);
+  background: transparent;
+  color: var(--error-fg);
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+}
+.error-banner-retry:hover { background: rgba(0,0,0,0.05); }
+
+/* ----------- Dashboard grid ----------- */
+.dashboard-grid {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  #rankings-panel { grid-column: 1 / -1; }
+}
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  #rankings-panel { grid-column: auto; }
+}
+
+/* ----------- Panel ----------- */
+.panel {
+  background: var(--bg-elevated);
+  border: var(--border-thin);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem 1.1rem;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+.panel-heading {
+  margin: 0 0 0.85rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding-bottom: 0.5rem;
+  border-bottom: var(--border-thin);
+}
+.panel-body { flex: 1 1 auto; }
+.panel-loading {
+  color: var(--fg-muted);
+  font-style: italic;
+  margin: 1rem 0;
+}
+.panel-empty-state {
+  color: var(--empty-fg);
+  text-align: center;
+  padding: 2rem 1rem;
+  font-style: italic;
+}
+
+/* ----------- Standings (rankings) ----------- */
+.division-block { margin-bottom: 1.1rem; }
+.division-block:last-child { margin-bottom: 0; }
+.division-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+}
+.division-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.division-table th,
+.division-table td {
+  text-align: right;
+  padding: 0.32rem 0.45rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.division-table th:first-child,
+.division-table td:first-child { text-align: left; }
+.division-table th {
+  font-weight: 500;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  border-bottom: 1px solid var(--border-strong);
+}
+.division-table tbody tr:hover { background: var(--row-hover); }
+.team-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+.team-swatch {
+  display: inline-block;
+  width: 6px;
+  height: 18px;
+  border-radius: 2px;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+.team-abbr {
+  font-family: var(--mono-stack);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+.numeric { font-variant-numeric: tabular-nums; font-family: var(--mono-stack); font-size: 0.86rem; }
+
+.wildcard-block {
+  margin-top: 1.2rem;
+  padding-top: 0.8rem;
+  border-top: 2px dashed var(--border-color);
+}
+.wildcard-block .division-title { color: var(--accent); }
+
+/* ----------- Trends ----------- */
+.trend-row {
+  display: grid;
+  grid-template-columns: 30px 44px 1fr 60px 50px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.trend-row:last-child { border-bottom: none; }
+.trend-row:hover { background: var(--row-hover); }
+.trend-abbr {
+  font-family: var(--mono-stack);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.trend-record { font-variant-numeric: tabular-nums; color: var(--fg-muted); font-size: 0.85rem; }
+.trend-rundiff {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+  font-size: 0.88rem;
+}
+.trend-rundiff.positive { color: #1c8e3f; }
+.trend-rundiff.negative { color: #c43a3a; }
+@media (prefers-color-scheme: dark) {
+  .trend-rundiff.positive { color: #5dd887; }
+  .trend-rundiff.negative { color: #f37070; }
+}
+.trend-streak {
+  font-family: var(--mono-stack);
+  font-size: 0.78rem;
+  text-align: right;
+  color: var(--fg-muted);
+}
+.trend-streak.streak-W { color: #1c8e3f; font-weight: 600; }
+.trend-streak.streak-L { color: #c43a3a; font-weight: 600; }
+@media (prefers-color-scheme: dark) {
+  .trend-streak.streak-W { color: #5dd887; }
+  .trend-streak.streak-L { color: #f37070; }
+}
+
+.sparkline {
+  width: 100%;
+  height: 24px;
+  display: block;
+}
+.sparkline-line {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sparkline-baseline {
+  stroke: var(--border-color);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+/* ----------- Upcoming ----------- */
+.upcoming-day-group { margin-bottom: 1rem; }
+.upcoming-day-group:last-child { margin-bottom: 0; }
+.upcoming-day-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+}
+.upcoming-game {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.3rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.88rem;
+}
+.upcoming-game:last-child { border-bottom: none; }
+.upcoming-matchup {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.upcoming-at { color: var(--fg-muted); font-size: 0.78rem; }
+.upcoming-time {
+  font-family: var(--mono-stack);
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+.upcoming-status {
+  font-family: var(--mono-stack);
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ----------- Footer ----------- */
+.site-footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem 1.5rem 2rem;
+  color: var(--fg-muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
