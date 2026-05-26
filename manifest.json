@@ -1,22 +1,29 @@
 {
   "role": "Integrator",
   "version": 1,
+  "revision": "rev-1",
   "run_slug": "mlb-daily-dashboard",
   "created_at": "2026-05-26T15:17:00Z",
+  "completed_at": "2026-05-26T18:30:00Z",
   "deliverable_kind": "web_app",
   "entry_point": "index.html",
   "files": [
-    {"path": "index.html",        "source_section": "ui-shell",        "source_builder": "builder-ui-shell-1"},
-    {"path": "styles.css",        "source_section": "ui-shell",        "source_builder": "builder-ui-shell-1"},
-    {"path": "app.js",            "source_section": "ui-render",       "source_builder": "builder-ui-render-1"},
-    {"path": "data-client.js",    "source_section": "data-client",     "source_builder": "builder-data-client-1"},
-    {"path": "teams.js",          "source_section": "data-client",     "source_builder": "builder-data-client-1"},
-    {"path": "trends-engine.js",  "source_section": "trends-engine",   "source_builder": "builder-trends-engine-1"},
-    {"path": "rankings-engine.js","source_section": "rankings-engine", "source_builder": "builder-rankings-engine-1"}
+    {"path": "index.html",         "source_section": "ui-shell",        "source_builder": "builder-ui-shell-1"},
+    {"path": "styles.css",         "source_section": "ui-shell",        "source_builder": "builder-ui-shell-1"},
+    {"path": "app.js",             "source_section": "ui-render",       "source_builder": "builder-ui-render-1"},
+    {"path": "data-client.js",     "source_section": "data-client",     "source_builder": "builder-data-client-1"},
+    {"path": "teams.js",           "source_section": "data-client",     "source_builder": "builder-data-client-1"},
+    {"path": "trends-engine.js",   "source_section": "trends-engine",   "source_builder": "builder-trends-engine-1"},
+    {"path": "rankings-engine.js", "source_section": "rankings-engine", "source_builder": "builder-rankings-engine-1"},
+    {"path": "stats-client.js",    "source_section": "data-client",     "source_builder": "rev-1-extension", "added_in": "rev-1"},
+    {"path": "trends-charts.js",   "source_section": "ui-render",       "source_builder": "rev-1-extension", "added_in": "rev-1"},
+    {"path": "divergence-from-integration.json", "source_section": "orchestrator", "source_builder": "rev-1-extension", "added_in": "rev-1"}
   ],
   "module_graph": {
-    "app.js": ["./data-client.js", "./trends-engine.js", "./rankings-engine.js", "./teams.js"],
+    "app.js": ["./data-client.js", "./stats-client.js", "./trends-engine.js", "./rankings-engine.js", "./teams.js", "./trends-charts.js"],
     "data-client.js": ["./teams.js"],
+    "stats-client.js": ["./teams.js"],
+    "trends-charts.js": ["./teams.js"],
     "trends-engine.js": [],
     "rankings-engine.js": [],
     "teams.js": []
@@ -24,7 +31,16 @@
   "deployment_target": "https://mondrianaire.github.io/auto-builder/runs/mlb-daily-dashboard/output/final/",
   "static_only": true,
   "build_step_required": false,
-  "external_runtime_dependencies": [],
+  "external_runtime_dependencies": [
+    {
+      "name": "Chart.js",
+      "version": "4.4.0",
+      "url": "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js",
+      "load_strategy": "lazy",
+      "trigger": "first activation of Trends tab",
+      "rationale": "Keeps initial paint (Daily tab) free of Chart.js overhead; only loaded if user opens Trends."
+    }
+  ],
   "contracts_satisfied": [
     "data-client--rankings-engine",
     "data-client--trends-engine",
@@ -32,5 +48,9 @@
     "trends-engine--ui-render",
     "rankings-engine--ui-render",
     "ui-shell--ui-render"
-  ]
+  ],
+  "notes": {
+    "trends_view_added": "rev-1 adds a Trends tab with 7 widgets (KPI strip, sortable standings, last-10 leaderboard, RS-vs-RA bubble scatter, OPS-vs-ERA scatter, home/road grouped bar, power/discipline scatter, 14-day W/L heatmap). All widgets driven by live fetches via data-client.js + stats-client.js; no inlined data. Daily tab behavior unchanged.",
+    "divergence": "final/ diverges from integration/ — see divergence-from-integration.json."
+  }
 }

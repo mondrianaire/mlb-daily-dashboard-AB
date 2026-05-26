@@ -1,0 +1,49 @@
+{
+  "created_at": "2026-05-26T18:30:00Z",
+  "supersedes_integration_at": "2026-05-26T15:17:00Z",
+  "reason": "other",
+  "trigger": {
+    "type": "user_requested_feature_extension",
+    "evidence_pointer": "history/log.jsonl (rev-1 entry 2026-05-26)",
+    "summary": "User requested merging the standalone mlb-trends-dashboard.html widgets into the live daily dashboard as a second tab. integration/ remains the original 3-panel build; final/ adds the Trends tab and supporting modules."
+  },
+  "added_files": [
+    {
+      "path": "stats-client.js",
+      "rationale": "New fetcher module: GET /teams/stats?group=hitting and /teams/stats?group=pitching plus a 14-day schedule call for the W/L heatmap. Mirrors data-client.js's DataClientError pattern with a sibling StatsClientError."
+    },
+    {
+      "path": "trends-charts.js",
+      "rationale": "Renders the 7 trend widgets (KPI strip, sortable standings, last-10 leaderboard, RS-vs-RA scatter, OPS-vs-ERA scatter, home/road bars, power/discipline scatter, 14-day heatmap). Lifted verbatim from mlb-trends-dashboard.html and re-wired to consume live fetched data instead of an inlined MLB_DATA blob."
+    },
+    {
+      "path": "divergence-from-integration.json",
+      "rationale": "This file."
+    }
+  ],
+  "modified_files": [
+    {
+      "path": "index.html",
+      "lines_changed": 70,
+      "diff_summary": "Added tab nav (Daily / Trends), wrapped existing 3 panels in <section id=\"tab-daily\">, added new <section id=\"tab-trends\" hidden> with filter chips + 7 widget containers (kpis, standings-table, last10-board, rsra-chart, ops-era-chart, home-road-chart, power-disc-chart, heatmap-body). Chart.js script tag NOT included in HTML — lazy-loaded by app.js on first Trends activation."
+    },
+    {
+      "path": "app.js",
+      "lines_changed": 120,
+      "diff_summary": "Added imports from stats-client.js. Added dailyFetchCache so the Trends tab reuses the teams+standings already fetched by the Daily tab. Added TRENDS state object, loadChartJs(), ensureTrendsView(), activateTab(), wireTabs(). Bootstrap now calls wireTabs() before init(). Daily tab render path is unchanged."
+    },
+    {
+      "path": "styles.css",
+      "lines_changed": 240,
+      "diff_summary": "Appended .tabs / .tab-button styling and a fully namespaced .trends-* style block (filterbar, chips, KPIs, cards, sortable standings, leaderboard, heatmap). Trends surface uses its own dark CSS variables so it has visual identity without clashing with the Daily light theme."
+    },
+    {
+      "path": "manifest.json",
+      "lines_changed": 30,
+      "diff_summary": "Added revision: rev-1. Listed new files (stats-client.js, trends-charts.js, divergence-from-integration.json). Updated module_graph. Added external_runtime_dependencies entry for Chart.js 4.4.0 (lazy-loaded). Added notes.trends_view_added describing the extension. Added completed_at."
+    }
+  ],
+  "removed_files": [],
+  "approved_by_role": "orchestrator",
+  "rationale": "User-requested feature extension: merged trends-dashboard widgets into the daily dashboard adding a Trends tab. final/ now diverges from integration/ by addition of new modules and modifications to index.html/app.js/styles.css. Original Daily tab experience is preserved byte-for-byte in behavior — only structural HTML changed (wrapped in a tab-panel section); the JS render path is untouched. Re-integration would require an Integrator pass on the new files, but per Maintenance precedent for incremental revisions to delivered builds, this divergence is recorded here without re-running integration."
+}

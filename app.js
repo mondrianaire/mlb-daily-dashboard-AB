@@ -11,6 +11,12 @@ import {
   DataClientError,
   DateUtil
 } from "./data-client.js";
+import {
+  fetchTeamHittingStats,
+  fetchTeamPitchingStats,
+  fetchCompletedGames14d,
+  StatsClientError
+} from "./stats-client.js";
 import { computeWeeklyTrends } from "./trends-engine.js";
 import { computeRankings } from "./rankings-engine.js";
 import { TEAM_META, ALL_TEAM_IDS, teamMeta } from "./teams.js";
@@ -23,6 +29,17 @@ const ID = {
   lastUpdated: "last-updated",
   errorBanner: "error-banner",
   errorRetry: "error-banner-retry"
+};
+
+// Daily-tab fetch cache: reused by the Trends tab so it doesn't refetch teams/standings.
+let dailyFetchCache = null;
+
+// Trends-tab lazy-load state.
+const TRENDS = {
+  loaded: false,
+  loading: null,            // Promise<void> in flight
+  chartJsLoaded: false,
+  chartJsLoading: null      // Promise<void> in flight
 };
 
 const DIVISION_LABELS = {
@@ -56,6 +73,9 @@ export async function init() {
 
     const rankings = computeRankings(standings);
     const trends = computeWeeklyTrends(recentResults);
+
+    // Cache the heavy responses so the Trends tab doesn't have to refetch.
+    dailyFetchCache = { teams, standings, schedule, recentResults };
 
     renderRankings(rankings, teams);
     renderTrends(trends, teams);
@@ -452,11 +472,115 @@ function escapeHtml(s) {
 }
 
 // ============================================================
+//                TABS  (Daily / Trends)
+// ============================================================
+const CHART_JS_URL = "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js";
+
+function loadChartJs() {
+  if (TRENDS.chartJsLoaded) return Promise.resolve();
+  if (TRENDS.chartJsLoading) return TRENDS.chartJsLoading;
+  TRENDS.chartJsLoading = new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = CHART_JS_URL;
+    s.async = true;
+    s.onload = () => { TRENDS.chartJsLoaded = true; resolve(); };
+    s.onerror = () => reject(new Error(`Failed to load Chart.js from ${CHART_JS_URL}`));
+    document.head.appendChild(s);
+  });
+  return TRENDS.chartJsLoading;
+}
+
+async function ensureTrendsView() {
+  if (TRENDS.loaded) return;
+  if (TRENDS.loading) return TRENDS.loading;
+  const loadingEl = document.getElementById("trends-loading");
+  TRENDS.loading = (async () => {
+    if (loadingEl) loadingEl.textContent = "Loading trend widgets…";
+    try {
+      // 1) lazy-load Chart.js
+      await loadChartJs();
+
+      // 2) reuse cached teams/standings; fetch the extra stats in parallel
+      let teams, standings;
+      if (dailyFetchCache) {
+        teams = dailyFetchCache.teams;
+        standings = dailyFetchCache.standings;
+      } else {
+        [teams, standings] = await Promise.all([fetchTeams(), fetchStandings()]);
+      }
+      const [hitting, pitching, recentGames] = await Promise.all([
+        fetchTeamHittingStats(),
+        fetchTeamPitchingStats(),
+        fetchCompletedGames14d()
+      ]);
+
+      // 3) hand off to the trends-charts renderer
+      const { initTrendsView } = await import("./trends-charts.js");
+      initTrendsView({ teams, standings, hitting, pitching, recentGames });
+
+      // 4) reveal the widgets
+      if (loadingEl) loadingEl.hidden = true;
+      const kpis = document.getElementById("kpis");
+      const grid = document.getElementById("trends-grid");
+      if (kpis) kpis.hidden = false;
+      if (grid) grid.hidden = false;
+      TRENDS.loaded = true;
+    } catch (err) {
+      const isNet = err instanceof DataClientError || err instanceof StatsClientError;
+      const msg = isNet
+        ? `Trends unavailable: ${err.message}`
+        : `Trends unavailable: ${err?.message || String(err)}`;
+      if (loadingEl) {
+        loadingEl.textContent = msg;
+        loadingEl.classList.add("trends-loading-error");
+      }
+      // eslint-disable-next-line no-console
+      console.error("[MLB Daily Dashboard] Trends init failed:", err);
+      // Allow retry on next tab activation.
+      TRENDS.loading = null;
+    }
+  })();
+  return TRENDS.loading;
+}
+
+function activateTab(targetId) {
+  const tabs = document.querySelectorAll(".tab-button");
+  const panels = document.querySelectorAll(".tab-panel");
+  tabs.forEach((t) => {
+    const on = t.dataset.tabTarget === targetId;
+    t.classList.toggle("is-active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  panels.forEach((p) => {
+    const on = p.id === targetId;
+    p.hidden = !on;
+  });
+  if (targetId === "tab-trends") {
+    // Fire-and-forget; ensureTrendsView is idempotent.
+    ensureTrendsView();
+  }
+}
+
+function wireTabs() {
+  document.querySelectorAll(".tab-button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.tabTarget;
+      if (target) activateTab(target);
+    });
+  });
+}
+
+// ============================================================
 //                BOOTSTRAP
 // ============================================================
+function bootstrap() {
+  wireTabs();
+  init();
+}
+
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("DOMContentLoaded", bootstrap);
 } else {
   // Document is already parsed; run on next microtask so module imports settle.
-  Promise.resolve().then(init);
+  Promise.resolve().then(bootstrap);
 }
