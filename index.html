@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLB Daily Dashboard</title>
+  <meta name="description" content="A live daily snapshot of all 30 MLB teams: weekly trends, upcoming games, and overall standings." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <h1 class="site-title">MLB Daily Dashboard</h1>
+      <p class="site-subtitle">
+        Live standings, weekly trends, and upcoming games for all 30 teams.
+        <span class="last-updated-wrap">
+          Last updated: <time id="last-updated" datetime="">—</time>
+        </span>
+      </p>
+    </div>
+  </header>
+
+  <div id="error-banner" class="error-banner" hidden role="alert" aria-live="assertive">
+    <span class="error-banner-text">Unable to load live MLB data.</span>
+    <button type="button" class="error-banner-retry" id="error-banner-retry">Retry</button>
+  </div>
+
+  <main class="dashboard-grid">
+    <section id="rankings-panel" class="panel" aria-labelledby="rankings-heading">
+      <h2 id="rankings-heading" class="panel-heading">Standings</h2>
+      <div class="panel-body">
+        <p class="panel-loading">Loading standings&hellip;</p>
+      </div>
+    </section>
+
+    <section id="trends-panel" class="panel" aria-labelledby="trends-heading">
+      <h2 id="trends-heading" class="panel-heading">Last 7 Days</h2>
+      <div class="panel-body">
+        <p class="panel-loading">Loading trends&hellip;</p>
+      </div>
+    </section>
+
+    <section id="upcoming-panel" class="panel" aria-labelledby="upcoming-heading">
+      <h2 id="upcoming-heading" class="panel-heading">Upcoming Games</h2>
+      <div class="panel-body">
+        <p class="panel-loading">Loading schedule&hellip;</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      Data: <a href="https://statsapi.mlb.com/api/v1/" rel="noreferrer noopener">MLB Stats API</a>.
+      Updates on every page load.
+    </p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

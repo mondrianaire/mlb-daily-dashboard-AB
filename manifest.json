@@ -1,0 +1,36 @@
+{
+  "role": "Integrator",
+  "version": 1,
+  "run_slug": "mlb-daily-dashboard",
+  "created_at": "2026-05-26T15:17:00Z",
+  "deliverable_kind": "web_app",
+  "entry_point": "index.html",
+  "files": [
+    {"path": "index.html",        "source_section": "ui-shell",        "source_builder": "builder-ui-shell-1"},
+    {"path": "styles.css",        "source_section": "ui-shell",        "source_builder": "builder-ui-shell-1"},
+    {"path": "app.js",            "source_section": "ui-render",       "source_builder": "builder-ui-render-1"},
+    {"path": "data-client.js",    "source_section": "data-client",     "source_builder": "builder-data-client-1"},
+    {"path": "teams.js",          "source_section": "data-client",     "source_builder": "builder-data-client-1"},
+    {"path": "trends-engine.js",  "source_section": "trends-engine",   "source_builder": "builder-trends-engine-1"},
+    {"path": "rankings-engine.js","source_section": "rankings-engine", "source_builder": "builder-rankings-engine-1"}
+  ],
+  "module_graph": {
+    "app.js": ["./data-client.js", "./trends-engine.js", "./rankings-engine.js", "./teams.js"],
+    "data-client.js": ["./teams.js"],
+    "trends-engine.js": [],
+    "rankings-engine.js": [],
+    "teams.js": []
+  },
+  "deployment_target": "https://mondrianaire.github.io/auto-builder/runs/mlb-daily-dashboard/output/final/",
+  "static_only": true,
+  "build_step_required": false,
+  "external_runtime_dependencies": [],
+  "contracts_satisfied": [
+    "data-client--rankings-engine",
+    "data-client--trends-engine",
+    "data-client--ui-render",
+    "trends-engine--ui-render",
+    "rankings-engine--ui-render",
+    "ui-shell--ui-render"
+  ]
+}
