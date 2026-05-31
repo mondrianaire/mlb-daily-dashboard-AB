@@ -24,6 +24,8 @@
   --border-color: #e3e6eb;
   --border-strong: #c8cdd4;
   --accent: #0c2340;
+  --watch-gold: #b07c14;
+  --watch-gold-bg: #fbf3df;
   --error-bg: #fdecea;
   --error-fg: #8b1a14;
   --empty-fg: #8a93a0;
@@ -76,6 +78,8 @@
     --border-color: #262b32;
     --border-strong: #383e47;
     --accent: #6ea8ff;
+    --watch-gold: #e8b84b;
+    --watch-gold-bg: #241f12;
     --error-bg: #3a1a17;
     --error-fg: #ffb4ad;
     --empty-fg: #6f7785;
@@ -372,6 +376,81 @@ a:hover { text-decoration: underline; }
   letter-spacing: 0.05em;
 }
 
+/* ----------- Watchability "top game" highlight (OPP-001) ----------- */
+.upcoming-game--top {
+  border-left: 3px solid var(--watch-gold);
+  padding-left: 0.5rem;
+  background: var(--watch-gold-bg);
+  border-radius: 0 6px 6px 0;
+}
+.upcoming-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+.watch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--watch-gold);
+  white-space: nowrap;
+}
+.upcoming-reason {
+  grid-column: 1 / -1;
+  font-size: 0.74rem;
+  color: var(--fg-muted);
+  padding-top: 0.05rem;
+}
+
+/* ----------- Daily briefing (OPP-002) ----------- */
+.briefing {
+  max-width: var(--max-width);
+  margin: 0 auto 0.25rem;
+  padding: 0.85rem 1.1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+}
+.briefing-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--fg-muted);
+}
+.briefing-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+}
+.briefing-item {
+  position: relative;
+  padding-left: 0.85rem;
+  font-size: 0.9rem;
+  color: var(--fg);
+  line-height: 1.35;
+}
+.briefing-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
 /* ----------- Footer ----------- */
 .site-footer {
   max-width: var(--max-width);
@@ -380,6 +459,16 @@ a:hover { text-decoration: underline; }
   color: var(--fg-muted);
   font-size: 0.82rem;
   text-align: center;
+}
+.app-version-strip {
+  margin-top: 0.4rem;
+}
+.app-version {
+  font-family: var(--mono-stack);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+  opacity: 0.75;
 }
 
 /* ====================================================================

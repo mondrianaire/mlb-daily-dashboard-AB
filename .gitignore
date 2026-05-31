@@ -1,0 +1,10 @@
+# Dependencies (none committed; the app is dependency-free at runtime)
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+
+# Local scratch
+_render.py
+*.local
