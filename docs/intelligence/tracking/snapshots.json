@@ -1,0 +1,61 @@
+{
+  "project": "MLB Daily Dashboard",
+  "snapshots": [
+    {
+      "date": "2026-05-31",
+      "commit": "b4c1e6c",
+      "scores": {
+        "ai_readiness": 18,
+        "maturity_product": 7,
+        "maturity_ai": 2,
+        "maturity_infra": 8,
+        "maturity_enterprise": 0,
+        "maturity_monetization": 0,
+        "maturity_differentiation": 3
+      },
+      "counts": { "open": 11, "in_progress": 0, "resolved": 0, "regressed": 0 }
+    },
+    {
+      "date": "2026-05-31",
+      "commit": "b4c1e6c",
+      "scores": {
+        "ai_readiness": 22,
+        "maturity_product": 8,
+        "maturity_ai": 2,
+        "maturity_infra": 8,
+        "maturity_enterprise": 0,
+        "maturity_monetization": 0,
+        "maturity_differentiation": 4
+      },
+      "counts": { "open": 9, "in_progress": 0, "resolved": 2, "regressed": 0 }
+    },
+    {
+      "date": "2026-05-31",
+      "commit": "b4c1e6c",
+      "scores": {
+        "ai_readiness": 24,
+        "maturity_product": 8,
+        "maturity_ai": 3,
+        "maturity_infra": 8,
+        "maturity_enterprise": 0,
+        "maturity_monetization": 0,
+        "maturity_differentiation": 5
+      },
+      "counts": { "open": 8, "in_progress": 0, "resolved": 3, "regressed": 0 }
+    },
+    {
+      "date": "2026-05-31",
+      "commit": "b4c1e6c",
+      "scores": {
+        "ai_readiness": 25,
+        "maturity_product": 8,
+        "maturity_ai": 3,
+        "maturity_infra": 8,
+        "maturity_enterprise": 0,
+        "maturity_monetization": 0,
+        "maturity_differentiation": 5
+      },
+      "counts": { "open": 7, "in_progress": 0, "resolved": 4, "regressed": 0 }
+    }
+  ]
+}

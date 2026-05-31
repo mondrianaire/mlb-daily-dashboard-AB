@@ -12,6 +12,29 @@
 
 import { teamMeta, TEAM_META, getLogoUrl } from "./teams.js";
 import { preloadLogos, getLogoImg, logoImgHtml } from "./logo-helpers.js";
+import {
+  explainRSRA, explainOpsEra, explainHomeRoad, explainPowerDisc
+} from "./trends-explainers.js";
+
+// Inject a dynamic, data-driven "Today:" caption into a chart's card, just
+// after its static .desc. Idempotent: updates in place on filter changes,
+// removes itself when the caption is empty. (OPP-003)
+function setExplainer(canvasId, text) {
+  const el = document.getElementById(canvasId);
+  if (!el) return;
+  const card = el.closest(".trends-card");
+  if (!card) return;
+  let ex = card.querySelector(".trends-explainer");
+  if (!text) { if (ex) ex.remove(); return; }
+  if (!ex) {
+    ex = document.createElement("div");
+    ex.className = "trends-explainer";
+    const desc = card.querySelector(".desc");
+    if (desc) desc.after(ex);
+    else card.querySelector(".trends-body")?.before(ex);
+  }
+  ex.textContent = text;
+}
 
 // MLB Stats API division.id → "AL East" / "NL Central" / ...
 const DIVISION_BY_ID = {
@@ -322,6 +345,7 @@ function destroyChart(id) {
 function renderRSRA() {
   destroyChart("rsra");
   const teams = filterTeams();
+  setExplainer("rsra-chart", explainRSRA(teams));
   if (teams.length === 0) return;
   const max = Math.max(...teams.map((t) => Math.max(t.rs, t.ra))) + 10;
   const min = Math.min(...teams.map((t) => Math.min(t.rs, t.ra))) - 10;
@@ -373,6 +397,7 @@ function renderRSRA() {
 function renderOpsEra() {
   destroyChart("opsera");
   const teams = filterTeams();
+  setExplainer("ops-era-chart", explainOpsEra(teams));
   if (teams.length === 0) return;
   const datasets = teams.map((t) => {
     const img = getLogoImg(t.id, "cap");
@@ -415,6 +440,7 @@ function renderOpsEra() {
 function renderHomeRoad() {
   destroyChart("homeroad");
   const teams = [...filterTeams()].sort((a, b) => (b.homeW + b.awayW) - (a.homeW + a.awayW));
+  setExplainer("home-road-chart", explainHomeRoad(teams));
   if (teams.length === 0) return;
   const labels = teams.map((t) => t.abbr);
   const homeData = teams.map((t) => t.homeW ?? 0);
@@ -469,6 +495,7 @@ function renderHomeRoad() {
 function renderPowerDisc() {
   destroyChart("powerdisc");
   const teams = filterTeams();
+  setExplainer("power-disc-chart", explainPowerDisc(teams));
   if (teams.length === 0) return;
   const datasets = teams.map((t) => {
     const img = getLogoImg(t.id, "cap");

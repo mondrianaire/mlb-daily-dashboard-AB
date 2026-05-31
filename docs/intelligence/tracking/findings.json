@@ -1,0 +1,195 @@
+{
+  "project": "MLB Daily Dashboard",
+  "findings": [
+    {
+      "id": "OPP-001",
+      "title": "Watchability ranker — surface tonight's best games",
+      "category": "opportunity",
+      "priority": "high",
+      "status": "resolved",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "watchability-engine.js — pure scoring module (form/quality/stakes/streak + division bonus)",
+        "app.js renderUpcoming/renderGameRow — top-3 badges, reasons, lead-ordering",
+        "tests/watchability-engine.test.js — 8 cases green",
+        "verified in-browser via mocked fetch: 3 of 4 games badged, marquee leads"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 7/10. Deterministic ranking over already-fetched data; no backend/LLM needed. Highest-feasibility recommendation." },
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 1 (v1.2.0): built + unit-tested + browser-verified. Deterministic, no backend, no new fetches. Shipped to working tree; pending deploy." }
+      ]
+    },
+    {
+      "id": "OPP-002",
+      "title": "AI Daily Briefing — plain-language league summary (template first, LLM optional)",
+      "category": "opportunity",
+      "priority": "high",
+      "status": "resolved",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "briefing-engine.js — pure rule-based engine (record/streak/rundiff/lead/race/skid/slate)",
+        "app.js renderBriefing + #briefing card in index.html",
+        "tests/briefing-engine.test.js — 10 cases green",
+        "verified in-browser via mocked fetch: 5 grounded highlights rendered, all traceable to real numbers"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 7/10. Template version ships with no backend; LLM upgrade gated on serverless key-proxy (see GAP-001)." },
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 2 (v1.3.0): template version built + unit-tested + browser-verified. Deterministic, no backend, no new fetches, no fabricated stats. LLM phrasing upgrade remains a future Phase-4 option gated on GAP-001." }
+      ]
+    },
+    {
+      "id": "OPP-003",
+      "title": "Plain-language chart explainers on Trends widgets",
+      "category": "opportunity",
+      "priority": "low",
+      "status": "resolved",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "trends-explainers.js — pure caption helpers for 4 charts (RSRA, OPS/ERA, home/road, power/discipline)",
+        "trends-charts.js setExplainer() injects captions into each card, refreshed on filter change",
+        "tests/trends-explainers.test.js — 11 cases green",
+        "verified in-browser via stubbed Chart.js: all 4 captions render with correct leaders + styling"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 5/10. Cheap polish; template fill, no dependency. Lower ceiling because static descriptions already orient users." },
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 3 (v1.4.0): built + unit-tested + browser-verified. Deterministic captions over already-merged Trends data; no backend, no new fetches; updates with filters." }
+      ]
+    },
+    {
+      "id": "GAP-001",
+      "title": "No backend / serverless function — blocks any keyed AI or 3rd-party API call",
+      "category": "gap",
+      "priority": "high",
+      "status": "open",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "manifest.json:34 static_only: true",
+        "no server code in repo; GitHub Pages hosting"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition." }
+      ]
+    },
+    {
+      "id": "GAP-002",
+      "title": "No data persistence / historical accumulation — no day-over-day memory",
+      "category": "gap",
+      "priority": "medium",
+      "status": "open",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "no DB/ORM in repo",
+        "currentSeason() data-client.js:20 single current year",
+        "dailyFetchCache app.js:36 is per-session only"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Removes the basis for predictive AI (no owned training data) and multi-season browsing." }
+      ]
+    },
+    {
+      "id": "GAP-003",
+      "title": "No telemetry / analytics — zero signal on what users view",
+      "category": "gap",
+      "priority": "medium",
+      "status": "open",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "no analytics/tracking calls anywhere in repo"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Prerequisite for personalization/recommendations and for evidence-based prioritization of OPP-004 (Q&A)." }
+      ]
+    },
+    {
+      "id": "GAP-004",
+      "title": "No automated tests for pure compute engines",
+      "category": "gap",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "tests/rankings-engine.test.js, tests/trends-engine.test.js, tests/watchability-engine.test.js — 23 cases passing via node:test",
+        "package.json adds type:module + test script; no runtime deps added"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Low-cost, high-confidence win: the two pure engines are trivially unit-testable and underpin every view." },
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "in-progress", "note": "Phase 0: node:test harness stood up; both existing pure engines (rankings, trends) now unit-tested, 15 cases green." },
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 1: watchability engine added with 8 tests; all current pure compute engines now covered (23 cases). New engines should ship with tests per this established practice." }
+      ]
+    },
+    {
+      "id": "RISK-001",
+      "title": "Hard dependency on unauthenticated public MLB Stats API (single point of failure)",
+      "category": "risk",
+      "priority": "high",
+      "status": "open",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "data-client.js:17 API_BASE statsapi.mlb.com",
+        "no caching across loads; every visit re-hits the API",
+        "no fallback data source"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data." }
+      ]
+    },
+    {
+      "id": "RISK-002",
+      "title": "Predictive/odds AI would be a trust-eroding gimmick without owned data",
+      "category": "risk",
+      "priority": "low",
+      "status": "open",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "GAP-002 (no training data)",
+        "Layer 3 category sweep — Predictive AI cut"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Logged as a guardrail: resist adding 'win probability' numbers that look authoritative but aren't backed by a real model. A wrong number on a stats product discredits the whole site." }
+      ]
+    },
+    {
+      "id": "ASSET-001",
+      "title": "Clean layered architecture with documented inter-module contracts",
+      "category": "asset",
+      "priority": "high",
+      "status": "open",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "manifest.json:54 contracts_satisfied",
+        "pure compute layer: rankings-engine.js, trends-engine.js",
+        "DOM isolated to app.js (app.js:3)"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. The product's strongest durable asset: separation of data/compute/view makes every recommended feature cheap to add. Drives the +30 cleanliness credit in AI Readiness." }
+      ]
+    },
+    {
+      "id": "ASSET-002",
+      "title": "Resilient UX: typed errors, loading/empty/retry states, 30-team integrity guarantee",
+      "category": "asset",
+      "priority": "medium",
+      "status": "open",
+      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "evidence": [
+        "DataClientError data-client.js:25",
+        "showError/setPanelEmpty app.js:415-449",
+        "ALL_TEAM_IDS fill data-client.js:96"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Production-grade resilience uncommon at this scale; renders 30 teams even on partial API responses." }
+      ]
+    }
+  ]
+}

@@ -19,6 +19,8 @@ import {
 } from "./stats-client.js";
 import { computeWeeklyTrends } from "./trends-engine.js";
 import { computeRankings } from "./rankings-engine.js";
+import { computeWatchability } from "./watchability-engine.js";
+import { computeBriefing } from "./briefing-engine.js";
 import { TEAM_META, ALL_TEAM_IDS, teamMeta, getLogoUrl } from "./teams.js";
 import { preloadLogos, logoImgHtml } from "./logo-helpers.js";
 
@@ -27,6 +29,7 @@ const ID = {
   rankings: "rankings-panel",
   trends: "trends-panel",
   upcoming: "upcoming-panel",
+  briefing: "briefing",
   lastUpdated: "last-updated",
   errorBanner: "error-banner",
   errorRetry: "error-banner-retry"
@@ -75,6 +78,27 @@ export async function init() {
     const rankings = computeRankings(standings);
     const trends = computeWeeklyTrends(recentResults);
 
+    // Watchability ranking (OPP-001): score tonight's games from data we already
+    // have in memory. Pure + deterministic; never throws fatally — guard anyway
+    // so a ranking hiccup can't blank the schedule panel.
+    let watch = null;
+    try {
+      watch = computeWatchability({ schedule, trends, rankings, today });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn("[MLB Daily Dashboard] watchability scoring skipped:", e);
+    }
+
+    // Daily briefing (OPP-002): deterministic plain-language highlights from the
+    // same in-memory data. Guarded so a briefing hiccup can't blank the page.
+    let briefing = null;
+    try {
+      briefing = computeBriefing({ rankings, trends, schedule, today });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn("[MLB Daily Dashboard] briefing skipped:", e);
+    }
+
     // Cache the heavy responses so the Trends tab doesn't have to refetch.
     dailyFetchCache = { teams, standings, schedule, recentResults };
 
@@ -88,9 +112,10 @@ export async function init() {
       preloadLogos(ALL_TEAM_IDS, "primary");
     } catch (_) { /* logos are decorative; never block on them */ }
 
+    renderBriefing(briefing);
     renderRankings(rankings, teams);
     renderTrends(trends, teams);
-    renderUpcoming(schedule);
+    renderUpcoming(schedule, watch);
     updateTimestamp(new Date());
   } catch (err) {
     const msg = err instanceof DataClientError
@@ -99,6 +124,7 @@ export async function init() {
     showError(msg);
     // Clear any remaining loading-state copy so the user does not see
     // the panels stuck in "Loading...".
+    renderBriefing(null); // hide the briefing on a failed load
     setPanelEmpty(ID.rankings, "Standings unavailable.");
     setPanelEmpty(ID.trends, "Trends unavailable.");
     setPanelEmpty(ID.upcoming, "Schedule unavailable.");
@@ -110,6 +136,28 @@ export async function init() {
 // ============================================================
 //                  RENDER FUNCTIONS
 // ============================================================
+function renderBriefing(briefing) {
+  const section = document.getElementById(ID.briefing);
+  if (!section) return;
+  const list = section.querySelector(".briefing-list");
+  if (!list) return;
+  list.innerHTML = "";
+
+  const highlights = briefing?.highlights || [];
+  if (highlights.length === 0) {
+    section.hidden = true; // nothing noteworthy (e.g. off-season) — stay quiet
+    return;
+  }
+
+  for (const h of highlights) {
+    const li = document.createElement("li");
+    li.className = h.kind ? `briefing-item briefing-${h.kind}` : "briefing-item";
+    li.textContent = h.text;
+    list.appendChild(li);
+  }
+  section.hidden = false;
+}
+
 function renderRankings(rankings, teams) {
   const teamById = new Map(teams.map((t) => [t.id, t]));
   const container = document.getElementById(ID.rankings);
@@ -310,7 +358,7 @@ function renderSparkline(points, color) {
   return svg;
 }
 
-function renderUpcoming(schedule) {
+function renderUpcoming(schedule, watch = null) {
   const container = document.getElementById(ID.upcoming);
   if (!container) return;
   const body = container.querySelector(".panel-body") || container;
@@ -320,6 +368,9 @@ function renderUpcoming(schedule) {
     setPanelEmpty(ID.upcoming, "No games scheduled in the next 7 days.");
     return;
   }
+
+  const byGameId = watch?.byGameId || null;
+  const topIds = new Set(watch?.topIds || []);
 
   // Group by ISO date (UTC date for stability).
   const groups = new Map();
@@ -339,16 +390,28 @@ function renderUpcoming(schedule) {
     title.textContent = formatHumanDate(dateKey);
     group.appendChild(title);
 
-    for (const game of groups.get(dateKey)) {
-      group.appendChild(renderGameRow(game));
+    // Lead with badged "top games" (by their watchability rank), keeping all
+    // other games in their existing chronological order.
+    const games = groups.get(dateKey).slice();
+    if (byGameId) {
+      games.sort((a, b) => {
+        const ra = topIds.has(a.gameId) ? byGameId.get(a.gameId).rank : Infinity;
+        const rb = topIds.has(b.gameId) ? byGameId.get(b.gameId).rank : Infinity;
+        return ra - rb; // stable for equal (non-top) entries
+      });
+    }
+
+    for (const game of games) {
+      const watchInfo = topIds.has(game.gameId) ? byGameId.get(game.gameId) : null;
+      group.appendChild(renderGameRow(game, watchInfo));
     }
     body.appendChild(group);
   }
 }
 
-function renderGameRow(game) {
+function renderGameRow(game, watchInfo = null) {
   const row = document.createElement("div");
-  row.className = "upcoming-game";
+  row.className = watchInfo ? "upcoming-game upcoming-game--top" : "upcoming-game";
 
   const matchup = document.createElement("div");
   matchup.className = "upcoming-matchup";
@@ -363,6 +426,16 @@ function renderGameRow(game) {
   matchup.appendChild(teamChip(home.teamAbbreviation, home.teamId));
 
   const right = document.createElement("div");
+  right.className = "upcoming-right";
+
+  if (watchInfo) {
+    const badge = document.createElement("span");
+    badge.className = "watch-badge";
+    badge.textContent = "★ Top game";
+    badge.title = "Highlighted by the watchability ranker";
+    right.appendChild(badge);
+  }
+
   if (game.status && game.status !== "Scheduled" && game.status !== "Pre-Game") {
     const st = document.createElement("span");
     st.className = "upcoming-status";
@@ -377,6 +450,15 @@ function renderGameRow(game) {
 
   row.appendChild(matchup);
   row.appendChild(right);
+
+  // Reason line spans the full row width (grid-column 1 / -1).
+  if (watchInfo && Array.isArray(watchInfo.reasons) && watchInfo.reasons.length) {
+    const reason = document.createElement("div");
+    reason.className = "upcoming-reason";
+    reason.textContent = watchInfo.reasons.join(" · ");
+    row.appendChild(reason);
+  }
+
   return row;
 }
 
@@ -591,7 +673,17 @@ function wireTabs() {
 // ============================================================
 //                BOOTSTRAP
 // ============================================================
+// Expose the deployed build version for programmatic test verification.
+// Single source of truth is the #app-version marker in index.html; we read it
+// from the DOM rather than hardcoding a second copy here (avoids drift).
+function publishVersion() {
+  const el = document.getElementById("app-version");
+  const v = el?.dataset?.version || el?.textContent?.trim() || null;
+  if (v) window.__APP_VERSION__ = v;
+}
+
 function bootstrap() {
+  publishVersion();
   wireTabs();
   init();
 }

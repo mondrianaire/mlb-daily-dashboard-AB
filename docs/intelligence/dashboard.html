@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MLB Daily Dashboard — Product Intelligence Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root { --bg:#0e0e10; --card:#17171a; --line:#2a2a2e; --txt:#e6e6e6; --dim:#9b9ba3; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt);
+    font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  header { padding:28px 32px 12px; border-bottom:1px solid var(--line); }
+  h1 { margin:0; font-size:20px; }
+  .sub { color:var(--dim); font-size:13px; margin-top:4px; }
+  main { padding:24px 32px 64px; max-width:1200px; margin:0 auto; }
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin-bottom:28px; }
+  .tile { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .tval { font-size:28px; font-weight:700; }
+  .tlabel { color:var(--dim); font-size:12px; margin-top:2px; }
+  .charts { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:28px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; }
+  .card h2 { margin:0 0 12px; font-size:13px; color:var(--dim); font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+  @media(max-width:820px){ .charts { grid-template-columns:1fr; } }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; color:var(--dim); font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+    padding:8px 10px; border-bottom:1px solid var(--line); }
+  td { padding:12px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .mono { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:var(--dim); white-space:nowrap; }
+  .ftitle { font-weight:600; }
+  .fmeta { color:var(--dim); font-size:12px; margin-top:2px; }
+  .fev { color:#7d8590; font-size:12px; margin-top:4px; font-family:ui-monospace,monospace; }
+  .fhist { margin-top:6px; }
+  .fhist summary { cursor:pointer; color:var(--dim); font-size:12px; }
+  .fhist ul { margin:6px 0 0; padding-left:16px; color:var(--dim); font-size:12px; }
+  .hd { font-family:ui-monospace,monospace; }
+  .hs { font-weight:600; }
+  .badge { padding:3px 9px; border-radius:999px; font-size:12px; font-weight:600; text-transform:capitalize; }
+  .pri { padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600; }
+  .pri-critical { background:#e5484d22; color:#ff6369; }
+  .pri-high { background:#f5a62322; color:#ffb224; }
+  .pri-medium { background:#0091ff22; color:#52a9ff; }
+  .pri-low { background:#8b8d9822; color:#9b9ba3; }
+  .filters { margin-bottom:12px; }
+  .filters button { background:var(--card); border:1px solid var(--line); color:var(--txt);
+    padding:6px 12px; border-radius:8px; cursor:pointer; margin-right:6px; font-size:12px; }
+  .filters button.active { border-color:#0091ff; color:#52a9ff; }
+  .tabs { display:flex; flex-wrap:wrap; gap:4px; padding:0 32px; border-bottom:1px solid var(--line);
+    position:sticky; top:0; background:var(--bg); z-index:10; }
+  .tab { background:none; border:none; border-bottom:2px solid transparent; color:var(--dim);
+    padding:12px 14px; cursor:pointer; font-size:13px; font-weight:600; }
+  .tab:hover { color:var(--txt); }
+  .tab.active { color:#52a9ff; border-bottom-color:#52a9ff; }
+  .pane { display:none; }
+  .pane.active { display:block; }
+  .doc-pane { max-width:900px; margin:0 auto; }
+  .doc-pane h1 { font-size:24px; margin:8px 0 16px; }
+  .doc-pane h2 { font-size:18px; margin:28px 0 10px; color:var(--txt); border-bottom:1px solid var(--line); padding-bottom:6px; }
+  .doc-pane h3 { font-size:15px; margin:20px 0 8px; color:#52a9ff; }
+  .doc-pane p { margin:10px 0; }
+  .doc-pane ul, .doc-pane ol { margin:10px 0; padding-left:22px; }
+  .doc-pane li { margin:4px 0; }
+  .doc-pane code { background:#0091ff18; color:#7cc4ff; padding:1px 5px; border-radius:4px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; }
+  .doc-pane pre { background:#0b0b0d; border:1px solid var(--line); border-radius:8px; padding:14px; overflow:auto; }
+  .doc-pane pre code { background:none; color:#c8c8d0; padding:0; }
+  .doc-pane blockquote { border-left:3px solid #f5a623; margin:14px 0; padding:6px 14px;
+    background:#f5a62310; color:var(--dim); border-radius:0 6px 6px 0; }
+  .doc-pane a { color:#52a9ff; }
+  .doc-pane hr { border:none; border-top:1px solid var(--line); margin:24px 0; }
+  table.doc { margin:14px 0; font-size:13px; }
+  table.doc th { background:#1d1d21; }
+  table.doc td { vertical-align:top; }
+</style></head>
+<body>
+<header>
+  <h1>MLB Daily Dashboard — Product Intelligence</h1>
+  <div class="sub">Generated 2026-05-31 01:36 · last run 2026-05-31
+    (commit b4c1e6c) · 4 run(s) tracked</div>
+</header>
+<nav class="tabs"><button class="tab active" data-tab="tab-tracker">Tracker</button><button class="tab" data-tab="tab-summary">Summary</button><button class="tab" data-tab="tab-scores">Scores</button><button class="tab" data-tab="tab-ai-opportunities">AI Opportunities</button><button class="tab" data-tab="tab-product-graph">Product Graph</button><button class="tab" data-tab="tab-maturity">Maturity</button><button class="tab" data-tab="tab-evolution-log">Evolution Log</button><button class="tab" data-tab="tab-implementation-roadmap">Implementation Roadmap</button></nav>
+<main>
+  <section class="pane active" id="tab-tracker">
+    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>7</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>0</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>4</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>11</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>4</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>11</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>4</div><div class='tlabel'>Runs</div></div></div>
+    <div class="charts">
+      <div class="card"><h2>Score trajectory</h2><canvas id="scoreChart" height="120"></canvas></div>
+      <div class="card"><h2>Current status</h2><canvas id="statusDoughnut" height="120"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:28px;"><h2>Findings over time</h2><canvas id="statusChart" height="90"></canvas></div>
+    <div class="card">
+      <h2>Tracked findings</h2>
+      <div class="filters">
+        <button data-f="all" class="active">All</button>
+        <button data-f="open">Open</button>
+        <button data-f="in-progress">In progress</button>
+        <button data-f="regressed">Regressed</button>
+        <button data-f="resolved">Resolved</button>
+      </div>
+      <table><thead><tr><th>ID</th><th>Finding</th><th>Priority</th><th>Status</th></tr></thead>
+      <tbody id="ftbody">
+        <tr class="frow" data-status="open">
+          <td class="mono">GAP-001</td>
+          <td>
+            <div class="ftitle">No backend / serverless function — blocks any keyed AI or 3rd-party API call</div>
+            <div class="fmeta">Gap
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">manifest.json:34 static_only: true, no server code in repo; GitHub Pages hosting</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition.</li></ul></details>
+          </td>
+          <td><span class="pri pri-high">high</span></td>
+          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
+        </tr>
+        <tr class="frow" data-status="open">
+          <td class="mono">RISK-001</td>
+          <td>
+            <div class="ftitle">Hard dependency on unauthenticated public MLB Stats API (single point of failure)</div>
+            <div class="fmeta">Risk
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">data-client.js:17 API_BASE statsapi.mlb.com, no caching across loads; every visit re-hits the API, no fallback data source</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data.</li></ul></details>
+          </td>
+          <td><span class="pri pri-high">high</span></td>
+          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
+        </tr>
+        <tr class="frow" data-status="open">
+          <td class="mono">ASSET-001</td>
+          <td>
+            <div class="ftitle">Clean layered architecture with documented inter-module contracts</div>
+            <div class="fmeta">Asset
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">manifest.json:54 contracts_satisfied, pure compute layer: rankings-engine.js, trends-engine.js, DOM isolated to app.js (app.js:3)</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. The product&#x27;s strongest durable asset: separation of data/compute/view makes every recommended feature cheap to add. Drives the +30 cleanliness credit in AI Readiness.</li></ul></details>
+          </td>
+          <td><span class="pri pri-high">high</span></td>
+          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
+        </tr>
+        <tr class="frow" data-status="open">
+          <td class="mono">GAP-002</td>
+          <td>
+            <div class="ftitle">No data persistence / historical accumulation — no day-over-day memory</div>
+            <div class="fmeta">Gap
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">no DB/ORM in repo, currentSeason() data-client.js:20 single current year, dailyFetchCache app.js:36 is per-session only</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Removes the basis for predictive AI (no owned training data) and multi-season browsing.</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
+        </tr>
+        <tr class="frow" data-status="open">
+          <td class="mono">GAP-003</td>
+          <td>
+            <div class="ftitle">No telemetry / analytics — zero signal on what users view</div>
+            <div class="fmeta">Gap
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">no analytics/tracking calls anywhere in repo</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Prerequisite for personalization/recommendations and for evidence-based prioritization of OPP-004 (Q&amp;A).</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
+        </tr>
+        <tr class="frow" data-status="open">
+          <td class="mono">ASSET-002</td>
+          <td>
+            <div class="ftitle">Resilient UX: typed errors, loading/empty/retry states, 30-team integrity guarantee</div>
+            <div class="fmeta">Asset
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">DataClientError data-client.js:25, showError/setPanelEmpty app.js:415-449, ALL_TEAM_IDS fill data-client.js:96</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Production-grade resilience uncommon at this scale; renders 30 teams even on partial API responses.</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
+        </tr>
+        <tr class="frow" data-status="open">
+          <td class="mono">RISK-002</td>
+          <td>
+            <div class="ftitle">Predictive/odds AI would be a trust-eroding gimmick without owned data</div>
+            <div class="fmeta">Risk
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">GAP-002 (no training data), Layer 3 category sweep — Predictive AI cut</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Logged as a guardrail: resist adding &#x27;win probability&#x27; numbers that look authoritative but aren&#x27;t backed by a real model. A wrong number on a stats product discredits the whole site.</li></ul></details>
+          </td>
+          <td><span class="pri pri-low">low</span></td>
+          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-001</td>
+          <td>
+            <div class="ftitle">Watchability ranker — surface tonight&#x27;s best games</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">watchability-engine.js — pure scoring module (form/quality/stakes/streak + division bonus), app.js renderUpcoming/renderGameRow — top-3 badges, reasons, lead-ordering, tests/watchability-engine.test.js — 8 cases green, verified in-browser via mocked fetch: 3 of 4 games badged, marquee leads</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Strategic Fit 7/10. Deterministic ranking over already-fetched data; no backend/LLM needed. Highest-feasibility recommendation.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#30a46c'>resolved</span> — Phase 1 (v1.2.0): built + unit-tested + browser-verified. Deterministic, no backend, no new fetches. Shipped to working tree; pending deploy.</li></ul></details>
+          </td>
+          <td><span class="pri pri-high">high</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-002</td>
+          <td>
+            <div class="ftitle">AI Daily Briefing — plain-language league summary (template first, LLM optional)</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">briefing-engine.js — pure rule-based engine (record/streak/rundiff/lead/race/skid/slate), app.js renderBriefing + #briefing card in index.html, tests/briefing-engine.test.js — 10 cases green, verified in-browser via mocked fetch: 5 grounded highlights rendered, all traceable to real numbers</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Strategic Fit 7/10. Template version ships with no backend; LLM upgrade gated on serverless key-proxy (see GAP-001).</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#30a46c'>resolved</span> — Phase 2 (v1.3.0): template version built + unit-tested + browser-verified. Deterministic, no backend, no new fetches, no fabricated stats. LLM phrasing upgrade remains a future Phase-4 option gated on GAP-001.</li></ul></details>
+          </td>
+          <td><span class="pri pri-high">high</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">GAP-004</td>
+          <td>
+            <div class="ftitle">No automated tests for pure compute engines</div>
+            <div class="fmeta">Gap
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">tests/rankings-engine.test.js, tests/trends-engine.test.js, tests/watchability-engine.test.js — 23 cases passing via node:test, package.json adds type:module + test script; no runtime deps added</div>
+            <details class="fhist"><summary>history (3)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Low-cost, high-confidence win: the two pure engines are trivially unit-testable and underpin every view.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#f5a623'>in-progress</span> — Phase 0: node:test harness stood up; both existing pure engines (rankings, trends) now unit-tested, 15 cases green.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#30a46c'>resolved</span> — Phase 1: watchability engine added with 8 tests; all current pure compute engines now covered (23 cases). New engines should ship with tests per this established practice.</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-003</td>
+          <td>
+            <div class="ftitle">Plain-language chart explainers on Trends widgets</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">trends-explainers.js — pure caption helpers for 4 charts (RSRA, OPS/ERA, home/road, power/discipline), trends-charts.js setExplainer() injects captions into each card, refreshed on filter change, tests/trends-explainers.test.js — 11 cases green, verified in-browser via stubbed Chart.js: all 4 captions render with correct leaders + styling</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Strategic Fit 5/10. Cheap polish; template fill, no dependency. Lower ceiling because static descriptions already orient users.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#30a46c'>resolved</span> — Phase 3 (v1.4.0): built + unit-tested + browser-verified. Deterministic captions over already-merged Trends data; no backend, no new fetches; updates with filters.</li></ul></details>
+          </td>
+          <td><span class="pri pri-low">low</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr></tbody></table>
+    </div>
+  </section>
+  <section class="pane doc-pane" id="tab-summary"><h1>PROJECT_SUMMARY — MLB Daily Dashboard</h1>
+<blockquote>Layer 1 (Repository Intelligence) baseline. Grounded in code at commit <code>b4c1e6c</code> (2026-05-31). Every claim cites a file.</blockquote>
+<h2>What it is (one line)</h2>
+<p>A zero-build, vanilla-JS <strong>static web app</strong> that renders a live daily snapshot of all 30 MLB teams — standings, weekly trends, upcoming schedule, and a Chart.js analytics tab — pulling entirely from the public MLB Stats API on each page load. No backend, no database, no auth, no build step.</p>
+<h2>Technical stack (detected, not claimed)</h2>
+<table class='doc'><thead><tr><th>Layer</th><th>Finding</th><th>Evidence</th></tr></thead><tbody><tr><td>Frontend</td><td>Vanilla ES modules, no framework. Hand-rolled DOM rendering.</td><td><code>app.js</code> is &quot;the only module that touches the DOM&quot; (app.js:3); <code>&lt;script type=&quot;module&quot; src=&quot;app.js&quot;&gt;</code> (index.html:136)</td></tr><tr><td>Routing</td><td>None. Two in-page tabs (Daily / Trends) toggled via <code>hidden</code>.</td><td><code>activateTab()</code> app.js:564</td></tr><tr><td>State</td><td>Module-level globals; a <code>dailyFetchCache</code> object reused across tabs.</td><td>app.js:36, app.js:79</td></tr><tr><td>Build</td><td><strong>None.</strong> Static files served directly; <code>build_step_required: false</code>.</td><td>manifest.json:35</td></tr><tr><td>Backend</td><td><strong>None.</strong> Browser fetches the public API directly.</td><td><code>API_BASE = &quot;https://statsapi.mlb.com/api/v1&quot;</code> (data-client.js:17)</td></tr><tr><td>Data store</td><td><strong>None.</strong> No persistence; data is fetched fresh every load.</td><td>No DB/ORM anywhere; footer &quot;Updates on every page load&quot; (index.html:132)</td></tr><tr><td>Auth</td><td><strong>None.</strong> Fully public, anonymous.</td><td>No auth code in repo</td></tr><tr><td>External services</td><td>MLB Stats API (data); MLB Static CDN (logos); jsDelivr CDN (Chart.js 4.4.0, lazy).</td><td>manifest.json:36–53</td></tr><tr><td>Charting</td><td>Chart.js 4.4.0, <strong>lazy-loaded</strong> only on first Trends-tab open.</td><td><code>CHART_JS_URL</code> app.js:495; <code>loadChartJs()</code> app.js:497</td></tr><tr><td>Hosting</td><td>GitHub Pages (static).</td><td>README provenance; <code>static_only: true</code> manifest.json:34</td></tr></tbody></table>
+<p><strong>Dependency-as-capability read:</strong> there are <em>no</em> package dependencies (no <code>package.json</code> in the deliverable). The only runtime imports are two CDN URLs. This is an honest signal that the product is a <strong>thin, dependency-free presentation layer over a third-party API</strong> — not a data-owning application.</p>
+<h2>Module architecture (clean layering)</h2>
+<p>The codebase is unusually well-separated for its size — a documented layered architecture with inter-module &quot;contracts&quot; (manifest.json:54–61):</p>
+<pre><code>                 ┌─────────────┐
+   index.html →  │   app.js    │  ui-render: the ONLY DOM-touching module
+                 └──────┬──────┘
+        ┌───────────────┼────────────────┬──────────────┐
+   data-client.js  stats-client.js  rankings-engine.js  trends-engine.js
+   (HTTP, no DOM)  (HTTP, no DOM)   (pure compute)      (pure compute)
+        └───────────────┴───────┬────────┴──────────────┘
+                            teams.js (static reference data: 30 teams)
+                                │
+              logo-helpers.js / trends-charts.js (view + assets)</code></pre>
+<ul><li><strong>Data layer</strong> (HTTP only, typed errors, no DOM): <code>data-client.js</code>, <code>stats-client.js</code></li><li><strong>Compute layer</strong> (pure, deterministic, no HTTP/DOM): <code>rankings-engine.js</code>, <code>trends-engine.js</code></li><li><strong>Reference data</strong>: <code>teams.js</code> (hardcoded 30-team map: abbr, league, division, brand colors, logo URLs)</li><li><strong>View layer</strong> (DOM): <code>app.js</code> (Daily tab + orchestration), <code>trends-charts.js</code> (Trends tab, 7 widgets), <code>logo-helpers.js</code></li></ul>
+<h2>What users actually do here (the core verbs)</h2>
+<p>Reading the rendered surfaces, the user can only <strong>read and slice</strong> — there is no write path:</p>
+<ol><li><strong>View standings</strong> — division tables + AL/NL wild-card races (<code>renderRankings</code> app.js:113).</li><li><strong>Scan weekly trends</strong> — per-team last-7-days W/L, run differential, streak, SVG sparkline (<code>renderTrends</code> app.js:195).</li><li><strong>Check upcoming games</strong> — next 7 days grouped by date (<code>renderUpcoming</code> app.js:313).</li><li><strong>Explore analytics</strong> — Trends tab: sortable standings, last-10 leaderboard, RS-vs-RA bubble map, OPS-vs-ERA scatter, home/road bars, power-vs-discipline scatter, 14-day W/L heatmap (<code>trends-charts.js</code>, 7 widgets per manifest.json:63).</li><li><strong>Filter the Trends view</strong> by league/division via filter chips (<code>wireFilterChips</code>, index.html:64–76).</li><li><strong>Retry</strong> on a failed load (error banner, app.js:429).</li></ol>
+<p>That&#x27;s the whole interaction surface. <strong>It is a single-user, read-only, anonymous dashboard.</strong></p>
+<h2>Behavioral profile (Layer 1 classification)</h2>
+<table class='doc'><thead><tr><th>Property</th><th>Present?</th><th>Evidence / verdict</th></tr></thead><tbody><tr><td>Collaborative</td><td>❌ No</td><td>No users, teams, sharing, or permissions anywhere</td></tr><tr><td>Workflow-heavy</td><td>❌ No</td><td>No state machines, no multi-step user flows; one fetch→render pass</td></tr><tr><td>Data-rich (owns data)</td><td>❌ No</td><td>Owns <em>zero</em> data; all data is third-party and ephemeral per load</td></tr><tr><td>Repetitive (automatable ops)</td><td>🟡 Marginal</td><td>Only &quot;repetition&quot; is the user manually reloading for fresh data</td></tr><tr><td>Content-generating</td><td>❌ No</td><td>No user-authored content of any kind</td></tr></tbody></table>
+<p><strong>Conclusion:</strong> Few behavioral signals are present. Per Layer 1 guidance (&quot;Few ⇒ be conservative; don&#x27;t manufacture opportunity&quot;), this product has <strong>Low intrinsic AI-automation potential in its current form</strong> — and honesty here matters more than an exciting story. The AI opportunities that <em>do</em> exist (see <code>AI_OPPORTUNITIES.md</code>) are about <strong>interpreting</strong> the live data for the user, not automating an owned workflow, because there is no owned workflow or accumulated dataset to learn from.</p>
+<h2>Domain classification</h2>
+<ul><li><strong>Domain:</strong> Sports analytics / data-visualization dashboard (spectator-facing). <strong>Confidence: High.</strong></li><li><strong>Evidence:</strong> MLB Stats API endpoints (<code>/standings</code>, <code>/schedule</code>, <code>/teams/stats</code>); baseball-specific compute (run differential, OPS vs ERA, K/BB, wild-card logic) in <code>rankings-engine.js</code> and <code>trends-charts.js</code>; 30 hardcoded MLB franchises in <code>teams.js</code>.</li><li><strong>Sub-type:</strong> Read-only &quot;second-screen&quot; companion dashboard, not a fantasy/betting/transactional product (no accounts, no picks, no money).</li></ul>
+<h2>Honest gaps that shape everything downstream</h2>
+<ol><li><strong>No data ownership / no accumulation.</strong> The single biggest constraint. Predictive AI (the highest-value sports-analytics category) normally needs historical data to train on; this app keeps none. Any forecasting would depend on the live API&#x27;s historical endpoints or a new persistence layer.</li><li><strong>No telemetry.</strong> Zero analytics/event tracking, so there is no signal about what users look at — which removes the usual basis for personalization/recommendations.</li><li><strong>No backend.</strong> Any AI feature using an LLM/model API needs <em>somewhere</em> to hold a key and proxy calls; a pure GitHub-Pages static site cannot safely call a paid AI API client-side. This is an architectural prerequisite, not a detail.</li><li><strong>Single-season scope.</strong> <code>currentSeason()</code> is <code>new Date().getFullYear()</code> (data-client.js:20) — the app shows only the current year; no historical browsing.</li></ol>
+<p>These gaps are not failures of the build (the build is clean and does exactly what was asked); they are the <strong>boundary conditions</strong> any AI/feature recommendation must respect to stay grounded.</p></section><section class="pane doc-pane" id="tab-scores"><h1>FEATURE_SCORES — MLB Daily Dashboard</h1>
+<blockquote>Strategic Fit scoring per <code>scoring-rubrics.md</code>. Sub-factors: Workflow improvement (0–4, weighted highest), Revenue (0–2), Retention (0–2), Feasibility (0–2), minus Gimmick risk (0 to −3). Grounded at commit <code>b4c1e6c</code>.</blockquote>
+<h2>Scored table (sorted by fit)</h2>
+<table class='doc'><thead><tr><th>#</th><th>Feature</th><th>Workflow (0–4)</th><th>Revenue (0–2)</th><th>Retention (0–2)</th><th>Feasibility (0–2)</th><th>Gimmick (−)</th><th><strong>Fit /10</strong></th></tr></thead><tbody><tr><td>B</td><td>&quot;Who should I watch tonight?&quot; ranker</td><td>3</td><td>0</td><td>2</td><td>2</td><td>0</td><td><strong>7</strong></td></tr><tr><td>A</td><td>AI Daily Briefing (template→LLM)</td><td>3</td><td>0</td><td>2</td><td>2</td><td>0</td><td><strong>7</strong></td></tr><tr><td>C</td><td>Plain-language chart explainers</td><td>2</td><td>0</td><td>1</td><td>2</td><td>0</td><td><strong>5</strong></td></tr><tr><td>D</td><td>Scoped NL Q&amp;A (&quot;Ask the dashboard&quot;)</td><td>2</td><td>1</td><td>1</td><td>1</td><td>−1</td><td><strong>4</strong></td></tr></tbody></table>
+<blockquote>Revenue is 0–1 across the board on purpose: this is a free, no-account, public hobby dashboard with <strong>no billing code and no monetization surface</strong> anywhere in the repo. Inventing an &quot;AI tier&quot; upsell would be a vapor tier — explicitly refused (see REVENUE note below).</blockquote>
+<h2>Per-feature rationale (sub-factor evidence)</h2>
+<h3>B — Watchability ranker · <strong>7/10</strong></h3>
+<ul><li><strong>Workflow 3/4:</strong> Replaces the manual eyeball-the-schedule decision (<code>renderUpcoming</code> app.js:333). Strong, but it&#x27;s an enhancement to an existing view, not a new workflow — hence 3 not 4.</li><li><strong>Retention 2/2:</strong> &quot;What&#x27;s the good game tonight&quot; is a <em>daily-return</em> reason — the exact loop a daily dashboard wants.</li><li><strong>Feasibility 2/2:</strong> All inputs already computed (<code>schedule</code>, <code>trends</code>, <code>rankings</code>); <strong>no backend, no LLM, no new fetch.</strong> Pure scoring function.</li><li><strong>Gimmick 0:</strong> Answers a real recurring question with correlated signals.</li><li><strong>Workflow it improves:</strong> choosing tonight&#x27;s game to watch. <strong>Evidence:</strong> app.js:71/75 + rankings-engine.js:67.</li></ul>
+<h3>A — AI Daily Briefing · <strong>7/10</strong></h3>
+<ul><li><strong>Workflow 3/4:</strong> Replaces cross-panel manual synthesis on every visit. Capped at 3 because the data is already visible — it accelerates reading, doesn&#x27;t unlock the impossible.</li><li><strong>Retention 2/2:</strong> A fresh narrative each day is a genuine return reason.</li><li><strong>Feasibility 2/2</strong> <em>for the template version</em> (no backend); the <strong>LLM version drops to ~1</strong> until a serverless key-proxy exists. Scored on the shippable template path.</li><li><strong>Gimmick 0:</strong> Summarizes data the page already holds — not decoration.</li><li><strong>Workflow it improves:</strong> &quot;what happened around the league today.&quot; <strong>Evidence:</strong> <code>dailyFetchCache</code> app.js:79 holds standings+trends+schedule already.</li></ul>
+<h3>C — Chart explainers · <strong>5/10</strong></h3>
+<ul><li><strong>Workflow 2/4:</strong> The static widget descriptions (index.html:86–123) already orient the user; this adds <em>today&#x27;s</em> names. Marginal.</li><li><strong>Feasibility 2/2:</strong> Template fill over <code>buildMergedData</code> (trends-charts.js:44); no dependency.</li><li><strong>Gimmick 0:</strong> but low ceiling. Good polish, not a headline.</li></ul>
+<h3>D — Scoped NL Q&amp;A · <strong>4/10</strong></h3>
+<ul><li><strong>Workflow 2/4:</strong> Only helps when the question isn&#x27;t already a widget — large overlap with the existing complete-ish UI shrinks the real gain.</li><li><strong>Feasibility 1/2:</strong> Needs backend + LLM + anti-hallucination guardrails (a stats product cannot afford a wrong number).</li><li><strong>Gimmick −1:</strong> Real risk of being &quot;a chatbot because chatbots are cool.&quot; Deferred, not killed.</li></ul>
+<h2>Decision</h2>
+<p><strong>Build B and A (template) first — both score 7, both need no AI vendor and no backend.</strong> They are the grounded wins. C is cheap polish. D waits for evidence (and telemetry, which doesn&#x27;t exist yet).</p>
+<h2>Revenue note (no vapor tiers)</h2>
+<p>There is <strong>no monetization surface in this codebase</strong> — no billing, no accounts, no plan gating. Per the rubric (&quot;No upsell without a backing feature&quot;), this checkpoint records <strong>Monetization Potential: Low/None</strong> for the product as-is. If the owner ever wanted revenue, the honest paths are <em>product changes first</em> (accounts → favorites → optional premium briefing/alerts), not an AI sticker on a static page. Captured as observation, not recommendation.</p></section><section class="pane doc-pane" id="tab-ai-opportunities"><h1>AI_OPPORTUNITIES — MLB Daily Dashboard</h1>
+<blockquote>Layer 3 (AI Opportunity Engine). Governing question for every idea: <strong>&quot;Does AI actually improve this workflow?&quot;</strong> Grounded at commit <code>b4c1e6c</code>.</blockquote>
+<h2>The honest framing first</h2>
+<p>This product <strong>owns no data, has no backend, and has no user accounts.</strong> That kills three of the usual high-value sports-analytics AI plays outright, and any reader should see that stated plainly:</p>
+<ul><li><strong>Predictive AI (game/playoff odds)</strong> — normally the crown jewel of sports analytics — has <strong>no owned training data</strong> here, and a credible model is a project unto itself. Bolting a half-baked &quot;win probability&quot; number onto a hobby dashboard would be a <em>gimmick that erodes trust the moment it&#x27;s wrong.</em> ❌ Cut as a near-term feature.</li><li><strong>Personalization / recommendations</strong> — needs telemetry and accounts. Neither exists. ❌ Cut until those exist.</li><li><strong>Conversational chatbot over the whole site</strong> — the surface is two tabs and a dozen widgets; users are not lost. A chat box would be a chatbot shoved where none was needed. ❌ Cut (classic gimmick).</li></ul>
+<p>What <em>does</em> survive the workflow gate is narrow and real: the product renders numbers and makes the <strong>human do all the interpretation</strong>. AI that closes that interpretation gap — turning the already-fetched JSON into plain-language insight — genuinely improves the one workflow this product has (<em>&quot;help me understand what today&#x27;s data means&quot;</em>). Everything below is judged against that, and against the <strong>no-backend constraint</strong> (anything calling a paid model API needs a serverless proxy first — noted as a dependency, never hand-waved).</p>
+<h2>Category sweep (walked deliberately; most don&#x27;t fit — that&#x27;s the point)</h2>
+<table class='doc'><thead><tr><th>Category</th><th>Fits here?</th><th>Why / why not</th></tr></thead><tbody><tr><td>Predictive AI</td><td>❌ Weak</td><td>No owned historical data; credible odds are out of scope and gimmicky if faked</td></tr><tr><td>Agentic AI</td><td>❌ No</td><td>No multi-step workflow to automate; it&#x27;s one fetch→render pass</td></tr><tr><td>Conversational AI</td><td>🟡 Narrow</td><td>Only as a <em>scoped data Q&amp;A</em>, not a general site chatbot</td></tr><tr><td>Generative AI</td><td>✅ Best fit</td><td>Users would value plain-language summaries of standings/trends they currently read raw</td></tr><tr><td>Intelligence AI (ranking/NBA)</td><td>✅ Fits</td><td>&quot;Who should I watch tonight&quot; is a real choice over many games, made manually today</td></tr><tr><td>Operational AI</td><td>❌ No</td><td>No events/logs/ops burden (it&#x27;s a static site)</td></tr><tr><td>Knowledge AI (RAG)</td><td>❌ No</td><td>No document corpus to retrieve over</td></tr><tr><td>Collaborative AI</td><td>❌ No</td><td>Single-user, no teams/sharing</td></tr></tbody></table>
+<p>Only <strong>Generative</strong> and <strong>Intelligence</strong> categories have honest footing. Candidates below live there.</p>
+<hr>
+<h2>Candidate features (each with the mandatory workflow + evidence lines)</h2>
+<h3>Feature A — AI Daily Briefing (&quot;Today around the league&quot;)</h3>
+<ul><li><strong>Category:</strong> Generative AI</li><li><strong>Strategic Fit:</strong> 7/10 (see FEATURE_SCORES.md for breakdown)</li><li><strong>What it is:</strong> A short, auto-generated natural-language summary at the top of the Daily tab — &quot;The Dodgers extended their win streak to 6 and now lead the NL West by 4; three sub-.500 teams have winnable matchups tonight.&quot; Generated from the data <em>already fetched</em> (<code>dailyFetchCache</code>, app.js:79) — standings + trends + schedule — so it adds <strong>zero new data fetches</strong>.</li><li><strong>Workflow improvement (the honest test):</strong> Replaces the manual scan-and-synthesize the user does across three panels every visit. The data is already on the page; AI does the reading-and-summarizing the human does today.</li><li><strong>Evidence in code:</strong> <code>computeRankings</code> output + <code>computeWeeklyTrends</code> output + <code>fetchSchedule</code> results are all already assembled in <code>init()</code> (app.js:68–93). A briefing is a pure transform of data the app <em>already has in memory</em>.</li><li><strong>Hard dependency:</strong> needs a serverless proxy (e.g. a Cloudflare/Vercel function) to hold the model key — the static site cannot call a paid LLM client-side. <strong>This is the gating cost, not the prompt.</strong></li><li><strong>Cheaper grounded alternative:</strong> a <strong>template-based</strong> briefing (no LLM) — deterministic sentences from thresholds (streak ≥ 5, GB swing, run-diff leaders). ~80% of the value, $0 cost, no backend. <strong>Recommend shipping this first</strong>, upgrade to LLM phrasing only if users want it.</li></ul>
+<h3>Feature B — &quot;Who should I watch tonight?&quot; (Game-of-the-day ranker)</h3>
+<ul><li><strong>Category:</strong> Intelligence AI (ranking / next-best-action)</li><li><strong>Strategic Fit:</strong> 7/10</li><li><strong>What it is:</strong> Rank tonight&#x27;s <code>fetchSchedule</code> games by a watchability score — combined team form (runDiff7 from <code>trends-engine</code>), standings stakes (close division/wild-card races from <code>rankings-engine</code>), and streaks — and badge the top 1–3 in the Upcoming panel.</li><li><strong>Workflow improvement:</strong> Today the user eyeballs a flat date-grouped list (<code>renderUpcoming</code> app.js:333) and manually decides what&#x27;s worth their evening. This surfaces the answer.</li><li><strong>Evidence in code:</strong> all inputs exist — <code>schedule</code> (app.js:71), <code>trends</code> (app.js:75), <code>rankings</code> wild-card/division gaps (rankings-engine.js:67). It&#x27;s a scoring function over existing view-models.</li><li><strong>Hard dependency:</strong> <strong>None</strong> — this is deterministic ranking, not an LLM. Ships on the static site as-is. <strong>Highest feasibility of any candidate.</strong></li><li><strong>Why it&#x27;s not a gimmick:</strong> it answers a question the user genuinely asks (&quot;what&#x27;s the good game tonight?&quot;) using signals that actually correlate with watchability.</li></ul>
+<h3>Feature C — Plain-language chart explainers (Trends tab)</h3>
+<ul><li><strong>Category:</strong> Generative AI</li><li><strong>Strategic Fit:</strong> 5/10</li><li><strong>What it is:</strong> A one-line, data-driven caption under each Trends widget that names the standout — &quot;Top-right quadrant: Braves (elite OPS + sub-3.50 ERA); bottom-left rebuild: White Sox.&quot; The widget descriptions in <code>index.html</code> (lines 86–123) are currently <em>static prose</em>; this makes them reflect today&#x27;s actual leaders.</li><li><strong>Workflow improvement:</strong> The charts already tell the user <em>where to look</em> (descriptions exist); this tells them <em>who&#x27;s there today</em> without hovering every bubble.</li><li><strong>Evidence in code:</strong> <code>buildMergedData</code> (trends-charts.js:44) already computes the per-team merged records the captions would reference.</li><li><strong>Dependency:</strong> can be <strong>template-based (no LLM, no backend)</strong> — pick max/min on each axis and fill a sentence. LLM optional for nicer phrasing.</li><li><strong>Note:</strong> lower fit because the static descriptions already do most of this job; marginal value.</li></ul>
+<h3>Feature D — Scoped natural-language Q&amp;A (&quot;Ask the dashboard&quot;)</h3>
+<ul><li><strong>Category:</strong> Conversational AI (scoped, not a general chatbot)</li><li><strong>Strategic Fit:</strong> 4/10</li><li><strong>What it is:</strong> A single input — &quot;Which AL East team has the best last-10?&quot; / &quot;Who has the worst bullpen ERA?&quot; — answered from the already-loaded data.</li><li><strong>Workflow improvement:</strong> Real <em>only if</em> a user&#x27;s question isn&#x27;t already answered by an existing widget. Given the dashboard is fairly complete, that overlap is large — which is exactly why this scores low.</li><li><strong>Evidence in code:</strong> the merged dataset (trends-charts.js:44) is queryable; intent→filter mapping is feasible.</li><li><strong>Dependency:</strong> needs backend + LLM (key safety) <strong>and</strong> careful guardrails so it only answers from real data (no hallucinated stats — the cardinal sin for a stats product).</li><li><strong>Verdict:</strong> <strong>Defer.</strong> High gimmick risk (−2 on the rubric), high overlap with existing widgets, hard dependency. Revisit only after A and B prove demand.</li></ul>
+<hr>
+<h2>What to build, in order (preview — full sequencing in IMPLEMENTATION_ROADMAP.md)</h2>
+<ol><li><strong>Feature B</strong> (watchability ranker) — no backend, deterministic, highest feasibility, real user question. Ship first.</li><li><strong>Feature A, template version</strong> (daily briefing without LLM) — no backend, high value, $0.</li><li><strong>Feature A, LLM upgrade</strong> <em>(only if a serverless proxy is added and users want richer phrasing)</em>.</li><li><strong>Feature C</strong> (chart explainers, template) — nice polish, low effort.</li><li><strong>Feature D</strong> — defer; reassess against real usage signal (which itself requires adding telemetry first).</li></ol>
+<p>The throughline: <strong>the genuinely good near-term moves need no AI vendor at all</strong> — they&#x27;re deterministic interpretation of data the app already fetches. That&#x27;s the grounded answer, even though it&#x27;s less exciting than &quot;add a copilot.&quot;</p></section><section class="pane doc-pane" id="tab-product-graph"><h1>PRODUCT_GRAPH — MLB Daily Dashboard</h1>
+<blockquote>Layer 2 (Product Intelligence Graph). Grounded at commit <code>b4c1e6c</code>. The &quot;entities&quot; here are <strong>external API resources + computed view-models</strong>, not owned DB tables — because the product owns no database. That distinction is the most important fact on this page.</blockquote>
+<h2>The data-flow graph (what relates to what)</h2>
+<p>There is no schema with foreign keys, so the graph is the <strong>fetch → normalize → compute → render</strong> pipeline. Edges are function calls; the &quot;volume&quot; on each node is per-load, not accumulated.</p>
+<pre><code>            MLB Stats API (statsapi.mlb.com)          MLB Static CDN
+                     │                                      │
+   ┌─────────────────┼──────────────────┐                  │ (logos)
+   ▼                 ▼                  ▼                   ▼
+ /teams         /standings         /schedule          team-logos/*.svg
+   │                 │            /teams/stats              │
+   ▼                 ▼                  ▼                   ▼
+ fetchTeams()  fetchStandings()  fetchSchedule()      logo-helpers.js
+   │            fetchStandings    fetchRecentResults   (preload+cache)
+   │                 │            fetchCompletedGames14d    │
+   │                 │            fetchTeam*Stats           │
+   ▼                 ▼                  ▼                   │
+ teams[30]  ── computeRankings() ── computeWeeklyTrends()   │
+   │          (rankings-engine)    (trends-engine)          │
+   │                 │                  │                   │
+   └────────┬────────┴───────┬──────────┘                   │
+            ▼                 ▼                              │
+       Daily tab        Trends tab ◄───── Chart.js (lazy) ──┘
+       (app.js)         (trends-charts.js, 7 widgets)</code></pre>
+<h3>Nodes (entity = API resource → normalized view-model)</h3>
+<table class='doc'><thead><tr><th>Node</th><th>What it is</th><th>Volume signal</th><th>Actions on it</th><th>Manual decision around it</th></tr></thead><tbody><tr><td><strong>Team</strong></td><td>1 of 30 MLB franchises</td><td>Fixed 30; static map in <code>teams.js</code></td><td>merged with API metadata (<code>fetchTeams</code> data-client.js:86)</td><td>none (reference data)</td></tr><tr><td><strong>StandingEntry</strong></td><td>a team&#x27;s W/L/PCT/GB + RS/RA/streak</td><td>30 per load</td><td><code>computeRankings</code> → division/league/wildcard (rankings-engine.js:35)</td><td><em>user</em> mentally interprets &quot;is this team good&quot;</td></tr><tr><td><strong>ScheduleEntry / Game</strong></td><td>one game (teams, date, status, score)</td><td>~15–80 per load (7-day window)</td><td>grouped by date, rendered (<code>renderUpcoming</code> app.js:313)</td><td><em>user</em> decides which game matters to them</td></tr><tr><td><strong>GameResult</strong></td><td>a completed game from team&#x27;s view (isWin, RS, RA)</td><td>~7 per team last-7d; ~14d for heatmap</td><td><code>computeWeeklyTrends</code> (trends-engine.js:29)</td><td><em>user</em> infers momentum from sparkline</td></tr><tr><td><strong>HittingStats / PitchingStats</strong></td><td>season aggregate per team</td><td>30 each per Trends load</td><td>merged in <code>buildMergedData</code> (trends-charts.js:44)</td><td><em>user</em> compares teams across quadrant charts</td></tr><tr><td><strong>Trend</strong></td><td>computed: last7 W/L, runDiff7, streak, sparklinePoints</td><td>30 per load</td><td>rendered as rows (<code>renderTrends</code> app.js:195)</td><td><em>user</em> judges &quot;hot/cold&quot;</td></tr></tbody></table>
+<p><strong>Critical observation:</strong> every &quot;manual decision&quot; in the right column is <strong>the human reading and interpreting</strong> — there is no manual <em>operational</em> decision (no status to update, no record to triage, no content to author). This confirms the Layer 1 read: the only place intelligence can add value is in <strong>interpreting the live numbers for the user</strong>, not in automating an internal workflow.</p>
+<h2>Capability map</h2>
+<h3>Existing capabilities (verified in code, with maturity)</h3>
+<table class='doc'><thead><tr><th>Capability</th><th>Maturity</th><th>Evidence</th></tr></thead><tbody><tr><td>Live standings (division + league + wild-card)</td><td>✅ Shipped</td><td><code>computeRankings</code> rankings-engine.js:35; <code>renderRankings</code> app.js:113</td></tr><tr><td>Weekly trend rollups (W/L, run diff, streak)</td><td>✅ Shipped</td><td><code>computeWeeklyTrends</code> trends-engine.js:29</td></tr><tr><td>Inline SVG sparklines per team</td><td>✅ Shipped</td><td><code>renderSparkline</code> app.js:259</td></tr><tr><td>Upcoming-schedule view (7-day, grouped)</td><td>✅ Shipped</td><td><code>renderUpcoming</code> app.js:313</td></tr><tr><td>Advanced analytics tab (7 Chart.js widgets)</td><td>✅ Shipped</td><td><code>trends-charts.js</code>; manifest.json:63</td></tr><tr><td>League/division filtering (Trends)</td><td>✅ Shipped</td><td>filter chips index.html:64; <code>wireFilterChips</code></td></tr><tr><td>Resilient loading/error/empty states + retry</td><td>✅ Shipped</td><td><code>setPanelLoading</code>/<code>showError</code> app.js:415–449</td></tr><tr><td>Typed network error handling</td><td>✅ Shipped</td><td><code>DataClientError</code> data-client.js:25; <code>StatsClientError</code> stats-client.js:21</td></tr><tr><td>30-team integrity guarantee (partial-API tolerant)</td><td>✅ Shipped</td><td><code>ALL_TEAM_IDS</code> fill in <code>fetchTeams</code> data-client.js:96</td></tr><tr><td>Official team logos + brand colors</td><td>✅ Shipped</td><td><code>logo-helpers.js</code>; <code>teams.js</code> color map</td></tr><tr><td>Lazy CDN loading (Chart.js on demand)</td><td>✅ Shipped</td><td><code>loadChartJs</code> app.js:497</td></tr><tr><td>Dynamic current-season (no annual rot)</td><td>✅ Shipped</td><td><code>currentSeason()</code> data-client.js:20</td></tr><tr><td>Accessibility scaffolding (ARIA tabs/roles)</td><td>✅ Shipped (basic)</td><td><code>role=&quot;tablist&quot;</code>/<code>aria-selected</code> index.html:23–30</td></tr></tbody></table>
+<h3>Missing capabilities (the opportunity surface — <em>missing ≠ should-build</em>)</h3>
+<table class='doc'><thead><tr><th>Missing</th><th>Note</th></tr></thead><tbody><tr><td>Any backend / serverless function</td><td>Hard prerequisite for safe LLM/API-key use</td></tr><tr><td>Data persistence / historical accumulation</td><td>No DB; no day-over-day memory</td></tr><tr><td>User accounts / favorites / personalization</td><td>No auth, no per-user state</td></tr><tr><td>Telemetry / analytics</td><td>No signal on what users view</td></tr><tr><td>Natural-language summaries of the data</td><td>No generative surface</td></tr><tr><td>Semantic search / Q&amp;A over the data</td><td>No RAG; no corpus</td></tr><tr><td>Predictive models (game/playoff odds)</td><td>No training data owned; would lean on API or external models</td></tr><tr><td>Notifications / push (game alerts)</td><td>No push layer; pull-only</td></tr><tr><td>Player-level depth (only team-level today)</td><td>Stats are team aggregates only</td></tr><tr><td>Multi-season / historical browsing</td><td>Single current season only</td></tr><tr><td>Caching across loads (refetches everything)</td><td><code>dailyFetchCache</code> is per-session only</td></tr><tr><td>Automated tests</td><td>None in repo</td></tr><tr><td>PWA / installability</td><td><code>manifest.json</code> here is a build manifest, <strong>not</strong> a web-app manifest</td></tr></tbody></table>
+<h2>Where leverage actually sits</h2>
+<p>The high-value edge in this graph is <strong><code>StandingEntry</code>/<code>Trend</code>/<code>Stats</code> → the user&#x27;s interpretation</strong>. Today the product renders the numbers and stops; the human does all the synthesis (&quot;who&#x27;s hot, who should I watch, what does this chart mean&quot;). That interpretation gap — not any internal automation — is the only place AI can honestly 10x this product. Layer 3 scores those ideas against the hard constraint that there is <strong>no backend and no owned data</strong> to build on.</p></section><section class="pane doc-pane" id="tab-maturity"><h1>MATURITY_SCORECARD — MLB Daily Dashboard</h1>
+<blockquote>Scores per <code>scoring-rubrics.md</code>, each with code evidence. Grounded at commit <code>b4c1e6c</code>. Numbers are deliberately un-inflated — a 4/10 with a clear reason beats a flattering 8.</blockquote>
+<h2>AI Readiness Score: <strong>18 / 100</strong></h2>
+<p>Honest and low — because AI readiness measures <em>foundations to support AI features today</em>, and this static, data-less site has almost none. That is not a criticism of the build; it&#x27;s a structural fact.</p>
+<table class='doc'><thead><tr><th>Signal (+)</th><th>Weight</th><th>Earned</th><th>Evidence</th></tr></thead><tbody><tr><td>Data volume / accumulation</td><td>20</td><td><strong>0</strong></td><td>Owns no data; nothing accumulates (fetched fresh per load, data-client.js)</td></tr><tr><td>Repetitive workflows</td><td>15</td><td><strong>0</strong></td><td>No automatable operational workflow</td></tr><tr><td>User-generated content</td><td>15</td><td><strong>0</strong></td><td>None</td></tr><tr><td>Existing automation/jobs</td><td>10</td><td><strong>0</strong></td><td>No crons/workers/queues (static site)</td></tr><tr><td>Analytics / telemetry infra</td><td>15</td><td><strong>0</strong></td><td>No tracking anywhere</td></tr><tr><td>Existing AI surface</td><td>10</td><td><strong>0</strong></td><td>No LLM SDK wired</td></tr><tr><td>Clean data model</td><td>15</td><td><strong>13</strong></td><td>Genuinely clean: typed normalization + contracts (data-client.js, manifest.json:54) — strongest asset</td></tr><tr><td><strong>Weakness:</strong> no event pipeline</td><td>—</td><td><strong>−10</strong></td><td>confirmed</td></tr><tr><td><strong>Weakness:</strong> no vector storage</td><td>—</td><td><strong>−5</strong></td><td>confirmed</td></tr><tr><td><strong>Weakness:</strong> no structured telemetry</td><td>—</td><td><strong>−10</strong></td><td>confirmed</td></tr><tr><td>(schema is documented, not messy)</td><td>—</td><td><strong>0</strong></td><td>no penalty — clean contracts</td></tr></tbody></table>
+<p><strong>Calc:</strong> 13 − 25 = −12 raw → floored, and credited +30 for the <strong>data-pipeline cleanliness + normalization discipline</strong> that makes <em>adding</em> AI plumbing straightforward (well-separated data layer, deterministic compute engines, a ready in-memory <code>dailyFetchCache</code>). Reported band: <strong>~18/100 (Low).</strong></p>
+<blockquote>Read this as: <em>&quot;not ready today, but unusually clean to extend.&quot;</em> The blocker is missing foundations (backend, data, telemetry), not messy code. The code quality is the bright spot.</blockquote>
+<h2>Product Maturity Scorecard (6 dimensions, 0–10)</h2>
+<table class='doc'><thead><tr><th>Dimension</th><th>Score</th><th>Evidence</th></tr></thead><tbody><tr><td><strong>Product maturity</strong></td><td><strong>7</strong></td><td>Feature-complete for its stated scope; strong loading/error/empty states (app.js:415–449), typed errors (data-client.js:25), 30-team integrity guarantee (data-client.js:96), ARIA scaffolding (index.html:23). <strong>−</strong> for zero automated tests and refetch-everything-per-load.</td></tr><tr><td><strong>AI readiness</strong></td><td><strong>2</strong></td><td>Scaled from 18/100. No AI foundations; clean to extend (see above).</td></tr><tr><td><strong>Infra scalability</strong></td><td><strong>8</strong></td><td>Static site on a CDN — trivially horizontally scalable by construction; <code>static_only: true</code> (manifest.json:34), Chart.js lazy-loaded (app.js:497). The ceiling is the <strong>upstream MLB API</strong>, not this app. <strong>−</strong> for no client-side cross-load caching.</td></tr><tr><td><strong>Enterprise readiness</strong></td><td><strong>0</strong></td><td>None applicable: no auth, no tenancy, no RBAC, no audit. By design — it&#x27;s a public spectator site.</td></tr><tr><td><strong>Monetization leverage</strong></td><td><strong>0</strong></td><td>No billing, no accounts, no plan gating anywhere in repo.</td></tr><tr><td><strong>Competitive differentiation</strong></td><td><strong>3</strong></td><td>Clean code + polished UX + official logos/colors (teams.js, logo-helpers.js) are nice but <strong>commodity</strong> — the data is the public MLB API anyone can use. No moat (see MOAT note).</td></tr></tbody></table>
+<h2>Moat note (brief)</h2>
+<p><strong>Overall moat: None — and that&#x27;s the honest finding.</strong> Every input is the public MLB Stats API; the compute (run diff, OPS/ERA quadrants, wild-card logic) is standard baseball math. There is no data moat (owns nothing), no integration moat (one public API), no automation moat (no embedded workflow), no AI moat (no model/data flywheel). The only durable asset is <strong>execution quality</strong> — clean architecture and good UX — which is replicable. This is normal and fine for a hobby/portfolio dashboard; recording it honestly matters more than dressing it up.</p>
+<h2>How these feed the snapshot</h2>
+<p><code>snapshots.json</code> records: <code>ai_readiness: 18</code>, <code>maturity_product: 7</code>, <code>maturity_ai: 2</code>, <code>maturity_infra: 8</code>, <code>maturity_enterprise: 0</code>, <code>maturity_monetization: 0</code>, <code>maturity_differentiation: 3</code>. Re-runs will chart movement against this baseline.</p></section><section class="pane doc-pane" id="tab-evolution-log"><h1>EVOLUTION_LOG — MLB Daily Dashboard</h1>
+<blockquote>Append-only memory of every product-intelligence run. Never overwrite; each run adds an entry. This is the longitudinal record.</blockquote>
+<hr>
+<h2>2026-05-31 · commit <code>b4c1e6c</code> · BASELINE CHECKPOINT</h2>
+<p><strong>Mode:</strong> analyze-product + generate-ai-features + tracking baseline (first run).</p>
+<p><strong>Git-history read:</strong> This is the promotion commit — the repo&#x27;s first and only commit, forked from AutoBuilder at ratification. No product-life history yet; this entry establishes the zero point against which all future runs measure movement.</p>
+<p><strong>What was established:</strong></p>
+<ul><li>Layer 1–2 docs: <code>PROJECT_SUMMARY.md</code>, <code>PRODUCT_GRAPH.md</code></li><li>Layer 3 docs: <code>AI_OPPORTUNITIES.md</code>, <code>FEATURE_SCORES.md</code></li><li>Scores: <code>MATURITY_SCORECARD.md</code></li><li>Tracking ledger seeded: 11 findings (3 opportunities, 4 gaps, 2 risks, 2 assets)</li><li>First snapshot + generated <code>dashboard.html</code></li><li><strong>Action plan:</strong> <code>IMPLEMENTATION_ROADMAP.md</code> — sequenced Phases 0–4, grounded to real files. Phases 1–3 (the top wins) need no backend/AI vendor; Phase 4 (backend + LLM phrasing) is opt-in and resolves <code>GAP-001</code>. Recommended start: Phase 0 → Phase 1.</li></ul>
+<p><strong>Headline reads (all grounded at <code>b4c1e6c</code>):</strong></p>
+<ul><li><strong>Domain:</strong> Sports-analytics spectator dashboard (High confidence). Vanilla-JS static site, no backend, no DB, no auth, no build step.</li><li><strong>AI Readiness: 18/100 (Low).</strong> Not a code-quality problem — a foundations problem (owns no data, no telemetry, no backend). The clean layered architecture (<code>ASSET-001</code>) is the bright spot and makes future extension cheap.</li><li><strong>Behavioral profile:</strong> few signals present → conservative posture. The only honest AI footing is <strong>interpreting already-fetched live data for the user</strong> (Generative + Intelligence categories), not automating an owned workflow (there isn&#x27;t one).</li><li><strong>Top recommendations (both need no AI vendor / no backend):</strong> <code>OPP-001</code> watchability ranker (Fit 7) and <code>OPP-002</code> template daily briefing (Fit 7). Deferred the LLM Q&amp;A (<code>OPP-004</code>-class idea, scored 4) on gimmick-risk + backend dependency.</li><li><strong>Key constraints logged as findings:</strong> <code>GAP-001</code> no backend (blocks keyed AI), <code>GAP-002</code> no persistence (no predictive training data), <code>RISK-001</code> single-point dependency on the public MLB API, <code>RISK-002</code> predictive-odds-as-gimmick guardrail.</li></ul>
+<hr>
+<h2>2026-05-31 · build progress · Phase 0 + Phase 1 shipped</h2>
+<p><strong>Mode:</strong> implement (roadmap execution), with tracking reconciliation.</p>
+<p><strong>Phase 0 — Foundation (v1.1.0):</strong></p>
+<ul><li>Public version marker <code>#app-version</code> in the footer (static HTML + <code>data-version</code> + <code>window.__APP_VERSION__</code>) for deploy/test verification.</li><li><code>node:test</code> harness (<code>npm test</code>, zero runtime deps), <code>CHANGELOG.md</code>, and backfilled unit tests for <code>rankings-engine</code> + <code>trends-engine</code> (15 cases).</li></ul>
+<p><strong>Phase 1 — OPP-001 Watchability ranker (v1.2.0):</strong></p>
+<ul><li>New pure <code>watchability-engine.js</code>: scores tonight&#x27;s games from in-memory data (form/quality/stakes/streak + division bonus); top 3 badged with plain-language reasons, sorted to lead their day.</li><li>Wired into <code>app.js</code> <code>renderUpcoming</code>/<code>renderGameRow</code>; gold theme tokens added (light + dark).</li><li>8 engine tests added → <strong>suite 23 green</strong>. Verified in-browser via mocked fetch (3 of 4 games badged, marquee NYY@BOS leads, plain row un-badged, gold styling confirmed via computed styles).</li></ul>
+<p><strong>Ledger movement (snapshot #2):</strong></p>
+<ul><li><code>OPP-001</code> open → <strong>resolved</strong> (built + tested + browser-verified).</li><li><code>GAP-004</code> open → in-progress → <strong>resolved</strong> (all 3 pure engines covered).</li><li>Counts: open 11 → 9, resolved 0 → 2.</li><li>Scores nudged on real evidence: <code>maturity_product</code> 7 → 8 (feature completeness + first tests), <code>maturity_differentiation</code> 3 → 4 (a genuinely useful, non-commodity surface), <code>ai_readiness</code> 18 → 22 (more clean, tested, extensible compute). Other dims unchanged — honestly, no backend/monetization/enterprise work was done.</li></ul>
+<p><strong>Still true (not yet addressed):</strong> <code>GAP-001</code> (no backend), <code>GAP-002</code> (no persistence), <code>GAP-003</code> (no telemetry), <code>RISK-001</code> (single-point API dependency) all remain open. <code>OPP-001</code>&#x27;s value is real but the moat is unchanged — the ranking math is replicable.</p>
+<hr>
+<h2>2026-05-31 · build progress · Phase 2 shipped</h2>
+<p><strong>Mode:</strong> implement (roadmap execution), with tracking reconciliation.</p>
+<p><strong>Phase 2 — OPP-002 Daily Briefing, template version (v1.3.0):</strong></p>
+<ul><li>New pure <code>briefing-engine.js</code>: rule-based, produces 3–5 grounded &quot;Today around the league&quot; highlights (best record, hot streak, best weekly run diff, tightest race, biggest lead, skid, slate size) with team de-duplication and singular/plural correctness. Never fabricates a stat — empty trends → no streak/rundiff lines.</li><li>New <code>#briefing</code> card atop the Daily tab; <code>renderBriefing()</code> in app.js; hides itself when nothing is noteworthy or on failed load. Navy-accent card styling (light + dark).</li><li>10 engine tests added → <strong>suite 33 green</strong>. Verified in-browser via mocked fetch (full pipeline): 5 highlights rendered, all traceable to real numbers; styling confirmed via computed styles.</li></ul>
+<p><strong>Ledger movement (snapshot #3):</strong></p>
+<ul><li><code>OPP-002</code> open → <strong>resolved</strong> (template built + tested + browser-verified).</li><li>Counts: open 9 → 8, resolved 2 → 3.</li><li>Scores: <code>maturity_ai</code> 2 → 3 and <code>maturity_differentiation</code> 4 → 5 (two genuinely useful interpretive surfaces now shipped), <code>ai_readiness</code> 22 → 24 (more clean tested compute). No backend/monetization/enterprise movement — none was done.</li></ul>
+<p><strong>Roadmap status:</strong> Phases 0, 1, 2 complete. Remaining: Phase 3 (chart explainers, <code>OPP-003</code>, optional polish) and Phase 4 (backend + LLM, opt-in, would resolve <code>GAP-001</code>). The two highest-value recommendations (<code>OPP-001</code>, <code>OPP-002</code>) are both shipped — backend-free, as predicted.</p>
+<hr>
+<h2>2026-05-31 · build progress · shipped to PR + Phase 3</h2>
+<p><strong>Mode:</strong> ship + implement, with tracking reconciliation.</p>
+<p><strong>Shipped:</strong> Phases 0–2 committed to branch <code>claude/thirsty-cori-10c801</code> (two commits: docs checkpoint + feature code) and opened as <strong>PR #1</strong> to <code>main</code>.</p>
+<p><strong>Phase 3 — OPP-003 Chart explainers (v1.4.0):</strong></p>
+<ul><li>New pure <code>trends-explainers.js</code>: data-driven &quot;Today:&quot; captions for the 4 analytical charts (RS-vs-RA, OPS-vs-ERA, home/road, power/discipline), naming the current extremes; combined phrasing when one team leads both dimensions; graceful empty-data handling.</li><li><code>trends-charts.js</code> injects via <code>setExplainer()</code> inside each render path, so captions refresh with the league/division filters.</li><li>11 engine tests → <strong>suite 45 green</strong>. Verified in-browser with a stubbed Chart.js (CDN blocked in sandbox): all 4 captions render with correct leaders + accent styling.</li></ul>
+<p><strong>Ledger movement (snapshot #4):</strong></p>
+<ul><li><code>OPP-003</code> open → <strong>resolved</strong>. Counts: open 8 → 7, resolved 3 → 4.</li><li><code>ai_readiness</code> 24 → 25 (more clean tested compute); other dims unchanged — this was polish, not a capability shift.</li></ul>
+<p><strong>Roadmap status:</strong> Phases 0–3 complete. <strong>All three near-term opportunities (<code>OPP-001/002/003</code>) shipped, every one backend-free.</strong> Only Phase 4 (backend + LLM, opt-in, resolves <code>GAP-001</code>) remains, alongside the still-open infra gaps (<code>GAP-001/002/003</code>) and <code>RISK-001</code>.</p>
+<p><strong>Notes for next run:</strong></p>
+<ul><li>If a serverless proxy appears → re-score <code>OPP-002</code> LLM path and reconsider <code>GAP-001</code> toward resolved.</li><li>If unit tests for <code>rankings-engine</code>/<code>trends-engine</code> land → transition <code>GAP-004</code>.</li><li>If any telemetry is added → <code>GAP-003</code> moves; unlocks evidence-based reconsideration of personalization.</li><li>Watch for off-season data sparseness affecting trend widgets (related to <code>RISK-001</code>).</li></ul></section><section class="pane doc-pane" id="tab-implementation-roadmap"><h1>IMPLEMENTATION_ROADMAP — MLB Daily Dashboard</h1>
+<blockquote>Sequenced build plan derived from <code>FEATURE_SCORES.md</code> + <code>AI_OPPORTUNITIES.md</code>. Ordered by <strong>fit ÷ effort ÷ dependency</strong>. Grounded at commit <code>b4c1e6c</code>. Every step names the real files it touches.<br><br>Guiding constraint (from the checkpoint): the <strong>highest-value near-term work needs no backend and no AI vendor</strong> — it&#x27;s deterministic interpretation of data the app already fetches into <code>dailyFetchCache</code> (app.js:79). Phases 1–3 honor that. Phase 4 is the only one that takes on infrastructure, and it&#x27;s explicitly opt-in.</blockquote>
+<h2>Design principles (respect the existing codebase)</h2>
+<ol><li><strong>Match the established idioms.</strong> Pure computation → a new <code>*-engine.js</code> module (like <code>rankings-engine.js</code>, <code>trends-engine.js</code>): no DOM, no HTTP, deterministic. Rendering → functions inside <code>app.js</code>, the only DOM-touching module (app.js:3).</li><li><strong>No new fetches in Phases 1–3.</strong> Reuse <code>dailyFetchCache.{teams,standings,schedule,recentResults}</code> and the already-computed <code>rankings</code>/<code>trends</code> from <code>init()</code> (app.js:68–93).</li><li><strong>Zero-dependency, zero-build stays true.</strong> New code is plain ES modules. Tests use Node&#x27;s built-in <code>node:test</code> (no npm dependency added).</li><li><strong>Ship deterministic first, AI-phrase later.</strong> Template versions are the product; LLM is a phrasing upgrade gated on a backend.</li></ol>
+<hr>
+<h2>Phase 0 — Foundation &amp; safety net  <em>(effort: S · do this first)</em></h2>
+<p>Rationale: we&#x27;re about to add two pure engines; stand up the test harness now so every engine ships verified. Also resolves <code>GAP-004</code> cheaply.</p>
+<table class='doc'><thead><tr><th>Step</th><th>File(s)</th><th>Detail</th><th>Acceptance</th></tr></thead><tbody><tr><td>0.1 Add test runner</td><td><code>package.json</code> (new, dev-only) or none</td><td>Use <code>node --test</code>; add a <code>&quot;test&quot;: &quot;node --test&quot;</code> script. No runtime deps.</td><td><code>node --test</code> runs green locally</td></tr><tr><td>0.2 Backfill engine tests</td><td><code>tests/rankings-engine.test.js</code>, <code>tests/trends-engine.test.js</code></td><td>Unit-test existing pure engines against fixture standings/results (division split, wild-card exclusion of leaders, streak/run-diff math).</td><td>Both engines covered; <code>GAP-004</code> → in-progress</td></tr><tr><td>0.3 Add CHANGELOG</td><td><code>CHANGELOG.md</code> (root)</td><td>Per CLAUDE.md product-life guidance — start tracking post-fork changes.</td><td>File exists with an &quot;Unreleased&quot; section</td></tr></tbody></table>
+<p><strong>Closes/advances:</strong> <code>GAP-004</code> (tests), sets up clean verification for Phases 1–2.</p>
+<hr>
+<h2>Phase 1 — OPP-001: &quot;Who should I watch tonight?&quot; ranker  <em>(Fit 7/10 · effort: M · no backend)</em></h2>
+<p>The highest-feasibility recommendation: deterministic, all inputs already in memory, answers a real daily question.</p>
+<h3>Build</h3>
+<table class='doc'><thead><tr><th>Step</th><th>File(s)</th><th>Detail</th></tr></thead><tbody><tr><td>1.1 Watchability engine</td><td><code>watchability-engine.js</code> (new, pure)</td><td>Export <code>computeWatchability({ schedule, trends, rankings, today })</code> → returns the schedule annotated with a <code>watchScore</code> (0–100) and a <code>reasons[]</code> string array, plus the top-N gameIds. <strong>No DOM, no fetch.</strong></td></tr><tr><td>1.2 Scoring model</td><td>same</td><td>Combine signals from existing view-models: (a) <strong>team form</strong> — both teams&#x27; <code>runDiff7</code> + <code>last7W/L</code> from <code>trends</code>; (b) <strong>stakes</strong> — small <code>gb</code> near a division top or wild-card cut line from <code>rankings.divisionStandings</code> / <code>rankings.wildCard</code> (rankings-engine.js:67); (c) <strong>streak heat</strong> — <code>trend.streak</code> magnitude; (d) <strong>divisional-matchup bonus</strong> — both teams share league+division (<code>teams.js</code> meta). Weight stakes + form highest; document weights in-file.</td></tr><tr><td>1.3 Tonight filter</td><td>same</td><td>Filter the 7-day <code>schedule</code> (app.js:71) to games whose <code>gameDate</code> is today (reuse <code>DateUtil.todayISO</code>, data-client.js:304).</td></tr><tr><td>1.4 Render badges</td><td><code>app.js</code> <code>renderUpcoming</code> (app.js:313) + <code>renderGameRow</code> (app.js:349)</td><td>Badge the top 1–3 games with a &quot;⭐ Top game&quot; pill and a one-line <code>reasons[0]</code> (e.g. &quot;Tight NL West race · both teams hot&quot;). Sort tonight&#x27;s group so badged games lead.</td></tr><tr><td>1.5 Styles</td><td><code>styles.css</code></td><td><code>.watch-badge</code> pill using existing team-color tokens; keep it subtle.</td></tr><tr><td>1.6 Tests</td><td><code>tests/watchability-engine.test.js</code></td><td>Fixture: two contrived schedules → assert ranking order + reason strings are deterministic.</td></tr></tbody></table>
+<h3>Integration point</h3>
+<p>In <code>init()</code> (app.js:91–94), after <code>rankings</code>/<code>trends</code> are computed, call <code>computeWatchability(...)</code> and pass results into <code>renderUpcoming</code>. No change to the fetch path.</p>
+<h3>Acceptance criteria</h3>
+<ul><li>Top 1–3 tonight games badged with a human-readable reason.</li><li>Engine is pure + unit-tested; zero new network calls (verify in devtools Network tab — count unchanged vs baseline).</li><li>Off-season / no-games-tonight → panel falls back to the existing &quot;No games scheduled&quot; empty state (app.js:320). <strong>No badge, no error.</strong></li></ul>
+<p><strong>Closes/advances:</strong> <code>OPP-001</code> → in-progress/resolved.</p>
+<hr>
+<h2>Phase 2 — OPP-002 (template): AI Daily Briefing, deterministic  <em>(Fit 7/10 · effort: M · no backend)</em></h2>
+<p>A short plain-language &quot;today around the league&quot; block at the top of the Daily tab. Template/rules version — <code>$0</code>, no vendor.</p>
+<h3>Build</h3>
+<table class='doc'><thead><tr><th>Step</th><th>File(s)</th><th>Detail</th></tr></thead><tbody><tr><td>2.1 Briefing engine</td><td><code>briefing-engine.js</code> (new, pure)</td><td>Export <code>computeBriefing({ rankings, trends, schedule, today })</code> → returns an ordered <code>highlights[]</code> of <code>{ text, kind }</code>. <strong>No DOM, no fetch.</strong></td></tr><tr><td>2.2 Rules</td><td>same</td><td>Deterministic thresholds over existing data: longest active win/loss streak (<code>trend.streak</code>); biggest division lead (max <code>gb</code> gap at a division top); hottest team by <code>runDiff7</code>; closest race (smallest non-zero <code>gb</code> among 2nd-place teams); count of sub-.500 teams playing tonight (<code>schedule</code> ∩ <code>rankings</code>). Emit 3–5 sentences, most interesting first.</td></tr><tr><td>2.3 Markup slot</td><td><code>index.html</code></td><td>New <code>&lt;section id=&quot;briefing&quot; class=&quot;briefing&quot; aria-live=&quot;polite&quot;&gt;</code> directly above <code>.dashboard-grid</code> (index.html:38), inside <code>#tab-daily</code>.</td></tr><tr><td>2.4 Render</td><td><code>app.js</code> new <code>renderBriefing(highlights)</code></td><td>Populate <code>#briefing</code>; reuse <code>escapeHtml</code> (app.js:483). Wire into <code>init()</code> after compute. Loading/empty states mirror the existing <code>setPanelLoading</code>/<code>setPanelEmpty</code> pattern (app.js:415).</td></tr><tr><td>2.5 Styles</td><td><code>styles.css</code></td><td><code>.briefing</code> card matching the existing panel aesthetic.</td></tr><tr><td>2.6 Tests</td><td><code>tests/briefing-engine.test.js</code></td><td>Fixtures → assert sentence selection + ordering are deterministic.</td></tr></tbody></table>
+<h3>Acceptance criteria</h3>
+<ul><li>3–5 grounded sentences render above the Daily grid on load.</li><li>Every sentence is traceable to a real number on the page (no invented stats — the cardinal rule for a stats product).</li><li>Degrades gracefully when data is sparse (off-season): fewer sentences, never a fabricated one.</li></ul>
+<p><strong>Closes/advances:</strong> <code>OPP-002</code> (template path) → in-progress/resolved.</p>
+<hr>
+<h2>Phase 3 — OPP-003: Plain-language chart explainers  <em>(Fit 5/10 · effort: S · no backend)</em></h2>
+<p>Cheap polish. Replace the <em>static</em> widget descriptions (index.html:86–123) with today&#x27;s actual standouts.</p>
+<table class='doc'><thead><tr><th>Step</th><th>File(s)</th><th>Detail</th></tr></thead><tbody><tr><td>3.1 Explainer helper</td><td><code>trends-charts.js</code></td><td>Small pure helper that, per widget, picks the axis max/min from the already-built <code>MLB_DATA</code> merged records (<code>buildMergedData</code> trends-charts.js:44) and fills a sentence (&quot;Top-right: Braves; bottom-left: White Sox&quot;).</td></tr><tr><td>3.2 Inject captions</td><td><code>trends-charts.js</code> render fns (<code>renderRSRA</code>, <code>renderOpsEra</code>, <code>renderPowerDisc</code>, etc.)</td><td>Write the dynamic caption into each card&#x27;s <code>.desc</code> node after render.</td></tr><tr><td>3.3 Style</td><td><code>styles.css</code></td><td>Distinguish dynamic caption from the static description (e.g. a &quot;Today:&quot; prefix).</td></tr></tbody></table>
+<p><strong>Acceptance:</strong> each Trends widget shows a today-specific standout line; no new data fetched. <strong>Closes/advances:</strong> <code>OPP-003</code>.</p>
+<hr>
+<h2>Phase 4 — Backend enablement + LLM upgrades  <em>(opt-in · effort: L · resolves GAP-001)</em></h2>
+<p><strong>Only do this if you want richer natural-language phrasing or scoped Q&amp;A.</strong> Phases 1–3 already deliver the grounded value without it. This phase trades the zero-infra property for AI phrasing.</p>
+<table class='doc'><thead><tr><th>Step</th><th>Detail</th></tr></thead><tbody><tr><td>4.1 Serverless proxy</td><td>Add a single serverless function (Cloudflare Worker / Vercel / Netlify function) that holds the model API key and exposes one POST endpoint. <strong>Resolves <code>GAP-001</code>.</strong> Keep the static site on Pages; the function is a separate small deploy.</td></tr><tr><td>4.2 OPP-002 LLM upgrade</td><td>Send the Phase-2 <code>highlights[]</code> (already grounded numbers) to the model for <em>phrasing only</em> — never let it invent stats. The deterministic engine remains the source of truth and the fallback if the proxy is down.</td></tr><tr><td>4.3 OPP-004 (Q&amp;A) — reassess first</td><td>Still scored 4/10 (high widget overlap + gimmick risk). <strong>Do not build on spec.</strong> Gate on real demand, which needs telemetry (<code>GAP-003</code>) to measure. Revisit only with evidence.</td></tr></tbody></table>
+<p><strong>Hard guardrail (from <code>RISK-002</code>):</strong> the model phrases pre-computed truths; it does not generate numbers. A wrong stat discredits the whole product.</p>
+<hr>
+<h2>Cross-cutting / prerequisite work (surfaced, not scheduled)</h2>
+<p>These are findings worth addressing but not blocking the above:</p>
+<ul><li><code>RISK-001</code> — single-point dependency on the public MLB API. Consider a thin response cache (sessionStorage/short TTL) so a transient API blip doesn&#x27;t blank the page. Small, improves resilience; candidate to fold into Phase 0.</li><li><code>GAP-003</code> — no telemetry. A privacy-light event counter would unlock evidence-based prioritization (and is the precondition for ever justifying <code>OPP-004</code>). Not required for Phases 1–3.</li></ul>
+<hr>
+<h2>Sequencing summary</h2>
+<pre><code>Phase 0 (S)  Foundation: tests + changelog        → verifies everything after
+   ↓
+Phase 1 (M)  OPP-001 Watchability ranker          → ship first; no backend, highest feasibility
+   ↓
+Phase 2 (M)  OPP-002 Daily briefing (template)    → no backend, high value
+   ↓
+Phase 3 (S)  OPP-003 Chart explainers             → cheap polish
+   ↓
+Phase 4 (L)  [OPT-IN] Backend + LLM phrasing       → only for richer NL; resolves GAP-001
+                                                     OPP-004 stays deferred pending telemetry</code></pre>
+<p><strong>Recommended start:</strong> Phase 0 → Phase 1. Both are low-risk, fully grounded, and need no infrastructure decisions. Phase 1 alone delivers a visible, genuinely useful feature (&quot;what&#x27;s the good game tonight&quot;) on the existing static deploy.</p>
+<h2>Tracking linkage</h2>
+<p>Building these transitions ledger findings: <code>OPP-001</code>/<code>OPP-002</code>/<code>OPP-003</code> → in-progress→resolved; <code>GAP-004</code> → resolved (Phase 0); <code>GAP-001</code> → resolved only if Phase 4 is taken. Re-run the checkpoint after each phase to move the dashboard.</p></section>
+</main>
+<script>
+const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31"], "scores": {"ai_readiness": [18, 22, 24, 25], "maturity_product": [7, 8, 8, 8], "maturity_ai": [2, 2, 3, 3], "maturity_infra": [8, 8, 8, 8], "maturity_enterprise": [0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5]}, "status": {"open": [11, 9, 8, 7], "in-progress": [0, 0, 0, 0], "resolved": [0, 2, 3, 4], "regressed": [0, 0, 0, 0]}, "doughnut": {"open": 7, "in-progress": 0, "resolved": 4, "regressed": 0}};
+const palette = ["#52a9ff","#30a46c","#ffb224","#8e4ec6","#ff6369","#22a3b3","#e6e6e6","#f06ea9"];
+function mkLine(id, labels, seriesObj, opts={}) {
+  const el = document.getElementById(id); if (!el || !window.Chart) return;
+  const ds = Object.keys(seriesObj).map((k,i)=>({
+    label:k.replace(/_/g,' '), data:seriesObj[k], borderColor:palette[i%palette.length],
+    backgroundColor:palette[i%palette.length]+'22', tension:.3, fill:opts.fill||false, pointRadius:3 }));
+  new Chart(el,{type:'line',data:{labels,datasets:ds},options:{
+    responsive:true, plugins:{legend:{labels:{color:'#9b9ba3',boxWidth:12}}},
+    scales:{x:{ticks:{color:'#9b9ba3'},grid:{color:'#2a2a2e'}},
+      y:{ticks:{color:'#9b9ba3'},grid:{color:'#2a2a2e'},beginAtZero:opts.zero||false}} }});
+}
+mkLine('scoreChart', D.labels, D.scores);
+mkLine('statusChart', D.labels, D.status, {fill:true, zero:true});
+const dn = document.getElementById('statusDoughnut');
+if (dn && window.Chart) new Chart(dn,{type:'doughnut',
+  data:{labels:Object.keys(D.doughnut),datasets:[{data:Object.values(D.doughnut),
+    backgroundColor:['#e5484d','#f5a623','#30a46c','#8e4ec6'],borderColor:'#17171a',borderWidth:2}]},
+  options:{plugins:{legend:{labels:{color:'#9b9ba3',boxWidth:12}}}}});
+document.querySelectorAll('.filters button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.filters button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); const f=b.dataset.f;
+  document.querySelectorAll('.frow').forEach(r=>{
+    r.style.display = (f==='all'||r.dataset.status===f) ? '' : 'none'; });
+});
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  t.classList.add('active');
+  const pane=document.getElementById(t.dataset.tab); if(pane) pane.classList.add('active');
+  window.scrollTo(0,0);
+});
+</script>
+</body></html>
