@@ -11,6 +11,16 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.5.1] — 2026-05-31
+### Fixed
+- **Oversized team logos on the Trends scatter charts** (RS-vs-RA, OPS-vs-ERA,
+  Power-vs-Discipline). The MLB cap SVGs declare a `viewBox` but no intrinsic
+  `width`/`height`, so a bare `Image()` defaulted to 150×150 — and Chart.js draws
+  an image point-style at the image's own size (it ignores `pointRadius`). The
+  preloaded marker images in `logo-helpers.js` are now pinned to 22×22, so the
+  scatter markers render as small logos instead of overrunning the plot area.
+  Inline DOM logos were unaffected (they already set explicit width/height).
+
 ## [1.5.0] — 2026-05-31
 ### Added
 - **Optional LLM phrasing for the daily briefing** (Phase 4, `GAP-001`) — a
