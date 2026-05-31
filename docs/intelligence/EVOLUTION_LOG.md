@@ -85,6 +85,29 @@
 
 **Roadmap status:** Phases 0–3 complete. **All three near-term opportunities (`OPP-001/002/003`) shipped, every one backend-free.** Only Phase 4 (backend + LLM, opt-in, resolves `GAP-001`) remains, alongside the still-open infra gaps (`GAP-001/002/003`) and `RISK-001`.
 
+---
+
+## 2026-05-31 · build progress · PR #1 merged + Phase 4
+
+**Mode:** merge + implement, with tracking reconciliation.
+
+**Merged:** PR #1 (Phases 0–3) merged to `main` (`9376a2e`). New work continues on `claude/phase4-briefing-llm` off updated `main`.
+
+**Phase 4 — optional LLM phrasing for the daily briefing (v1.5.0), host: Cloudflare Workers, model: Anthropic Claude Haiku:**
+- `server/briefing-worker.js` — default-off Worker that rewords the grounded highlights; key held as a Wrangler secret (never in repo/browser). Optional KV daily-cache.
+- `briefing-llm.js` — client enhancer; posts highlights, swaps reworded text in place, falls back to deterministic on any failure.
+- **Triple numeric guardrail** (system prompt + server `preservesNumbers` + client re-check) so the model can reword but never fabricate a stat (`RISK-002`).
+- `server/wrangler.toml`, `server/README.md` (runbook), `docs/intelligence/AI_STACK.md` (Layer-4 architecture + cost model — headline: KV cache collapses cost to ~1 model call/day at any scale).
+- 16 tests → **suite 61 green**. Browser-verified both paths: OFF = zero network/identical to v1.4.0; ON = worker called once, text swapped in place, numbers preserved.
+
+**Ledger movement (snapshot #5):**
+- `GAP-001` open → **in-progress** (a deployable backend path now exists; not resolved because it's default-off and undeployed — needs the owner's Cloudflare account + ANTHROPIC_API_KEY).
+- `OPP-002` stays resolved, with a note that its optional LLM upgrade now exists.
+- Counts: open 7 → 6, in-progress 0 → 1, resolved 4.
+- Scores: `ai_readiness` 25 → 38 (a real LLM surface + backend path now exist, behind clean guardrails), `maturity_ai` 3 → 5, `maturity_differentiation` 5 → 6 (the triple no-fabrication guard is a genuinely thoughtful, less-common touch). `maturity_infra` held at 8 — the worker is optional and separate; the static site is unchanged.
+
+**Honest status:** the feature is *built and safe* but *not active*. By default the product behaves exactly as v1.4.0. Real activation is a deliberate owner decision (deploy + key + cost), which is correct — Phase 4 was always the opt-in one. Remaining open: `GAP-002` (persistence), `GAP-003` (telemetry), `RISK-001` (single-point API dependency), `RISK-002` (guardrail, now reinforced in code).
+
 **Notes for next run:**
 - If a serverless proxy appears → re-score `OPP-002` LLM path and reconsider `GAP-001` toward resolved.
 - If unit tests for `rankings-engine`/`trends-engine` land → transition `GAP-004`.

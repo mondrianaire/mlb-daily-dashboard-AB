@@ -21,6 +21,7 @@ import { computeWeeklyTrends } from "./trends-engine.js";
 import { computeRankings } from "./rankings-engine.js";
 import { computeWatchability } from "./watchability-engine.js";
 import { computeBriefing } from "./briefing-engine.js";
+import { maybeEnhanceBriefing } from "./briefing-llm.js";
 import { TEAM_META, ALL_TEAM_IDS, teamMeta, getLogoUrl } from "./teams.js";
 import { preloadLogos, logoImgHtml } from "./logo-helpers.js";
 
@@ -113,6 +114,15 @@ export async function init() {
     } catch (_) { /* logos are decorative; never block on them */ }
 
     renderBriefing(briefing);
+    // Optional LLM phrasing (Phase 4): default-OFF. If an endpoint is configured,
+    // this fire-and-forget call rephrases the highlights in place; on anything
+    // less than success the deterministic briefing above simply stands.
+    if (briefing?.highlights?.length) {
+      maybeEnhanceBriefing(
+        briefing.highlights,
+        (enhanced) => renderBriefing({ highlights: enhanced })
+      );
+    }
     renderRankings(rankings, teams);
     renderTrends(trends, teams);
     renderUpcoming(schedule, watch);
