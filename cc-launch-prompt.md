@@ -2,7 +2,7 @@ You are picking up mlb-daily-dashboard — a repo that was auto-built by AutoBui
 (https://github.com/mondrianaire/auto-builder), ratified on 2026-05-31,
 and promoted here for product life.
 
-The current state of the deployed application is at: https://mondrianaire.github.io/auto-builder/runs/mlb-daily-dashboard/output/final/index.html
+The current state of the deployed application is at: https://mondrianaire.github.io/mlb-daily-dashboard-AB/
 
 WHERE THIS CAME FROM (informational, not regulatory)
 
@@ -50,7 +50,7 @@ must stay within.
 
 FIRST ACTION
 
-Read .claude/CLAUDE.md, take a look at https://mondrianaire.github.io/auto-builder/runs/mlb-daily-dashboard/output/final/index.html
+Read .claude/CLAUDE.md, take a look at https://mondrianaire.github.io/mlb-daily-dashboard-AB/
 (via Chrome MCP or puppeteer per the CLAUDE.md guidance), and tell me
 what you see — what seems solid, what looks broken or unfinished, what
 you'd want to know before making changes. Don't touch any files yet.

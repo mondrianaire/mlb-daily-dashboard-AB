@@ -30,7 +30,7 @@
     "rankings-engine.js": [],
     "teams.js": []
   },
-  "deployment_target": "https://mondrianaire.github.io/auto-builder/runs/mlb-daily-dashboard/output/final/",
+  "deployment_target": "https://mondrianaire.github.io/mlb-daily-dashboard-AB/",
   "static_only": true,
   "build_step_required": false,
   "external_runtime_dependencies": [

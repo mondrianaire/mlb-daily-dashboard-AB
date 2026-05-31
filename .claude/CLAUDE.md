@@ -32,7 +32,7 @@ For the full ethos (recommended if you'll be making non-trivial decisions): see 
 | Slug | `mlb-daily-dashboard` |
 | Deliverable kind | `web_app` |
 | Verification verdict | `pass` |
-| Live URL | https://mondrianaire.github.io/auto-builder/runs/mlb-daily-dashboard/output/final/index.html |
+| Live URL | https://mondrianaire.github.io/mlb-daily-dashboard-AB/ |
 | Ratified | 2026-05-31T00:10:40.035Z by Jett |
 | Architecture version at build | `v1.10.1` |
 
@@ -74,7 +74,7 @@ When you're iterating on a UI-bearing artifact (which web_app deliverables alway
 
 If the user has the [Claude in Chrome](https://www.anthropic.com/news/claude-in-chrome) browser extension installed and authorized for this session, you have access to `mcp__Claude_in_Chrome__*` tools. You can:
 
-- Navigate to the live URL (`https://mondrianaire.github.io/auto-builder/runs/mlb-daily-dashboard/output/final/index.html` for this build, if it's a web_app)
+- Navigate to the live URL (`https://mondrianaire.github.io/mlb-daily-dashboard-AB/` for this build, if it's a web_app)
 - Take screenshots of the current state
 - Click, type, fill forms, read console output, read network requests
 - Iterate on UI changes by viewing the deployed result after each commit
