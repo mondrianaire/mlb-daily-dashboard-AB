@@ -194,6 +194,25 @@
       "history": [
         { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Production-grade resilience uncommon at this scale; renders 30 teams even on partial API responses." }
       ]
+    },
+    {
+      "id": "DEBT-001",
+      "title": "Trends scatter logos rendered at SVG default size (150px), overrunning the charts",
+      "category": "tech-debt",
+      "priority": "high",
+      "status": "resolved",
+      "first_seen": { "date": "2026-05-31", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-05-31", "commit": "aac7cf0" },
+      "evidence": [
+        "logo-helpers.js loadOne created marker Image() with no width/height",
+        "MLB cap SVGs have viewBox 0 0 300 300 but no intrinsic width/height -> bare <img> defaults to 150px",
+        "Chart.js draws image point-styles at the image's own size (pointRadius ignored)",
+        "reproduced in-browser: ~150px markers overflowing the OPS-vs-ERA / RS-vs-RA / Power-vs-Discipline scatters"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "aac7cf0", "status": "open", "note": "Reported by user post-ship: logos too large, throwing off charts/graphs. Root-caused to dimensionless SVGs + Chart.js image point-style sizing." },
+        { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.1: pinned preloaded marker images to 22x22 in logo-helpers.js. Verified in-browser (markers 22px vs 150px before; mechanism + fresh-module render confirmed). Inline DOM logos were never affected." }
+      ]
     }
   ]
 }

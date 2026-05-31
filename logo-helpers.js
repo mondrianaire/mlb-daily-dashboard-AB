@@ -22,6 +22,14 @@ import { getLogoUrl, ALL_TEAM_IDS } from "./teams.js";
 const cache = new Map(); // key: `${variant}:${id}` -> HTMLImageElement
 const pending = new Map(); // key: `${variant}:${id}` -> Promise<HTMLImageElement>
 
+// These preloaded images are used ONLY as Chart.js point-style markers
+// (see getLogoImg). The MLB team SVGs declare a viewBox but no intrinsic
+// width/height, so a bare <img> defaults to 150x150 — and Chart.js draws an
+// image point-style at the image's own width/height (pointRadius does NOT
+// scale images). Without an explicit size the markers render ~150px and
+// overrun the scatter charts. Pin them to a small marker size.
+const LOGO_MARKER_PX = 22;
+
 function cacheKey(teamId, variant) {
   return `${variant || "cap"}:${teamId}`;
 }
@@ -43,6 +51,9 @@ function loadOne(teamId, variant = "cap") {
   img.decoding = "async";
   img.crossOrigin = "anonymous";
   img.alt = ""; // decorative when used as Chart.js point marker
+  // Pin a marker size so Chart.js draws small logos, not the SVG's 150px default.
+  img.width = LOGO_MARKER_PX;
+  img.height = LOGO_MARKER_PX;
 
   const p = new Promise((resolve) => {
     img.onload = () => { cache.set(key, img); pending.delete(key); resolve(img); };
