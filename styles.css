@@ -647,18 +647,24 @@ a:hover { text-decoration: underline; }
 /* Chart cards: Chart.js (responsive + maintainAspectRatio:false) needs a
    container with a DEFINITE height. A flex body whose height is indeterminate
    gives it no stable target, so the canvas can collapse or grow without bound
-   (the infinite-growth feedback loop). Pin the height for bodies that hold a
-   <canvas> and let the canvas fill it absolutely. Table/heatmap bodies are
-   untouched (they keep flex:1 and flow naturally). */
+   (the infinite-growth feedback loop). Pin the height for the chart bodies and
+   let the canvas fill it absolutely. Table/heatmap bodies are untouched.
+   Targeted by an explicit class (.trends-body--chart) so this works in every
+   browser; the :has() rule is a redundant fallback. */
+.trends-card .trends-body--chart,
 .trends-card .trends-body:has(> canvas) {
-  flex: none;
-  height: 280px;
+  flex: none !important;
+  height: 280px !important;
+  max-height: 280px !important; /* hard cap: can never grow past this */
+  overflow: hidden;
 }
+.trends-card .trends-body--chart > canvas,
 .trends-card .trends-body:has(> canvas) > canvas {
-  position: absolute;
+  position: absolute !important;
   inset: 0;
   width: 100% !important;
   height: 100% !important;
+  max-height: 280px !important;
   display: block;
 }
 .trends-card.span-12 { grid-column: span 12; }
