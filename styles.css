@@ -632,6 +632,16 @@ a:hover { text-decoration: underline; }
   margin-bottom: 12px;
   line-height: 1.35;
 }
+.trends-card .trends-explainer {
+  margin: -4px 0 12px;
+  padding: 6px 9px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--trends-text-2);
+  background: var(--trends-panel-2);
+  border-left: 2px solid var(--trends-accent);
+  border-radius: 0 6px 6px 0;
+}
 .trends-card .trends-body { flex: 1; min-height: 0; position: relative; }
 .trends-card.span-12 { grid-column: span 12; }
 .trends-card.span-8  { grid-column: span 8; }

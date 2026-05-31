@@ -66,6 +66,25 @@
 
 **Roadmap status:** Phases 0, 1, 2 complete. Remaining: Phase 3 (chart explainers, `OPP-003`, optional polish) and Phase 4 (backend + LLM, opt-in, would resolve `GAP-001`). The two highest-value recommendations (`OPP-001`, `OPP-002`) are both shipped — backend-free, as predicted.
 
+---
+
+## 2026-05-31 · build progress · shipped to PR + Phase 3
+
+**Mode:** ship + implement, with tracking reconciliation.
+
+**Shipped:** Phases 0–2 committed to branch `claude/thirsty-cori-10c801` (two commits: docs checkpoint + feature code) and opened as **PR #1** to `main`.
+
+**Phase 3 — OPP-003 Chart explainers (v1.4.0):**
+- New pure `trends-explainers.js`: data-driven "Today:" captions for the 4 analytical charts (RS-vs-RA, OPS-vs-ERA, home/road, power/discipline), naming the current extremes; combined phrasing when one team leads both dimensions; graceful empty-data handling.
+- `trends-charts.js` injects via `setExplainer()` inside each render path, so captions refresh with the league/division filters.
+- 11 engine tests → **suite 45 green**. Verified in-browser with a stubbed Chart.js (CDN blocked in sandbox): all 4 captions render with correct leaders + accent styling.
+
+**Ledger movement (snapshot #4):**
+- `OPP-003` open → **resolved**. Counts: open 8 → 7, resolved 3 → 4.
+- `ai_readiness` 24 → 25 (more clean tested compute); other dims unchanged — this was polish, not a capability shift.
+
+**Roadmap status:** Phases 0–3 complete. **All three near-term opportunities (`OPP-001/002/003`) shipped, every one backend-free.** Only Phase 4 (backend + LLM, opt-in, resolves `GAP-001`) remains, alongside the still-open infra gaps (`GAP-001/002/003`) and `RISK-001`.
+
 **Notes for next run:**
 - If a serverless proxy appears → re-score `OPP-002` LLM path and reconsider `GAP-001` toward resolved.
 - If unit tests for `rankings-engine`/`trends-engine` land → transition `GAP-004`.

@@ -73,13 +73,13 @@
 <body>
 <header>
   <h1>MLB Daily Dashboard — Product Intelligence</h1>
-  <div class="sub">Generated 2026-05-31 01:26 · last run 2026-05-31
-    (commit b4c1e6c) · 3 run(s) tracked</div>
+  <div class="sub">Generated 2026-05-31 01:36 · last run 2026-05-31
+    (commit b4c1e6c) · 4 run(s) tracked</div>
 </header>
 <nav class="tabs"><button class="tab active" data-tab="tab-tracker">Tracker</button><button class="tab" data-tab="tab-summary">Summary</button><button class="tab" data-tab="tab-scores">Scores</button><button class="tab" data-tab="tab-ai-opportunities">AI Opportunities</button><button class="tab" data-tab="tab-product-graph">Product Graph</button><button class="tab" data-tab="tab-maturity">Maturity</button><button class="tab" data-tab="tab-evolution-log">Evolution Log</button><button class="tab" data-tab="tab-implementation-roadmap">Implementation Roadmap</button></nav>
 <main>
   <section class="pane active" id="tab-tracker">
-    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>8</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>0</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>3</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>11</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>3</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>11</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>3</div><div class='tlabel'>Runs</div></div></div>
+    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>7</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>0</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>4</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>11</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>4</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>11</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>4</div><div class='tlabel'>Runs</div></div></div>
     <div class="charts">
       <div class="card"><h2>Score trajectory</h2><canvas id="scoreChart" height="120"></canvas></div>
       <div class="card"><h2>Current status</h2><canvas id="statusDoughnut" height="120"></canvas></div>
@@ -175,19 +175,6 @@
           <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
         </tr>
         <tr class="frow" data-status="open">
-          <td class="mono">OPP-003</td>
-          <td>
-            <div class="ftitle">Plain-language chart explainers on Trends widgets</div>
-            <div class="fmeta">Opportunity
-              · first seen 2026-05-31
-              · last seen 2026-05-31</div>
-            <div class="fev">index.html:86-123 static widget descriptions, buildMergedData trends-charts.js:44 per-team merged records available</div>
-            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Strategic Fit 5/10. Cheap polish; template fill, no dependency. Lower ceiling because static descriptions already orient users.</li></ul></details>
-          </td>
-          <td><span class="pri pri-low">low</span></td>
-          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
-        </tr>
-        <tr class="frow" data-status="open">
           <td class="mono">RISK-002</td>
           <td>
             <div class="ftitle">Predictive/odds AI would be a trust-eroding gimmick without owned data</div>
@@ -237,6 +224,19 @@
             <details class="fhist"><summary>history (3)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Low-cost, high-confidence win: the two pure engines are trivially unit-testable and underpin every view.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#f5a623'>in-progress</span> — Phase 0: node:test harness stood up; both existing pure engines (rankings, trends) now unit-tested, 15 cases green.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#30a46c'>resolved</span> — Phase 1: watchability engine added with 8 tests; all current pure compute engines now covered (23 cases). New engines should ship with tests per this established practice.</li></ul></details>
           </td>
           <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-003</td>
+          <td>
+            <div class="ftitle">Plain-language chart explainers on Trends widgets</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-05-31
+              · last seen 2026-05-31</div>
+            <div class="fev">trends-explainers.js — pure caption helpers for 4 charts (RSRA, OPS/ERA, home/road, power/discipline), trends-charts.js setExplainer() injects captions into each card, refreshed on filter change, tests/trends-explainers.test.js — 11 cases green, verified in-browser via stubbed Chart.js: all 4 captions render with correct leaders + styling</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Strategic Fit 5/10. Cheap polish; template fill, no dependency. Lower ceiling because static descriptions already orient users.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#30a46c'>resolved</span> — Phase 3 (v1.4.0): built + unit-tested + browser-verified. Deterministic captions over already-merged Trends data; no backend, no new fetches; updates with filters.</li></ul></details>
+          </td>
+          <td><span class="pri pri-low">low</span></td>
           <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
         </tr></tbody></table>
     </div>
@@ -383,6 +383,15 @@
 <p><strong>Ledger movement (snapshot #3):</strong></p>
 <ul><li><code>OPP-002</code> open → <strong>resolved</strong> (template built + tested + browser-verified).</li><li>Counts: open 9 → 8, resolved 2 → 3.</li><li>Scores: <code>maturity_ai</code> 2 → 3 and <code>maturity_differentiation</code> 4 → 5 (two genuinely useful interpretive surfaces now shipped), <code>ai_readiness</code> 22 → 24 (more clean tested compute). No backend/monetization/enterprise movement — none was done.</li></ul>
 <p><strong>Roadmap status:</strong> Phases 0, 1, 2 complete. Remaining: Phase 3 (chart explainers, <code>OPP-003</code>, optional polish) and Phase 4 (backend + LLM, opt-in, would resolve <code>GAP-001</code>). The two highest-value recommendations (<code>OPP-001</code>, <code>OPP-002</code>) are both shipped — backend-free, as predicted.</p>
+<hr>
+<h2>2026-05-31 · build progress · shipped to PR + Phase 3</h2>
+<p><strong>Mode:</strong> ship + implement, with tracking reconciliation.</p>
+<p><strong>Shipped:</strong> Phases 0–2 committed to branch <code>claude/thirsty-cori-10c801</code> (two commits: docs checkpoint + feature code) and opened as <strong>PR #1</strong> to <code>main</code>.</p>
+<p><strong>Phase 3 — OPP-003 Chart explainers (v1.4.0):</strong></p>
+<ul><li>New pure <code>trends-explainers.js</code>: data-driven &quot;Today:&quot; captions for the 4 analytical charts (RS-vs-RA, OPS-vs-ERA, home/road, power/discipline), naming the current extremes; combined phrasing when one team leads both dimensions; graceful empty-data handling.</li><li><code>trends-charts.js</code> injects via <code>setExplainer()</code> inside each render path, so captions refresh with the league/division filters.</li><li>11 engine tests → <strong>suite 45 green</strong>. Verified in-browser with a stubbed Chart.js (CDN blocked in sandbox): all 4 captions render with correct leaders + accent styling.</li></ul>
+<p><strong>Ledger movement (snapshot #4):</strong></p>
+<ul><li><code>OPP-003</code> open → <strong>resolved</strong>. Counts: open 8 → 7, resolved 3 → 4.</li><li><code>ai_readiness</code> 24 → 25 (more clean tested compute); other dims unchanged — this was polish, not a capability shift.</li></ul>
+<p><strong>Roadmap status:</strong> Phases 0–3 complete. <strong>All three near-term opportunities (<code>OPP-001/002/003</code>) shipped, every one backend-free.</strong> Only Phase 4 (backend + LLM, opt-in, resolves <code>GAP-001</code>) remains, alongside the still-open infra gaps (<code>GAP-001/002/003</code>) and <code>RISK-001</code>.</p>
 <p><strong>Notes for next run:</strong></p>
 <ul><li>If a serverless proxy appears → re-score <code>OPP-002</code> LLM path and reconsider <code>GAP-001</code> toward resolved.</li><li>If unit tests for <code>rankings-engine</code>/<code>trends-engine</code> land → transition <code>GAP-004</code>.</li><li>If any telemetry is added → <code>GAP-003</code> moves; unlocks evidence-based reconsideration of personalization.</li><li>Watch for off-season data sparseness affecting trend widgets (related to <code>RISK-001</code>).</li></ul></section><section class="pane doc-pane" id="tab-implementation-roadmap"><h1>IMPLEMENTATION_ROADMAP — MLB Daily Dashboard</h1>
 <blockquote>Sequenced build plan derived from <code>FEATURE_SCORES.md</code> + <code>AI_OPPORTUNITIES.md</code>. Ordered by <strong>fit ÷ effort ÷ dependency</strong>. Grounded at commit <code>b4c1e6c</code>. Every step names the real files it touches.<br><br>Guiding constraint (from the checkpoint): the <strong>highest-value near-term work needs no backend and no AI vendor</strong> — it&#x27;s deterministic interpretation of data the app already fetches into <code>dailyFetchCache</code> (app.js:79). Phases 1–3 honor that. Phase 4 is the only one that takes on infrastructure, and it&#x27;s explicitly opt-in.</blockquote>
@@ -442,7 +451,7 @@ Phase 4 (L)  [OPT-IN] Backend + LLM phrasing       → only for richer NL; resol
 <p>Building these transitions ledger findings: <code>OPP-001</code>/<code>OPP-002</code>/<code>OPP-003</code> → in-progress→resolved; <code>GAP-004</code> → resolved (Phase 0); <code>GAP-001</code> → resolved only if Phase 4 is taken. Re-run the checkpoint after each phase to move the dashboard.</p></section>
 </main>
 <script>
-const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31"], "scores": {"ai_readiness": [18, 22, 24], "maturity_product": [7, 8, 8], "maturity_ai": [2, 2, 3], "maturity_infra": [8, 8, 8], "maturity_enterprise": [0, 0, 0], "maturity_monetization": [0, 0, 0], "maturity_differentiation": [3, 4, 5]}, "status": {"open": [11, 9, 8], "in-progress": [0, 0, 0], "resolved": [0, 2, 3], "regressed": [0, 0, 0]}, "doughnut": {"open": 8, "in-progress": 0, "resolved": 3, "regressed": 0}};
+const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31"], "scores": {"ai_readiness": [18, 22, 24, 25], "maturity_product": [7, 8, 8, 8], "maturity_ai": [2, 2, 3, 3], "maturity_infra": [8, 8, 8, 8], "maturity_enterprise": [0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5]}, "status": {"open": [11, 9, 8, 7], "in-progress": [0, 0, 0, 0], "resolved": [0, 2, 3, 4], "regressed": [0, 0, 0, 0]}, "doughnut": {"open": 7, "in-progress": 0, "resolved": 4, "regressed": 0}};
 const palette = ["#52a9ff","#30a46c","#ffb224","#8e4ec6","#ff6369","#22a3b3","#e6e6e6","#f06ea9"];
 function mkLine(id, labels, seriesObj, opts={}) {
   const el = document.getElementById(id); if (!el || !window.Chart) return;

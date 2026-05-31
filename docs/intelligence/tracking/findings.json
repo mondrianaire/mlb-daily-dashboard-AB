@@ -44,15 +44,18 @@
       "title": "Plain-language chart explainers on Trends widgets",
       "category": "opportunity",
       "priority": "low",
-      "status": "open",
+      "status": "resolved",
       "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
       "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
       "evidence": [
-        "index.html:86-123 static widget descriptions",
-        "buildMergedData trends-charts.js:44 per-team merged records available"
+        "trends-explainers.js — pure caption helpers for 4 charts (RSRA, OPS/ERA, home/road, power/discipline)",
+        "trends-charts.js setExplainer() injects captions into each card, refreshed on filter change",
+        "tests/trends-explainers.test.js — 11 cases green",
+        "verified in-browser via stubbed Chart.js: all 4 captions render with correct leaders + styling"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 5/10. Cheap polish; template fill, no dependency. Lower ceiling because static descriptions already orient users." }
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 5/10. Cheap polish; template fill, no dependency. Lower ceiling because static descriptions already orient users." },
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 3 (v1.4.0): built + unit-tested + browser-verified. Deterministic captions over already-merged Trends data; no backend, no new fetches; updates with filters." }
       ]
     },
     {

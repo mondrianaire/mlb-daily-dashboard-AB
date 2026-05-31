@@ -11,6 +11,22 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-05-31
+### Added
+- **Chart explainers** (`OPP-003`) — `trends-explainers.js`, pure helpers that add
+  a data-driven "Today:" caption under four Trends-tab charts, naming who's
+  actually at the extremes right now: RS-vs-RA (best/worst run differential),
+  OPS-vs-ERA (elite-on-both or separate bat/arm leaders), Home-vs-Road (biggest
+  home edge or road-warrior fallback), Power-vs-Discipline (HR + K/BB leaders,
+  combined when one team leads both). Captions update live with the league/
+  division filters and degrade to nothing when a filtered set lacks the stat.
+- `tests/trends-explainers.test.js` — 11 cases (extremes, elite-on-both, combined
+  power/command, road fallback, empty-data, deterministic id tiebreak). Suite 45, green.
+
+### Changed
+- `trends-charts.js` injects the captions via a new `setExplainer()` helper inside
+  each chart's render path (so they refresh on filter changes).
+
 ## [1.3.0] — 2026-05-31
 ### Added
 - **Daily briefing** (`OPP-002`, template version) — `briefing-engine.js`, a
