@@ -11,6 +11,18 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.5.2] — 2026-05-31
+### Fixed
+- **Infinitely-growing chart on the Trends tab.** The scatter/bar charts use
+  Chart.js with `responsive: true` + `maintainAspectRatio: false` inside a flex
+  body whose height was indeterminate, so the canvas height fed back into layout
+  (collapse or unbounded growth — the classic Chart.js feedback loop). Chart
+  bodies that contain a `<canvas>` now have a **definite height (280px)** with the
+  canvas filling it absolutely, per Chart.js's documented container requirement.
+  Table/heatmap bodies are unaffected (they keep `flex:1` and flow naturally).
+- The Home-vs-Road logo strip is now rendered as a sibling **below** the chart
+  body instead of inside it, so it no longer fights the canvas sizing.
+
 ## [1.5.1] — 2026-05-31
 ### Fixed
 - **Oversized team logos on the Trends scatter charts** (RS-vs-RA, OPS-vs-ERA,
