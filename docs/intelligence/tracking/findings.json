@@ -229,7 +229,9 @@
       ],
       "history": [
         { "date": "2026-05-31", "commit": "aac7cf0", "status": "open", "note": "Reported by user: Trends UI bug causing an infinitely growing chart." },
-        { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.2: gave chart bodies a definite 280px height with the canvas absolutely filling it (Chart.js's documented container requirement); moved the home/road strip to a sibling below the body. Verified in-browser: canvas stable at 280px across 0-4.7s samples, no growth/collapse. Scoped via :has(> canvas) so table/heatmap bodies are untouched." }
+        { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.2: gave chart bodies a definite 280px height with the canvas absolutely filling it (Chart.js's documented container requirement); moved the home/road strip to a sibling below the body. Verified in-browser: canvas stable at 280px across 0-4.7s samples, no growth/collapse. Scoped via :has(> canvas) so table/heatmap bodies are untouched." },
+        { "date": "2026-05-31", "commit": "aac7cf0", "status": "regressed", "note": "User still saw growth after 1.5.2: the fix was masked by (a) stale CSS cache — styles.css had no cache-busting, so the old stylesheet kept loading while the HTML version marker updated; and (b) reliance on the :has() selector. The code fix was correct but didn't reach the browser." },
+        { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.3: hardened — chart containers carry an explicit .trends-body--chart class (no :has() dependency), asset URLs are version-cache-busted (styles.css?v=, app.js?v=), and a hard max-height:280px backstop added. Verified in-browser: class rule applies, CSS loads fresh, canvases stable at 280px." }
       ]
     }
   ]

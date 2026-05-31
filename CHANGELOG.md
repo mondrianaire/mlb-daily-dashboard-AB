@@ -11,6 +11,20 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.5.3] — 2026-05-31
+### Fixed
+- **Trends chart still growing for some users after 1.5.2.** Two robustness gaps
+  let the 1.5.2 fix be masked:
+  - **Stale CSS cache** — `styles.css`/`app.js` were referenced without any
+    cache-busting, so returning visitors kept running the *old* stylesheet (the
+    HTML version marker updated, but the CSS fix didn't load). Asset URLs are now
+    versioned (`styles.css?v=…`, `app.js?v=…`).
+  - **`:has()` reliance** — the fixed-height rule depended on the CSS `:has()`
+    selector. The four chart containers now carry an explicit
+    `trends-body--chart` class, so the rule applies in every browser regardless
+    of `:has()` support. Added a hard `max-height: 280px` cap as a final
+    backstop so the canvas can never grow past its box.
+
 ## [1.5.2] — 2026-05-31
 ### Fixed
 - **Infinitely-growing chart on the Trends tab.** The scatter/bar charts use

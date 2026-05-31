@@ -11,7 +11,8 @@
     server/briefing-worker.js (see server/README.md) and put its URL here.
   -->
   <meta name="briefing-llm-endpoint" content="" />
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Cache-bust assets with the app version so deploys aren't masked by stale caches. -->
+  <link rel="stylesheet" href="styles.css?v=1.5.3" />
 </head>
 <body>
   <header class="site-header">
@@ -107,25 +108,25 @@
         <div class="trends-card span-6">
           <h2>Run differential map &mdash; RS vs RA</h2>
           <div class="desc">Each bubble = a team. Size = wins. Anything below the diagonal is outscoring opponents (dominant); above means being outscored.</div>
-          <div class="trends-body"><canvas id="rsra-chart"></canvas></div>
+          <div class="trends-body trends-body--chart"><canvas id="rsra-chart"></canvas></div>
         </div>
 
         <div class="trends-card span-6">
           <h2>Offense &times; Defense &mdash; OPS vs ERA</h2>
           <div class="desc">Top-right quadrant (high OPS, low ERA) = elite on both sides of the ball. Bottom-left = rebuilding.</div>
-          <div class="trends-body"><canvas id="ops-era-chart"></canvas></div>
+          <div class="trends-body trends-body--chart"><canvas id="ops-era-chart"></canvas></div>
         </div>
 
         <div class="trends-card span-6">
           <h2>Home vs Road wins</h2>
           <div class="desc">Paired bars per team. Big home advantage shows when blue stack dwarfs orange.</div>
-          <div class="trends-body"><canvas id="home-road-chart"></canvas></div>
+          <div class="trends-body trends-body--chart"><canvas id="home-road-chart"></canvas></div>
         </div>
 
         <div class="trends-card span-6">
           <h2>Power vs Discipline &mdash; HR vs K/BB</h2>
           <div class="desc">HR (y-axis) tracks raw power. K/BB (x-axis, pitching) tracks staff command. Higher K/BB = better.</div>
-          <div class="trends-body"><canvas id="power-disc-chart"></canvas></div>
+          <div class="trends-body trends-body--chart"><canvas id="power-disc-chart"></canvas></div>
         </div>
 
         <div class="trends-card span-12">
@@ -149,10 +150,10 @@
       Bump this (and CHANGELOG.md) on every release.
     -->
     <p class="app-version-strip">
-      <span id="app-version" class="app-version" data-version="1.5.2">v1.5.2</span>
+      <span id="app-version" class="app-version" data-version="1.5.3">v1.5.3</span>
     </p>
   </footer>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=1.5.3"></script>
 </body>
 </html>
