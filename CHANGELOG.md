@@ -11,6 +11,31 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.5.0] — 2026-05-31
+### Added
+- **Optional LLM phrasing for the daily briefing** (Phase 4, `GAP-001`) — a
+  **default-off** Cloudflare Worker (`server/briefing-worker.js`) that calls
+  Anthropic Claude (Haiku) to reword the already-grounded briefing highlights,
+  keeping the API key off the browser. Client enhancer `briefing-llm.js` posts the
+  deterministic highlights and swaps in livelier wording **in place**, only when a
+  `briefing-llm-endpoint` meta tag is set. The deterministic briefing remains the
+  source of truth and stands on any failure.
+- **Triple numeric guardrail** so the model can reword but never fabricate a stat:
+  system prompt + server-side `preservesNumbers()` + client-side re-check. Any
+  reworded line that introduces a new number is rejected per-item.
+- Optional KV daily-cache in the worker (briefing is identical for all visitors on
+  a day → ~1 model call/day at any scale).
+- `server/wrangler.toml`, `server/README.md` (deploy runbook), and
+  `docs/intelligence/AI_STACK.md` (Layer-4 architecture + cost model).
+- `tests/briefing-llm.test.js` — 16 cases (number extraction/guard, per-item
+  fallback on fabrication, endpoint resolution, injected-fetch paths). Suite 61, green.
+
+### Notes
+- **No behavior change by default**: with the meta tag empty there is zero network
+  call and the dashboard is identical to v1.4.0. Enabling requires deploying the
+  worker with your own `ANTHROPIC_API_KEY` (never committed) and setting the endpoint.
+- The static GitHub Pages site is unchanged; the worker is a separate, optional deploy.
+
 ## [1.4.0] — 2026-05-31
 ### Added
 - **Chart explainers** (`OPP-003`) — `trends-explainers.js`, pure helpers that add

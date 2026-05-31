@@ -36,7 +36,8 @@
       ],
       "history": [
         { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 7/10. Template version ships with no backend; LLM upgrade gated on serverless key-proxy (see GAP-001)." },
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 2 (v1.3.0): template version built + unit-tested + browser-verified. Deterministic, no backend, no new fetches, no fabricated stats. LLM phrasing upgrade remains a future Phase-4 option gated on GAP-001." }
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 2 (v1.3.0): template version built + unit-tested + browser-verified. Deterministic, no backend, no new fetches, no fabricated stats. LLM phrasing upgrade remains a future Phase-4 option gated on GAP-001." },
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 4 (v1.5.0): the optional LLM-phrasing upgrade is now built (default-off) via the GAP-001 backend. Stays resolved — deterministic version is the source of truth; LLM only rewords behind a triple numeric guard." }
       ]
     },
     {
@@ -63,15 +64,18 @@
       "title": "No backend / serverless function — blocks any keyed AI or 3rd-party API call",
       "category": "gap",
       "priority": "high",
-      "status": "open",
+      "status": "in-progress",
       "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
       "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
       "evidence": [
-        "manifest.json:34 static_only: true",
-        "no server code in repo; GitHub Pages hosting"
+        "server/briefing-worker.js — Cloudflare Worker proxy (Anthropic Claude), default-off",
+        "briefing-llm.js — client enhancer with deterministic fallback",
+        "server/README.md deploy runbook; docs/intelligence/AI_STACK.md architecture+cost",
+        "key held as a Wrangler secret, never in the repo or browser"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition." }
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition." },
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "in-progress", "note": "Phase 4 (v1.5.0): a deployable serverless backend path now EXISTS in the repo (Cloudflare Worker + client integration + runbook + cost model), unblocking keyed AI. Marked in-progress not resolved because it is default-off and not deployed — activation needs the owner's Cloudflare account + ANTHROPIC_API_KEY. Resolves once deployed." }
       ]
     },
     {
