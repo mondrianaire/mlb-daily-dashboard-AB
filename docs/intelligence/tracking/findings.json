@@ -213,6 +213,24 @@
         { "date": "2026-05-31", "commit": "aac7cf0", "status": "open", "note": "Reported by user post-ship: logos too large, throwing off charts/graphs. Root-caused to dimensionless SVGs + Chart.js image point-style sizing." },
         { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.1: pinned preloaded marker images to 22x22 in logo-helpers.js. Verified in-browser (markers 22px vs 150px before; mechanism + fresh-module render confirmed). Inline DOM logos were never affected." }
       ]
+    },
+    {
+      "id": "DEBT-002",
+      "title": "Trends chart canvas grew/collapsed unbounded (Chart.js responsive feedback loop)",
+      "category": "tech-debt",
+      "priority": "high",
+      "status": "resolved",
+      "first_seen": { "date": "2026-05-31", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-05-31", "commit": "aac7cf0" },
+      "evidence": [
+        "Chart.js responsive:true + maintainAspectRatio:false in a flex .trends-body with indeterminate height",
+        "canvas height fed back into layout -> collapse (58px) or unbounded growth",
+        "home-road logo strip lived inside the canvas container, compounding the issue"
+      ],
+      "history": [
+        { "date": "2026-05-31", "commit": "aac7cf0", "status": "open", "note": "Reported by user: Trends UI bug causing an infinitely growing chart." },
+        { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.2: gave chart bodies a definite 280px height with the canvas absolutely filling it (Chart.js's documented container requirement); moved the home/road strip to a sibling below the body. Verified in-browser: canvas stable at 280px across 0-4.7s samples, no growth/collapse. Scoped via :has(> canvas) so table/heatmap bodies are untouched." }
+      ]
     }
   ]
 }

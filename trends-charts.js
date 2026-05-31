@@ -474,14 +474,18 @@ function renderHomeRoad() {
   });
 
   // Render a small logo strip beneath the canvas as a custom x-axis label row.
-  // Lives in a sibling <div> so Chart.js's responsive sizing isn't disrupted.
+  // It lives OUTSIDE the canvas's (now fixed-height) .trends-body so it neither
+  // disrupts Chart.js's responsive sizing nor gets covered by the absolutely-
+  // positioned canvas. We place it as a sibling of the body, inside the card.
   const canvas = document.getElementById("home-road-chart");
-  if (canvas && canvas.parentElement) {
-    let strip = canvas.parentElement.querySelector(".trends-homeroad-logos");
+  const body = canvas && canvas.closest(".trends-body");
+  const card = canvas && canvas.closest(".trends-card");
+  if (body && card) {
+    let strip = card.querySelector(".trends-homeroad-logos");
     if (!strip) {
       strip = document.createElement("div");
       strip.className = "trends-homeroad-logos";
-      canvas.parentElement.appendChild(strip);
+      body.after(strip); // sibling after the chart body
     }
     strip.innerHTML = teams.map((t) =>
       `<span class="trends-homeroad-logo-cell" title="${t.abbr} - ${t.name}">${logoImgHtml(t.id, "cap", 18, "trends-homeroad-logo")}</span>`
