@@ -149,9 +149,9 @@ export async function init() {
 function renderBriefing(briefing) {
   const section = document.getElementById(ID.briefing);
   if (!section) return;
-  const list = section.querySelector(".briefing-list");
-  if (!list) return;
-  list.innerHTML = "";
+  const body = section.querySelector(".briefing-body");
+  if (!body) return;
+  body.innerHTML = "";
 
   const highlights = briefing?.highlights || [];
   if (highlights.length === 0) {
@@ -159,13 +159,60 @@ function renderBriefing(briefing) {
     return;
   }
 
-  for (const h of highlights) {
-    const li = document.createElement("li");
-    li.className = h.kind ? `briefing-item briefing-${h.kind}` : "briefing-item";
-    li.textContent = h.text;
-    list.appendChild(li);
+  // Dateline (human-readable, local).
+  const dateEl = document.getElementById("briefing-dateline");
+  if (dateEl) dateEl.textContent = formatDateline(new Date());
+
+  // Lead story = the top-priority highlight, enlarged with a team-color rule.
+  const [lead, ...rest] = highlights;
+  const leadEl = document.createElement("div");
+  leadEl.className = "briefing-lead";
+  const leadColor = chipColor(lead.teamId);
+  if (leadColor) leadEl.style.borderLeftColor = leadColor;
+
+  const eyebrow = document.createElement("span");
+  eyebrow.className = "briefing-lead-eyebrow";
+  eyebrow.textContent = "Lead";
+  const head = document.createElement("p");
+  head.className = "briefing-lead-head";
+  head.textContent = lead.text;
+  leadEl.appendChild(eyebrow);
+  leadEl.appendChild(head);
+  body.appendChild(leadEl);
+
+  // Rundown = the remaining highlights, each tagged with a team-color chip.
+  if (rest.length) {
+    const rundown = document.createElement("ul");
+    rundown.className = "briefing-rundown";
+    for (const h of rest) {
+      const li = document.createElement("li");
+      li.className = h.kind ? `briefing-rundown-item briefing-${h.kind}` : "briefing-rundown-item";
+      const chip = document.createElement("span");
+      chip.className = "briefing-chip";
+      chip.style.background = chipColor(h.teamId) || "var(--fg-muted)";
+      const txt = document.createElement("span");
+      txt.className = "briefing-rundown-text";
+      txt.textContent = h.text;
+      li.appendChild(chip);
+      li.appendChild(txt);
+      rundown.appendChild(li);
+    }
+    body.appendChild(rundown);
   }
+
   section.hidden = false;
+}
+
+function chipColor(teamId) {
+  if (teamId == null) return "";
+  const meta = teamMeta(teamId);
+  return meta?.primaryColor || "";
+}
+
+function formatDateline(d) {
+  const day = d.toLocaleDateString(undefined, { weekday: "short" });
+  const mon = d.toLocaleDateString(undefined, { month: "short" });
+  return `${day} · ${mon} ${d.getDate()} · around the league`;
 }
 
 function renderRankings(rankings, teams) {

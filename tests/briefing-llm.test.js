@@ -70,6 +70,16 @@ test("validateRephrased falls back per-item when a rewrite invents a number", ()
   assert.equal(out[1].enhanced, true);
 });
 
+test("validateRephrased preserves teamId for the chip layer (both paths)", () => {
+  const orig = [{ text: "The Yankees have won 6 games in a row.", kind: "streak", teamId: 147 }];
+  const ok = validateRephrased(orig, ["The Yankees have ripped off 6 straight."]);
+  assert.equal(ok[0].teamId, 147);
+  assert.equal(ok[0].enhanced, true);
+  const fallback = validateRephrased(orig, ["The Yankees have won 9 in a row."]); // fabricated → fallback
+  assert.equal(fallback[0].teamId, 147);
+  assert.equal(fallback[0].enhanced, false);
+});
+
 test("validateRephrased rejects wholesale on length mismatch", () => {
   assert.equal(validateRephrased(originals, ["only one"]), null);
   assert.equal(validateRephrased(originals, "not an array"), null);

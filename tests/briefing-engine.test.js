@@ -60,6 +60,16 @@ test("leads with MLB's best record", () => {
   assert.match(highlights[0].text, /70-30/);
 });
 
+test("highlights carry the teamId they're about (null for league-wide lines)", () => {
+  const { highlights } = computeBriefing({ rankings, trends, schedule, today: TODAY });
+  const record = highlights.find((h) => h.kind === "record");
+  assert.equal(record.teamId, 147); // Yankees — best record
+  const streak = highlights.find((h) => h.kind === "streak");
+  assert.equal(streak.teamId, 111); // Red Sox — W6
+  const race = highlights.find((h) => h.kind === "race");
+  assert.equal(race.teamId, null); // a division race isn't about one team
+});
+
 test("caps at five highlights", () => {
   const { highlights } = computeBriefing({ rankings, trends, schedule, today: TODAY });
   assert.ok(highlights.length <= 5);

@@ -12,7 +12,7 @@
   -->
   <meta name="briefing-llm-endpoint" content="" />
   <!-- Cache-bust assets with the app version so deploys aren't masked by stale caches. -->
-  <link rel="stylesheet" href="styles.css?v=1.5.3" />
+  <link rel="stylesheet" href="styles.css?v=1.6.0" />
 </head>
 <body>
   <header class="site-header">
@@ -43,8 +43,11 @@
 
   <section id="tab-daily" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-daily">
     <section id="briefing" class="briefing" aria-labelledby="briefing-heading" aria-live="polite" hidden>
-      <h2 id="briefing-heading" class="briefing-heading">Today around the league</h2>
-      <ul class="briefing-list"></ul>
+      <div class="briefing-topline">
+        <h2 id="briefing-heading" class="briefing-heading">Today around the league</h2>
+        <span class="briefing-dateline" id="briefing-dateline"></span>
+      </div>
+      <div class="briefing-body"></div>
     </section>
 
     <main class="dashboard-grid">
@@ -150,10 +153,10 @@
       Bump this (and CHANGELOG.md) on every release.
     -->
     <p class="app-version-strip">
-      <span id="app-version" class="app-version" data-version="1.5.3">v1.5.3</span>
+      <span id="app-version" class="app-version" data-version="1.6.0">v1.6.0</span>
     </p>
   </footer>
 
-  <script type="module" src="app.js?v=1.5.3"></script>
+  <script type="module" src="app.js?v=1.6.0"></script>
 </body>
 </html>

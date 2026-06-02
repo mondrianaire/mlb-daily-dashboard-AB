@@ -11,6 +11,26 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.6.0] — 2026-06-02
+### Changed
+- **Daily briefing → broadcast-wire treatment** (design audit P2). The briefing
+  is the product's synthesized lede; it now reads like one. The top-priority
+  highlight renders as an enlarged **lead story** with a team-color rule, above a
+  tighter **rundown** where each remaining line carries a small team-color chip,
+  with a human **dateline** ("Tue · Jun 2 · around the league"). Previously a flat
+  bullet list of equal-weight lines.
+- `briefing-engine.js` now exposes the `teamId` behind each highlight (engine stays
+  pure — no color/DOM concern); `briefing-llm.js` preserves it through the optional
+  rephrasing path so the chips survive an LLM pass. League-wide lines (division
+  race, slate size) correctly get a neutral chip.
+- 2 new tests (teamId emitted + preserved). Suite now 63, green.
+
+### Notes
+- First implementation from the App 05 design audit (`Documents/Claude/Design Audits/`).
+  Remaining audit recommendations (trend pulse, tabular numerals + run-diff spine,
+  featured matchup card, quadrant chart instruments, dark unification) are tracked
+  and queued.
+
 ## [1.5.3] — 2026-05-31
 ### Fixed
 - **Trends chart still growing for some users after 1.5.2.** Two robustness gaps
