@@ -1,5 +1,35 @@
 # IMPLEMENTATION_ROADMAP — MLB Daily Dashboard
 
+## Status — evaluated 2026-06-02 (live v1.16.0)
+
+**Visual roadmap:** [`roadmap.html`](./roadmap.html) (open in a browser).
+
+The original checkpoint roadmap below is **fully delivered**, plus a design audit, a live-score feature, a deliberate simplification, and a quick-win batch. Snapshot:
+
+| Track | Status |
+|---|---|
+| **Original roadmap** (Phases 0–4 below) | ✅ all delivered — foundation + tests, watchability ranker, briefing, chart explainers, and the (later-removed) optional LLM backend |
+| **Stability fixes** | ✅ chart logo size, infinite-growth, cache-busting (v1.5.1–1.5.3) |
+| **Design audit — App 05 (P1–P6)** | ✅ all five findings shipped (v1.6–1.11): briefing wire, trend pulse + run-diff spine, featured matchup, quadrant chart instruments, dark unification |
+| **Live scoreboard** | ✅ auto-refreshing in-game scores (v1.9) |
+| **Resilience / telemetry / memory** | ✅ network-first cache (RISK-001), local telemetry (GAP-003), day-over-day memory (GAP-002) — v1.12–1.14 |
+| **Simplification** | ✅ removed the LLM/Cloudflare backend → purely static (v1.15); `GAP-001` → **wontfix** by choice |
+| **Quick wins** | ✅ favorites, probable starters, magic numbers, multi-day trend, installable PWA (v1.16) |
+
+**Ledger:** 25 findings — 18 resolved · 3 in-progress (mitigated/opt-in: GAP-002 memory, GAP-003 telemetry, RISK-001 API) · 3 open (2 standing **assets** + 1 **guardrail**, none are work) · 1 wontfix. **92 tests, 0 fail. 18 PRs merged.**
+
+**Next — bigger bets (optional depth; nothing is required):**
+1. **Game box-score detail** — line score by inning, team lines, scoring plays · *Impact High · ~1 day*
+2. **Player leaders** — HR / AVG / ERA / K / SB leaderboards · *Impact Med-High · ~½–1 day*
+3. **Accessibility + mobile pass** — keyboard nav, ARIA, contrast/touch · *Impact Med · ~½–1 day*
+4. **PNG app icons** — install fidelity on older Android · *Impact Low · ~1 hr*
+
+**Deliberately not building:** an LLM/serverless backend (static by choice — `GAP-001` wontfix), predictive odds (`RISK-002` guardrail), real push notifications (needs a backend).
+
+---
+
+## Original plan (delivered) — preserved below for the record
+
 > Sequenced build plan derived from `FEATURE_SCORES.md` + `AI_OPPORTUNITIES.md`. Ordered by **fit ÷ effort ÷ dependency**. Grounded at commit `b4c1e6c`. Every step names the real files it touches.
 >
 > Guiding constraint (from the checkpoint): the **highest-value near-term work needs no backend and no AI vendor** — it's deterministic interpretation of data the app already fetches into `dailyFetchCache` (app.js:79). Phases 1–3 honor that. Phase 4 is the only one that takes on infrastructure, and it's explicitly opt-in.
