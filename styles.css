@@ -26,6 +26,8 @@
   --accent: #0c2340;
   --watch-gold: #b07c14;
   --watch-gold-bg: #fbf3df;
+  --rd-pos: #1c8e3f;
+  --rd-neg: #c43a3a;
   --error-bg: #fdecea;
   --error-fg: #8b1a14;
   --empty-fg: #8a93a0;
@@ -80,6 +82,8 @@
     --accent: #6ea8ff;
     --watch-gold: #e8b84b;
     --watch-gold-bg: #241f12;
+    --rd-pos: #5dd887;
+    --rd-neg: #f37070;
     --error-bg: #3a1a17;
     --error-fg: #ffb4ad;
     --empty-fg: #6f7785;
@@ -493,6 +497,82 @@ a:hover { text-decoration: underline; }
 }
 .briefing-rundown-text { min-width: 0; }
 
+/* ----------- Trend pulse — hottest/coldest on first contact (audit P3) ----------- */
+.trend-pulse {
+  max-width: var(--max-width);
+  margin: 0 auto 0.25rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+@media (max-width: 560px) { .trend-pulse { grid-template-columns: 1fr; } }
+.pulse-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "label label label" "team spark rd";
+  align-items: center;
+  gap: 0.2rem 0.7rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+.pulse-card.pulse-rising  { border-left: 3px solid var(--rd-pos); }
+.pulse-card.pulse-cooling { border-left: 3px solid var(--rd-neg); }
+.pulse-label {
+  grid-area: label;
+  font-family: var(--mono-stack);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: 0.15rem;
+}
+.pulse-team { grid-area: team; display: flex; align-items: center; gap: 0.4rem; }
+.pulse-card .logo-img.pulse-logo { width: 22px; height: 22px; }
+.pulse-abbr { font-weight: 700; font-size: 0.92rem; }
+.pulse-record {
+  font-family: var(--mono-stack);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+}
+.pulse-spark { grid-area: spark; width: 100%; height: 26px; }
+.pulse-rundiff {
+  grid-area: rd;
+  font-family: var(--mono-stack);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.pulse-rundiff.positive { color: var(--rd-pos); }
+.pulse-rundiff.negative { color: var(--rd-neg); }
+
+/* ----------- Run-differential spine in the Daily standings (audit P4) ----------- */
+.numeric { font-variant-numeric: tabular-nums; }
+.division-table td.numeric,
+.division-table th { font-family: var(--mono-stack); }
+.division-table th { font-weight: 600; }
+.diff-cell { width: 1%; white-space: nowrap; }
+.rd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+.rd-bar { height: 8px; border-radius: 2px; flex: none; }
+.rd-bar.positive { background: var(--rd-pos); }
+.rd-bar.negative { background: var(--rd-neg); }
+.rd-num {
+  font-family: var(--mono-stack);
+  font-variant-numeric: tabular-nums;
+  min-width: 2.4em;
+  text-align: right;
+}
+.rd-num.positive { color: var(--rd-pos); font-weight: 600; }
+.rd-num.negative { color: var(--rd-neg); font-weight: 600; }
+
 /* ----------- Footer ----------- */
 .site-footer {
   max-width: var(--max-width);
@@ -747,6 +827,11 @@ table.trends-standings td { padding: 6px 8px; }
 table.trends-standings td.numeric { text-align: right; font-variant-numeric: tabular-nums; }
 table.trends-standings .pos { color: var(--trends-good); font-weight: 700; }
 table.trends-standings .neg { color: var(--trends-bad); font-weight: 700; }
+/* Run-diff diverging bar in the Diff column (audit P4) */
+.trends-rd { display: inline-flex; align-items: center; justify-content: flex-end; gap: 5px; }
+.trends-rd-bar { height: 8px; border-radius: 2px; flex: none; }
+.trends-rd-bar.pos { background: var(--trends-good); }
+.trends-rd-bar.neg { background: var(--trends-bad); }
 table.trends-standings .streak-w { color: var(--trends-good); font-weight: 700; }
 table.trends-standings .streak-l { color: var(--trends-bad); font-weight: 700; }
 
