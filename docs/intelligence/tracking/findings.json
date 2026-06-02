@@ -317,6 +317,23 @@
       ]
     },
     {
+      "id": "OPP-011",
+      "title": "Register discontinuity between tabs — unify on dark with a toggle (default dark)",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "evidence": [
+        "Design audit App 05, Finding 02 / Priority 1",
+        "data-theme attribute model + header toggle + localStorage persistence + pre-paint head script"
+      ],
+      "history": [
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P1/F2: a light Daily tab flipped to a dark Trends tab — the product read as two apps. The default was OS-driven, so on light OS the discontinuity was visible." },
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.11.0: explicit data-theme model, DEFAULT DARK so both tabs are unified out of the box; header toggle for light, persisted to localStorage, applied pre-paint (no flash). color-scheme per theme. Browser-verified: default dark, toggle->light (bg #f6f7f9), persists across reload. Completes all 5 design-audit findings (P1-P6)." }
+      ]
+    },
+    {
       "id": "DEBT-002",
       "title": "Trends chart canvas grew/collapsed unbounded (Chart.js responsive feedback loop)",
       "category": "tech-debt",

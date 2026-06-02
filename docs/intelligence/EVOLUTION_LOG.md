@@ -123,6 +123,24 @@ A standalone **design audit** (App 05 in the user's `Documents/Claude/Design Aud
 
 **Decisions logged for the remaining audit work:** dark unification (P1) will ship as a light/dark **toggle defaulting to dark**, deferred to last. Queue: trend pulse (P3), tabular numerals + run-diff spine (P4), featured matchup card (P6), quadrant chart instruments (P5).
 
+---
+
+## 2026-06-02 · design audit fully implemented + live scores (v1.6.0 → v1.11.0)
+
+All five App-05 design-audit findings are now shipped, plus a net-new live-score feature:
+
+- **P2** (v1.6.0) — briefing broadcast-wire. `OPP-005`.
+- **P3** (v1.7.0) — trend pulse on first contact. `OPP-006`.
+- **P4** (v1.7.0) — tabular numerals + run-diff spine. `OPP-007`.
+- **P6** (v1.8.0) — featured matchup hero card. `OPP-008`.
+- **Live scoreboard** (v1.9.0, net-new user request) — auto-refreshing today's-games panel. `OPP-009`.
+- **P5** (v1.10.0) — quadrant chart instruments (inline Chart.js plugin). `OPP-010`.
+- **P1** (v1.11.0) — light/dark theme toggle, **default dark**, unifying the tabs. `OPP-011`.
+
+Every increment shipped on its own branch → PR → merge → live, each verified in-browser and version-cache-busted. Engine logic stayed pure and tested throughout (suite grew 45 → 75). Ledger: **13 resolved**, scores moved on real evidence (`maturity_product` 8→9, `differentiation` 6→8, AI readiness held at 38 — no new AI foundations were added; these were UX/feature wins).
+
+**Honest standing:** the still-open items are the structural ones the checkpoint named on day one — `GAP-001` (backend, in-progress/opt-in via the Phase-4 worker), `GAP-002` (persistence), `GAP-003` (telemetry), `RISK-001` (single-point MLB-API dependency, now exercised harder by live polling). The product is materially more useful and more coherent; the remaining work is infrastructure, not features.
+
 **Notes for next run:**
 - If a serverless proxy appears → re-score `OPP-002` LLM path and reconsider `GAP-001` toward resolved.
 - If unit tests for `rankings-engine`/`trends-engine` land → transition `GAP-004`.

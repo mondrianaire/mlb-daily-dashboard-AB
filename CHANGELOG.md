@@ -11,6 +11,26 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.11.0] — 2026-06-02
+### Added
+- **Light / dark theme toggle, default dark** (design audit P1, completes the audit).
+  The product now defaults to the dark "instrument" register so the Daily and Trends
+  tabs are unified out of the box (the previous OS-driven default could mismatch the
+  always-dark Trends tab). A header toggle (☀ / ☾) flips light ↔ dark, the choice
+  **persists** to `localStorage`, and a tiny head script applies it before first
+  paint (no flash). `color-scheme` is set per theme for native controls/scrollbars.
+
+### Changed
+- Theme is now governed by an explicit `data-theme` attribute rather than
+  `prefers-color-scheme`, so the user's toggle wins over the OS. Refactored the
+  trend run-diff / streak colors onto the shared `--rd-pos` / `--rd-neg` tokens,
+  removing the last per-component dark media queries.
+
+### Notes
+- The Trends tab's chart surface remains its dark instrument palette in both modes
+  (its Chart.js colors are dark-tuned); light mode lightens the Daily chrome. With
+  dark as the default, the tabs are unified for the common case.
+
 ## [1.10.0] — 2026-06-02
 ### Changed
 - **Quadrant chart instruments** (design audit P5) — the Trends-tab scatter charts
