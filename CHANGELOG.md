@@ -11,6 +11,14 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.8.0] — 2026-06-02
+### Added
+- **Featured matchup card** (design audit P6) — tonight's single most-watchable
+  game (from the watchability ranker) is promoted to a **hero card** atop the
+  Upcoming panel: enlarged team logos, each club's W–L record, the reason it's the
+  pick, and first pitch. It's then **excluded from the day list** so it isn't shown
+  twice; the remaining games keep their inline badges.
+
 ## [1.7.0] — 2026-06-02
 ### Added
 - **Trend pulse on the Daily view** (design audit P3) — a compact two-card strip

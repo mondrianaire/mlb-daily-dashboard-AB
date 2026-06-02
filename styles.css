@@ -411,6 +411,62 @@ a:hover { text-decoration: underline; }
   padding-top: 0.05rem;
 }
 
+/* ----------- Featured matchup hero (audit P6) ----------- */
+.featured-matchup {
+  margin: 0 0 0.9rem;
+  padding: 0.7rem 0.85rem 0.75rem;
+  background: var(--watch-gold-bg);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--watch-gold);
+  border-radius: 8px;
+}
+.featured-label {
+  font-family: var(--mono-stack);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--watch-gold);
+  margin-bottom: 0.5rem;
+}
+.featured-teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+}
+.featured-team {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.featured-matchup .logo-img.featured-logo { width: 40px; height: 40px; }
+.featured-abbr { font-weight: 700; font-size: 1.05rem; }
+.featured-record {
+  font-family: var(--mono-stack);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+  color: var(--fg-muted);
+}
+.featured-at { color: var(--fg-muted); font-size: 0.85rem; }
+.featured-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.55rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+}
+.featured-reason { font-size: 0.82rem; color: var(--fg); min-width: 0; }
+.featured-time {
+  font-family: var(--mono-stack);
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
 /* ----------- Daily briefing — broadcast wire (OPP-002 / audit P2) ----------- */
 .briefing {
   max-width: var(--max-width);
