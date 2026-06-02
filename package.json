@@ -1,6 +1,6 @@
 {
   "name": "mlb-daily-dashboard",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "private": true,
   "type": "module",
   "description": "Web-based daily dashboard for all 30 MLB teams: standings, weekly trends, upcoming games, and analytics. Static site, no build step.",

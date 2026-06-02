@@ -8,9 +8,16 @@ import {
   fetchStandings,
   fetchSchedule,
   fetchRecentResults,
+  fetchScoreboard,
   DataClientError,
   DateUtil
 } from "./data-client.js";
+import {
+  summarize as summarizeScoreboard,
+  describeState,
+  leader,
+  sortForDisplay
+} from "./scoreboard-engine.js";
 import {
   fetchTeamHittingStats,
   fetchTeamPitchingStats,
@@ -896,10 +903,106 @@ function publishVersion() {
   if (v) window.__APP_VERSION__ = v;
 }
 
+// ============================================================
+//                LIVE SCOREBOARD
+// ============================================================
+const SCOREBOARD = { timer: null, LIVE_MS: 30000, IDLE_MS: 120000 };
+
+export async function refreshScoreboard() {
+  try {
+    const sum = summarizeScoreboard(await fetchScoreboard());
+    renderScoreboard(sum);
+    scheduleScoreboard(sum.liveCount, sum.total);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn("[MLB Daily Dashboard] scoreboard refresh failed:", err);
+    scheduleScoreboard(0, 1); // transient error — back off and keep trying
+  }
+}
+
+function scheduleScoreboard(liveCount, total) {
+  if (SCOREBOARD.timer) clearTimeout(SCOREBOARD.timer);
+  if (total === 0) return; // no games today — stop until the next page load
+  const delay = liveCount > 0 ? SCOREBOARD.LIVE_MS : SCOREBOARD.IDLE_MS;
+  SCOREBOARD.timer = setTimeout(refreshScoreboard, delay);
+}
+
+function renderScoreboard(sum) {
+  const section = document.getElementById("scoreboard");
+  const body = document.getElementById("scoreboard-body");
+  const statusEl = document.getElementById("scoreboard-status");
+  if (!section || !body) return;
+
+  if (!sum || sum.total === 0) { section.hidden = true; return; }
+
+  body.innerHTML = "";
+  for (const g of sortForDisplay(sum.games)) body.appendChild(renderScoreGame(g));
+
+  if (statusEl) {
+    const t = new Date();
+    const stamp = `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}:${String(t.getSeconds()).padStart(2, "0")}`;
+    statusEl.textContent = sum.liveCount > 0
+      ? `${sum.liveCount} live · updated ${stamp}`
+      : `updated ${stamp}`;
+    statusEl.classList.toggle("has-live", sum.liveCount > 0);
+  }
+  section.hidden = false;
+}
+
+function renderScoreGame(g) {
+  const lead = leader(g);
+  const card = document.createElement("div");
+  card.className = `score-game score-${g.cls}`;
+
+  const teams = document.createElement("div");
+  teams.className = "score-teams";
+  teams.appendChild(scoreLine(g.away, g.cls, lead === "away"));
+  teams.appendChild(scoreLine(g.home, g.cls, lead === "home"));
+
+  const status = document.createElement("div");
+  status.className = "score-status-cell";
+  const label = describeState(g);
+  if (g.cls === "live") {
+    const dot = document.createElement("span");
+    dot.className = "score-live-dot";
+    status.appendChild(dot);
+    const txt = document.createElement("span");
+    txt.className = "score-state-text live";
+    txt.textContent = label;
+    status.appendChild(txt);
+  } else {
+    const txt = document.createElement("span");
+    txt.className = label ? "score-state-text" : "score-state-text time";
+    txt.textContent = label || formatGameTime(g.gameDate);
+    status.appendChild(txt);
+  }
+
+  card.appendChild(teams);
+  card.appendChild(status);
+  return card;
+}
+
+function scoreLine(team, cls, isLeader) {
+  const line = document.createElement("div");
+  line.className = "score-line" + (isLeader ? " is-leader" : "");
+  const abbr = team.abbr || (team.teamId ? teamMeta(team.teamId)?.abbr : "") || "—";
+  const logo = team.teamId ? logoImgHtml(team.teamId, "cap", 20, "score-logo") : "";
+  const showScore = (cls === "live" || cls === "final") && team.score != null;
+  line.innerHTML = `
+    <span class="score-team-id">${logo}<span class="score-abbr">${escapeHtml(abbr)}</span></span>
+    <span class="score-num">${showScore ? team.score : ""}</span>
+  `;
+  return line;
+}
+
+// ============================================================
+//                BOOTSTRAP
+// ============================================================
 function bootstrap() {
   publishVersion();
   wireTabs();
   init();
+  refreshScoreboard(); // independent live loop — self-schedules
 }
 
 if (document.readyState === "loading") {

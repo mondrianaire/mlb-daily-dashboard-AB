@@ -215,6 +215,47 @@ export async function fetchSchedule(
   return out;
 }
 
+// ---------- fetchScoreboard ----------
+// GET /api/v1/schedule?sportId=1&date=YYYY-MM-DD&hydrate=linescore
+// Today's games with live score + inning state for the live scoreboard.
+// Returns Array<ScoreEntry>; the scoreboard-engine classifies/labels them.
+export async function fetchScoreboard(date = todayISO()) {
+  const url = `${API_BASE}/schedule?sportId=1&date=${date}&hydrate=linescore`;
+  const json = await getJSON(url);
+  const dates = Array.isArray(json.dates) ? json.dates : [];
+
+  const out = [];
+  for (const dayBucket of dates) {
+    for (const game of (dayBucket.games || [])) {
+      const away = game.teams?.away ?? {};
+      const home = game.teams?.home ?? {};
+      const ls = game.linescore ?? {};
+      const awayMeta = teamMeta(away.team?.id);
+      const homeMeta = teamMeta(home.team?.id);
+      out.push({
+        gameId: game.gamePk,
+        gameDate: game.gameDate,
+        away: {
+          teamId: away.team?.id,
+          abbr: awayMeta?.abbr ?? "",
+          score: away.score ?? null
+        },
+        home: {
+          teamId: home.team?.id,
+          abbr: homeMeta?.abbr ?? "",
+          score: home.score ?? null
+        },
+        detailedState: game.status?.detailedState ?? "",
+        abstractState: game.status?.abstractGameState ?? "",
+        inning: ls.currentInning ?? null,
+        inningState: ls.inningState ?? null,
+        outs: ls.outs ?? null
+      });
+    }
+  }
+  return out;
+}
+
 // ---------- fetchTeamGameResults ----------
 // Returns the team's completed games in the inclusive window.
 // Uses the same schedule endpoint scoped by teamId for efficiency.
