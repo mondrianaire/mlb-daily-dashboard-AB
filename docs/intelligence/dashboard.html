@@ -73,7 +73,7 @@
 <body>
 <header>
   <h1>MLB Daily Dashboard — Product Intelligence</h1>
-  <div class="sub">Generated 2026-06-02 17:51 · last run 2026-06-02
+  <div class="sub">Generated 2026-06-02 17:58 · last run 2026-06-02
     (commit 964a981) · 17 run(s) tracked</div>
 </header>
 <nav class="tabs"><button class="tab active" data-tab="tab-tracker">Tracker</button><button class="tab" data-tab="tab-summary">Summary</button><button class="tab" data-tab="tab-scores">Scores</button><button class="tab" data-tab="tab-ai-opportunities">AI Opportunities</button><button class="tab" data-tab="tab-product-graph">Product Graph</button><button class="tab" data-tab="tab-maturity">Maturity</button><button class="tab" data-tab="tab-ai-stack">AI Stack</button><button class="tab" data-tab="tab-evolution-log">Evolution Log</button><button class="tab" data-tab="tab-implementation-roadmap">Implementation Roadmap</button></nav>
@@ -143,7 +143,7 @@
               · first seen 2026-05-31
               · last seen 2026-05-31</div>
             <div class="fev">server/briefing-worker.js — Cloudflare Worker proxy (Anthropic Claude), default-off, briefing-llm.js — client enhancer with deterministic fallback, server/README.md deploy runbook; docs/intelligence/AI_STACK.md architecture+cost, key held as a Wrangler secret, never in the repo or browser</div>
-            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#f5a623'>in-progress</span> — Phase 4 (v1.5.0): a deployable serverless backend path now EXISTS in the repo (Cloudflare Worker + client integration + runbook + cost model), unblocking keyed AI. Marked in-progress not resolved because it is default-off and not deployed — activation needs the owner&#x27;s Cloudflare account + ANTHROPIC_API_KEY. Resolves once deployed.</li></ul></details>
+            <details class="fhist"><summary>history (3)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#f5a623'>in-progress</span> — Phase 4 (v1.5.0): a deployable serverless backend path now EXISTS in the repo (Cloudflare Worker + client integration + runbook + cost model), unblocking keyed AI. Marked in-progress not resolved because it is default-off and not deployed — activation needs the owner&#x27;s Cloudflare account + ANTHROPIC_API_KEY. Resolves once deployed.</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#f5a623'>in-progress</span> — Added one-command deploy automation (npm run deploy:briefing -&gt; server/deploy.mjs) + optional CI workflow. Reduces activation to a Cloudflare browser-auth + pasting the API key; the script auto-wires the worker URL into index.html. Still in-progress until the owner actually runs it (their account/key/cost).</li></ul></details>
           </td>
           <td><span class="pri pri-high">high</span></td>
           <td><span class="badge" style="background:#f5a6231a;color:#f5a623;border:1px solid #f5a62355">in-progress</span></td>

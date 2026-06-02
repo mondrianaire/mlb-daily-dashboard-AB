@@ -24,7 +24,38 @@ deterministic briefing.
   installed: `npm i -g wrangler` then `wrangler login`.
 - An [Anthropic API key](https://console.anthropic.com/).
 
-## Deploy (≈3 minutes)
+## One-command deploy (recommended)
+
+From the repo root:
+
+```bash
+npm run deploy:briefing
+```
+
+That guided script automates everything that can be automated. You only do the two
+things that are inherently yours:
+
+1. **Authorize Cloudflare** in the browser when it opens (one click).
+2. **Paste your Anthropic API key** at the hidden prompt (wrangler stores it as an
+   encrypted secret — the script never sees it).
+
+It then deploys the worker, optionally creates + binds the KV daily-cache, captures
+the deployed URL, **writes it into `index.html`'s `briefing-llm-endpoint` meta tag**,
+and offers to commit + push (which makes the live site start using it).
+
+Flags: `--ship` (auto commit+push), `--no-cache` (skip KV), `--yes` (accept prompts).
+
+Prefer to do it by hand? The manual steps are below.
+
+### Even more automated: CI redeploys (optional)
+
+`.github/workflows/deploy-briefing-worker.yml` redeploys the worker automatically on
+every change under `server/**`, once you add two repo secrets
+(`CLOUDFLARE_API_TOKEN`, `ANTHROPIC_API_KEY`) — see the comments at the top of that
+file. It no-ops until those secrets exist. Run `npm run deploy:briefing` once first to
+wire the endpoint into the site; after that, CI keeps the worker code deployed.
+
+## Manual deploy (≈3 minutes)
 
 ```bash
 cd server
