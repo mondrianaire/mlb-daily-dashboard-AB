@@ -10,6 +10,14 @@ there together on every release — they are the single source of truth used for
 deploy/testing verification.
 
 ## [Unreleased]
+### Tooling
+- **One-command briefing-worker deploy** (`npm run deploy:briefing`) — a guided
+  `server/deploy.mjs` that handles wrangler auth, the API-key secret, the optional
+  KV cache, the deploy, **auto-wires the worker URL into `index.html`**, and offers
+  to commit + push. You only authorize Cloudflare (browser) and paste your key.
+- Optional `.github/workflows/deploy-briefing-worker.yml` for fully-automated CI
+  redeploys (no-op until you add `CLOUDFLARE_API_TOKEN` + `ANTHROPIC_API_KEY` repo
+  secrets). No app behavior change.
 
 ## [1.14.0] — 2026-06-02
 ### Added

@@ -144,6 +144,12 @@
           "commit": "b4c1e6c",
           "status": "in-progress",
           "note": "Phase 4 (v1.5.0): a deployable serverless backend path now EXISTS in the repo (Cloudflare Worker + client integration + runbook + cost model), unblocking keyed AI. Marked in-progress not resolved because it is default-off and not deployed — activation needs the owner's Cloudflare account + ANTHROPIC_API_KEY. Resolves once deployed."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "in-progress",
+          "note": "Added one-command deploy automation (npm run deploy:briefing -> server/deploy.mjs) + optional CI workflow. Reduces activation to a Cloudflare browser-auth + pasting the API key; the script auto-wires the worker URL into index.html. Still in-progress until the owner actually runs it (their account/key/cost)."
         }
       ]
     },
