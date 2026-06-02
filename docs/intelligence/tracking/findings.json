@@ -283,6 +283,23 @@
       ]
     },
     {
+      "id": "OPP-009",
+      "title": "Live in-game scores — auto-refreshing scoreboard for the second-screen use case",
+      "category": "opportunity",
+      "priority": "high",
+      "status": "resolved",
+      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "evidence": [
+        "User request; directly serves the second-screen-during-games telos",
+        "scoreboard-engine.js (pure) + data-client.fetchScoreboard (linescore hydrate) + polling loop in app.js"
+      ],
+      "history": [
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Requested: live score functionality. Strong telos fit (read-only second-screen companion during games), previously absent — the dashboard only showed schedule + final results." },
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.9.0: live scoreboard on the Daily tab (running score, inning/outs, pulsing live dot; finals + start times), ordered live-first, auto-refresh 30s live / 120s idle and stops with no games. Pure engine with 7 tests; browser-verified across live/final/scheduled states." }
+      ]
+    },
+    {
       "id": "DEBT-002",
       "title": "Trends chart canvas grew/collapsed unbounded (Chart.js responsive feedback loop)",
       "category": "tech-debt",

@@ -11,6 +11,21 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.9.0] — 2026-06-02
+### Added
+- **Live scoreboard** — a new "Today's games" section at the top of the Daily tab
+  showing every game today with live scores and state: **in-progress games** show
+  the running score, inning (Top/Bot/Mid), and outs with a pulsing live dot;
+  **finals** show the final (and extra-inning marker, e.g. Final/11); **scheduled**
+  games show first pitch. Games are ordered live → scheduled → final, and the
+  leading team's score is emphasized.
+- **Auto-refresh** — the scoreboard polls on its own loop (every **30s** while any
+  game is live, **120s** otherwise) and stops when there are no games today. It
+  runs independently of the main page load and degrades quietly on transient
+  errors. A status line shows the live count and last-updated time.
+- New `scoreboard-engine.js` (pure classify / state-description / ordering) with 7
+  tests, and `data-client.fetchScoreboard()` (hydrates the linescore). Suite now 75, green.
+
 ## [1.8.0] — 2026-06-02
 ### Added
 - **Featured matchup card** (design audit P6) — tonight's single most-watchable
