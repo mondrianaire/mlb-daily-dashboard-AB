@@ -11,6 +11,19 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.10.0] — 2026-06-02
+### Changed
+- **Quadrant chart instruments** (design audit P5) — the Trends-tab scatter charts
+  now explain their own meaning instead of leaning on the caption, via a small
+  inline Chart.js plugin (no new dependency):
+  - **OPS-vs-ERA** and **Power-vs-Discipline** gain a dashed **median crosshair**
+    with the standout corner shaded green and labeled (`ELITE · BOTH SIDES`,
+    `POWER + COMMAND`) and the opposite corner shaded red (`REBUILDING`).
+  - **RS-vs-RA** shades the break-even diagonal — above it green (`OUTSCORING`),
+    below it red (`OUTSCORED`).
+- Fixed the RS-vs-RA caption, which described the diagonal backwards (above the
+  diagonal is outscoring, not below).
+
 ## [1.9.0] — 2026-06-02
 ### Added
 - **Live scoreboard** — a new "Today's games" section at the top of the Daily tab
