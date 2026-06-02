@@ -141,6 +141,30 @@ Every increment shipped on its own branch → PR → merge → live, each verifi
 
 **Honest standing:** the still-open items are the structural ones the checkpoint named on day one — `GAP-001` (backend, in-progress/opt-in via the Phase-4 worker), `GAP-002` (persistence), `GAP-003` (telemetry), `RISK-001` (single-point MLB-API dependency, now exercised harder by live polling). The product is materially more useful and more coherent; the remaining work is infrastructure, not features.
 
+---
+
+## 2026-06-02 · simplification — removed the LLM/Cloudflare backend (v1.15.0)
+
+Owner decision, and the right one: the product is **purely static** again. The only
+thing that ever needed a server was the *optional* LLM rephrasing of the briefing —
+over-engineered for a read-only dashboard that already refreshes itself live from the
+MLB API on every page load (the API is the "database"; nothing to maintain).
+
+Removed: `server/` (worker, wrangler.toml, deploy.mjs, runbook), `briefing-llm.js` +
+tests, the CI deploy workflow, `AI_STACK.md`, the `briefing-llm-endpoint` meta tag,
+the `deploy:briefing` script, and the client enhancement call. **No user-facing
+change** — the deterministic briefing was always the source of truth and the LLM path
+was default-off. Suite 97 → 80 (dropped the LLM-client tests), green.
+
+Ledger: `GAP-001` (no backend) → **wontfix** — not an unmet gap, a deliberate
+architecture stance. `OPP-002` stays resolved (deterministic briefing intact). Honest
+score movement: `ai_readiness` 44 → 38 and `maturity_ai` 5 → 3, because we *removed*
+the AI surface on purpose — the "smart" features are all deterministic interpretation,
+not ML. The repo is leaner (16 client modules, zero server), which is a better fit for
+what this is. If richer phrasing is ever wanted, the static-friendly path is a
+build-time JSON precompute (scheduled CI → committed `briefing.json`), not a runtime
+server.
+
 **Notes for next run:**
 - If a serverless proxy appears → re-score `OPP-002` LLM path and reconsider `GAP-001` toward resolved.
 - If unit tests for `rankings-engine`/`trends-engine` land → transition `GAP-004`.

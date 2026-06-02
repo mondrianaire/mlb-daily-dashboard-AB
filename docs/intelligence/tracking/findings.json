@@ -74,6 +74,12 @@
           "commit": "b4c1e6c",
           "status": "resolved",
           "note": "Phase 4 (v1.5.0): the optional LLM-phrasing upgrade is now built (default-off) via the GAP-001 backend. Stays resolved — deterministic version is the source of truth; LLM only rewords behind a triple numeric guard."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.15.0: the optional LLM-phrasing upgrade was removed (see GAP-001 wontfix). Stays RESOLVED — the deterministic template briefing is and always was the source of truth; nothing user-facing changed (the LLM path was default-off and never enabled)."
         }
       ]
     },
@@ -117,14 +123,14 @@
       "title": "No backend / serverless function — blocks any keyed AI or 3rd-party API call",
       "category": "gap",
       "priority": "high",
-      "status": "in-progress",
+      "status": "wontfix",
       "first_seen": {
         "date": "2026-05-31",
         "commit": "b4c1e6c"
       },
       "last_seen": {
-        "date": "2026-05-31",
-        "commit": "b4c1e6c"
+        "date": "2026-06-02",
+        "commit": "964a981"
       },
       "evidence": [
         "server/briefing-worker.js — Cloudflare Worker proxy (Anthropic Claude), default-off",
@@ -150,6 +156,12 @@
           "commit": "964a981",
           "status": "in-progress",
           "note": "Added one-command deploy automation (npm run deploy:briefing -> server/deploy.mjs) + optional CI workflow. Reduces activation to a Cloudflare browser-auth + pasting the API key; the script auto-wires the worker URL into index.html. Still in-progress until the owner actually runs it (their account/key/cost)."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "wontfix",
+          "note": "Decided against by the owner: the product is intentionally PURELY STATIC. The only thing that ever needed a backend was optional LLM rephrasing of the briefing, which was over-engineered for a read-only dashboard that already refreshes itself live from the MLB API on every load. All Cloudflare/worker/deploy scaffolding + the client LLM enhancer were removed (v1.15.0). Revisitable later via a build-time JSON-precompute pattern (scheduled CI -> committed briefing.json) with no runtime server, if richer phrasing is ever wanted."
         }
       ]
     },
