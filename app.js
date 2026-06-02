@@ -22,6 +22,7 @@ import { computeRankings } from "./rankings-engine.js";
 import { computeWatchability } from "./watchability-engine.js";
 import { computeBriefing } from "./briefing-engine.js";
 import { maybeEnhanceBriefing } from "./briefing-llm.js";
+import { computePulse } from "./pulse-engine.js";
 import { TEAM_META, ALL_TEAM_IDS, teamMeta, getLogoUrl } from "./teams.js";
 import { preloadLogos, logoImgHtml } from "./logo-helpers.js";
 
@@ -31,6 +32,7 @@ const ID = {
   trends: "trends-panel",
   upcoming: "upcoming-panel",
   briefing: "briefing",
+  pulse: "trend-pulse",
   lastUpdated: "last-updated",
   errorBanner: "error-banner",
   errorRetry: "error-banner-retry"
@@ -114,6 +116,7 @@ export async function init() {
     } catch (_) { /* logos are decorative; never block on them */ }
 
     renderBriefing(briefing);
+    renderPulse(computePulse(trends), teams);
     // Optional LLM phrasing (Phase 4): default-OFF. If an endpoint is configured,
     // this fire-and-forget call rephrases the highlights in place; on anything
     // less than success the deterministic briefing above simply stands.
@@ -135,6 +138,7 @@ export async function init() {
     // Clear any remaining loading-state copy so the user does not see
     // the panels stuck in "Loading...".
     renderBriefing(null); // hide the briefing on a failed load
+    renderPulse(null);    // hide the trend pulse too
     setPanelEmpty(ID.rankings, "Standings unavailable.");
     setPanelEmpty(ID.trends, "Trends unavailable.");
     setPanelEmpty(ID.upcoming, "Schedule unavailable.");
@@ -209,6 +213,64 @@ function chipColor(teamId) {
   return meta?.primaryColor || "";
 }
 
+// Trend pulse (audit P3): the week's hottest + coldest club, visible on the
+// Daily view in zero clicks. Reuses the sparkline renderer.
+function renderPulse(pulse, teams) {
+  const el = document.getElementById(ID.pulse);
+  if (!el) return;
+  el.innerHTML = "";
+  const items = [];
+  if (pulse?.hottest) items.push({ trend: pulse.hottest, kind: "rising" });
+  if (pulse?.coldest) items.push({ trend: pulse.coldest, kind: "cooling" });
+  if (items.length === 0) { el.hidden = true; return; }
+
+  const teamById = new Map((teams || []).map((t) => [t.id, t]));
+  for (const { trend, kind } of items) {
+    el.appendChild(renderPulseCard(trend, kind, teamById));
+  }
+  el.hidden = false;
+}
+
+function renderPulseCard(trend, kind, teamById) {
+  const info = teamById.get(trend.teamId) || teamMeta(trend.teamId) || {};
+  const abbr = info.abbreviation || info.abbr || String(trend.teamId);
+  const color = info.primaryColor || teamMeta(trend.teamId)?.primaryColor || "var(--accent)";
+
+  const card = document.createElement("div");
+  card.className = `pulse-card pulse-${kind}`;
+
+  const label = document.createElement("span");
+  label.className = "pulse-label";
+  label.textContent = kind === "rising" ? "Rising · last 7" : "Cooling · last 7";
+
+  const team = document.createElement("div");
+  team.className = "pulse-team";
+  team.innerHTML = logoImgHtml(trend.teamId, "cap", 22, "pulse-logo");
+  const abbrEl = document.createElement("span");
+  abbrEl.className = "pulse-abbr";
+  abbrEl.style.color = "var(--fg)";
+  abbrEl.textContent = abbr;
+  team.appendChild(abbrEl);
+  const rec = document.createElement("span");
+  rec.className = "pulse-record";
+  rec.textContent = `${trend.last7W}-${trend.last7L}`;
+  team.appendChild(rec);
+
+  const spark = renderSparkline(trend.sparklinePoints, color);
+  spark.classList.add("pulse-spark");
+
+  const rd = document.createElement("span");
+  const v = trend.runDiff7;
+  rd.className = `pulse-rundiff ${v > 0 ? "positive" : v < 0 ? "negative" : ""}`;
+  rd.textContent = `${v > 0 ? "+" : ""}${v}`;
+
+  card.appendChild(label);
+  card.appendChild(team);
+  card.appendChild(spark);
+  card.appendChild(rd);
+  return card;
+}
+
 function formatDateline(d) {
   const day = d.toLocaleDateString(undefined, { weekday: "short" });
   const mon = d.toLocaleDateString(undefined, { month: "short" });
@@ -268,6 +330,7 @@ function renderDivisionBlock(title, entries, teamById, compact = false) {
         <th>L</th>
         <th>PCT</th>
         <th>GB</th>
+        <th>Diff</th>
       </tr>
     </thead>
   `;
@@ -289,6 +352,7 @@ function renderDivisionBlock(title, entries, teamById, compact = false) {
       <td class="numeric">${t.losses}</td>
       <td class="numeric">${formatPct(t.pct)}</td>
       <td class="numeric">${formatGB(t.gb)}</td>
+      <td class="numeric diff-cell">${runDiffCellHtml(t.runsScored, t.runsAllowed)}</td>
     `;
     tbody.appendChild(tr);
   }
@@ -590,6 +654,16 @@ function hideError() {
 // ============================================================
 //                FORMAT HELPERS
 // ============================================================
+// Run-differential cell (audit P4): a colored, tabular value with a small
+// diverging bar encoding magnitude — the standings' form spine at a glance.
+function runDiffCellHtml(runsScored, runsAllowed) {
+  const diff = (Number(runsScored) || 0) - (Number(runsAllowed) || 0);
+  const w = Math.min(26, Math.round((Math.abs(diff) / 80) * 26));
+  const cls = diff > 0 ? "positive" : diff < 0 ? "negative" : "";
+  const sign = diff > 0 ? "+" : "";
+  const bar = w > 0 ? `<span class="rd-bar ${cls}" style="width:${w}px"></span>` : "";
+  return `<span class="rd">${bar}<span class="rd-num ${cls}">${sign}${diff}</span></span>`;
+}
 function formatPct(p) {
   if (p === undefined || p === null || Number.isNaN(p)) return ".000";
   // Drop leading zero: 0.615 -> .615

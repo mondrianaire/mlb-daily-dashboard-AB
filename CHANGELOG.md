@@ -11,6 +11,27 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.7.0] — 2026-06-02
+### Added
+- **Trend pulse on the Daily view** (design audit P3) — a compact two-card strip
+  surfacing the week's **hottest** and **coldest** club (logo, last-7 record,
+  sparkline, run differential) directly on first contact, so the product's
+  namesake capability is visible in zero clicks. Backed by a new pure
+  `pulse-engine.js` (`computePulse`) with deterministic hottest/coldest selection.
+- **Run-differential spine** (design audit P4) — the Daily division standings gain
+  a **Diff** column rendering run differential as a colored, tabular value with a
+  small diverging bar; the Trends standings table's existing Diff column gains the
+  same bar. Run diff is the truest form signal, now the table's visual spine.
+
+### Changed
+- **Tabular-lining numerals** across standings — numeric cells now use tabular
+  figures (and a mono face on the division tables) so columns lock and a glance
+  ranks the league.
+- Shared `--rd-pos` / `--rd-neg` run-diff color tokens (light + dark).
+
+### Tests
+- 5 new `pulse-engine` cases (selection, ties, single-team, no-games). Suite now 68, green.
+
 ## [1.6.0] — 2026-06-02
 ### Changed
 - **Daily briefing → broadcast-wire treatment** (design audit P2). The briefing

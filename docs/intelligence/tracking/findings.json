@@ -232,6 +232,40 @@
       ]
     },
     {
+      "id": "OPP-006",
+      "title": "Namesake trends invisible on load — surface a hottest/coldest pulse on the Daily view",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "evidence": [
+        "Design audit App 05, Finding 01 / Priority 3",
+        "pulse-engine.js + renderPulse; data reused from already-computed trends, no new fetch"
+      ],
+      "history": [
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P3/F1: the product is named for trends but opens on a static standings table." },
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.7.0: trend-pulse strip (hottest/coldest, logo+L7 record+sparkline+run diff) on the Daily view. Pure pulse-engine with 5 tests; browser-verified (NYY rising +20, BOS cooling -31)." }
+      ]
+    },
+    {
+      "id": "OPP-007",
+      "title": "Numerals don't behave like data — tabular figures + run-diff spine",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "evidence": [
+        "Design audit App 05, Finding 04 / Priority 4",
+        "Daily division standings Diff column + diverging bar; Trends table Diff bar; tabular-nums globally"
+      ],
+      "history": [
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P4/F4: proportional digits wander; run differential — the truest form signal — was a faint number, not the table's spine." },
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.7.0: tabular-lining mono numerals across standings; run differential promoted to a colored tabular value with a diverging bar in both the Daily division tables and the Trends standings table. Browser-verified (NYY +78 with green bar)." }
+      ]
+    },
+    {
       "id": "DEBT-002",
       "title": "Trends chart canvas grew/collapsed unbounded (Chart.js responsive feedback loop)",
       "category": "tech-debt",

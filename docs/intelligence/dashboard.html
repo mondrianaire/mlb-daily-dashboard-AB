@@ -73,13 +73,13 @@
 <body>
 <header>
   <h1>MLB Daily Dashboard — Product Intelligence</h1>
-  <div class="sub">Generated 2026-06-02 16:13 · last run 2026-06-02
-    (commit aac7cf0) · 9 run(s) tracked</div>
+  <div class="sub">Generated 2026-06-02 16:24 · last run 2026-06-02
+    (commit aac7cf0) · 10 run(s) tracked</div>
 </header>
 <nav class="tabs"><button class="tab active" data-tab="tab-tracker">Tracker</button><button class="tab" data-tab="tab-summary">Summary</button><button class="tab" data-tab="tab-scores">Scores</button><button class="tab" data-tab="tab-ai-opportunities">AI Opportunities</button><button class="tab" data-tab="tab-product-graph">Product Graph</button><button class="tab" data-tab="tab-maturity">Maturity</button><button class="tab" data-tab="tab-ai-stack">AI Stack</button><button class="tab" data-tab="tab-evolution-log">Evolution Log</button><button class="tab" data-tab="tab-implementation-roadmap">Implementation Roadmap</button></nav>
 <main>
   <section class="pane active" id="tab-tracker">
-    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>6</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>1</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>7</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>1</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>1</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>14</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>9</div><div class='tlabel'>Runs</div></div></div>
+    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>6</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>1</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>9</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>3</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>3</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>16</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>10</div><div class='tlabel'>Runs</div></div></div>
     <div class="charts">
       <div class="card"><h2>Score trajectory</h2><canvas id="scoreChart" height="120"></canvas></div>
       <div class="card"><h2>Current status</h2><canvas id="statusDoughnut" height="120"></canvas></div>
@@ -261,6 +261,32 @@
               · last seen 2026-06-02</div>
             <div class="fev">Design audit App 05, Finding 03 / Priority 2 (Documents/Claude/Design Audits/app-05-mlb-daily-dashboard), briefing was a flat equal-weight bullet list</div>
             <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#e5484d'>open</span> — Surfaced by the App 05 design audit: the briefing is the product&#x27;s lede but was dressed as a footnote (uniform bullets).</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.6.0: broadcast-wire treatment — enlarged lead story with team-color rule + dateline + team-chip rundown. Engine exposes teamId (stays pure); LLM path preserves it. 63 tests green; browser-verified (lead rule = lead team&#x27;s color, chips = team primaries, neutral for league-wide lines).</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-006</td>
+          <td>
+            <div class="ftitle">Namesake trends invisible on load — surface a hottest/coldest pulse on the Daily view</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-06-02
+              · last seen 2026-06-02</div>
+            <div class="fev">Design audit App 05, Finding 01 / Priority 3, pulse-engine.js + renderPulse; data reused from already-computed trends, no new fetch</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#e5484d'>open</span> — Audit P3/F1: the product is named for trends but opens on a static standings table.</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.7.0: trend-pulse strip (hottest/coldest, logo+L7 record+sparkline+run diff) on the Daily view. Pure pulse-engine with 5 tests; browser-verified (NYY rising +20, BOS cooling -31).</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-007</td>
+          <td>
+            <div class="ftitle">Numerals don&#x27;t behave like data — tabular figures + run-diff spine</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-06-02
+              · last seen 2026-06-02</div>
+            <div class="fev">Design audit App 05, Finding 04 / Priority 4, Daily division standings Diff column + diverging bar; Trends table Diff bar; tabular-nums globally</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#e5484d'>open</span> — Audit P4/F4: proportional digits wander; run differential — the truest form signal — was a faint number, not the table&#x27;s spine.</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.7.0: tabular-lining mono numerals across standings; run differential promoted to a colored tabular value with a diverging bar in both the Daily division tables and the Trends standings table. Browser-verified (NYY +78 with green bar).</li></ul></details>
           </td>
           <td><span class="pri pri-medium">medium</span></td>
           <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
@@ -540,7 +566,7 @@ Phase 4 (L)  [OPT-IN] Backend + LLM phrasing       → only for richer NL; resol
 <p>Building these transitions ledger findings: <code>OPP-001</code>/<code>OPP-002</code>/<code>OPP-003</code> → in-progress→resolved; <code>GAP-004</code> → resolved (Phase 0); <code>GAP-001</code> → resolved only if Phase 4 is taken. Re-run the checkpoint after each phase to move the dashboard.</p></section>
 </main>
 <script>
-const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 6, "in-progress": 1, "resolved": 7, "regressed": 0}};
+const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 6, "in-progress": 1, "resolved": 9, "regressed": 0}};
 const palette = ["#52a9ff","#30a46c","#ffb224","#8e4ec6","#ff6369","#22a3b3","#e6e6e6","#f06ea9"];
 function mkLine(id, labels, seriesObj, opts={}) {
   const el = document.getElementById(id); if (!el || !window.Chart) return;

@@ -250,7 +250,12 @@ const COLS = [
   { key: "l",      label: "L",        numeric: true,  get: (t) => t.l },
   { key: "pct",    label: "PCT",      numeric: true,  get: (t) => t.pct, fmt: (v) => "." + (v * 1000).toFixed(0) },
   { key: "gb",     label: "GB",       numeric: true,  get: (t) => t.gb === "-" ? 0 : parseFloat(t.gb), fmt: (v, t) => t.gb },
-  { key: "diff",   label: "Diff",     numeric: true,  get: (t) => t.diff, fmt: (v) => v >= 0 ? `+${v}` : `${v}`, classify: (v) => v > 0 ? "pos" : v < 0 ? "neg" : "" },
+  { key: "diff",   label: "Diff",     numeric: true,  get: (t) => t.diff, fmt: (v) => {
+      const w = Math.min(34, Math.round((Math.abs(v) / 80) * 34));
+      const side = v > 0 ? "pos" : v < 0 ? "neg" : "";
+      const bar = w > 0 ? `<span class="trends-rd-bar ${side}" style="width:${w}px"></span>` : "";
+      return `<span class="trends-rd">${bar}<span>${v >= 0 ? "+" : ""}${v}</span></span>`;
+    }, classify: (v) => v > 0 ? "pos" : v < 0 ? "neg" : "" },
   { key: "rs",     label: "RS",       numeric: true,  get: (t) => t.rs },
   { key: "ra",     label: "RA",       numeric: true,  get: (t) => t.ra },
   { key: "streak", label: "Streak",   numeric: true,  get: (t) => t.streak, fmt: (v) => v, classify: (v) => v && String(v).startsWith("W") ? "streak-w" : v && String(v).startsWith("L") ? "streak-l" : "" },
