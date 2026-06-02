@@ -73,13 +73,13 @@
 <body>
 <header>
   <h1>MLB Daily Dashboard — Product Intelligence</h1>
-  <div class="sub">Generated 2026-06-02 17:11 · last run 2026-06-02
-    (commit aac7cf0) · 13 run(s) tracked</div>
+  <div class="sub">Generated 2026-06-02 17:18 · last run 2026-06-02
+    (commit aac7cf0) · 14 run(s) tracked</div>
 </header>
 <nav class="tabs"><button class="tab active" data-tab="tab-tracker">Tracker</button><button class="tab" data-tab="tab-summary">Summary</button><button class="tab" data-tab="tab-scores">Scores</button><button class="tab" data-tab="tab-ai-opportunities">AI Opportunities</button><button class="tab" data-tab="tab-product-graph">Product Graph</button><button class="tab" data-tab="tab-maturity">Maturity</button><button class="tab" data-tab="tab-ai-stack">AI Stack</button><button class="tab" data-tab="tab-evolution-log">Evolution Log</button><button class="tab" data-tab="tab-implementation-roadmap">Implementation Roadmap</button></nav>
 <main>
   <section class="pane active" id="tab-tracker">
-    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>6</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>1</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>12</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>6</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>6</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>19</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>13</div><div class='tlabel'>Runs</div></div></div>
+    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>6</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>1</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>13</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>7</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>7</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>20</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>14</div><div class='tlabel'>Runs</div></div></div>
     <div class="charts">
       <div class="card"><h2>Score trajectory</h2><canvas id="scoreChart" height="120"></canvas></div>
       <div class="card"><h2>Current status</h2><canvas id="statusDoughnut" height="120"></canvas></div>
@@ -318,6 +318,19 @@
           <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
         </tr>
         <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-011</td>
+          <td>
+            <div class="ftitle">Register discontinuity between tabs — unify on dark with a toggle (default dark)</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-06-02
+              · last seen 2026-06-02</div>
+            <div class="fev">Design audit App 05, Finding 02 / Priority 1, data-theme attribute model + header toggle + localStorage persistence + pre-paint head script</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#e5484d'>open</span> — Audit P1/F2: a light Daily tab flipped to a dark Trends tab — the product read as two apps. The default was OS-driven, so on light OS the discontinuity was visible.</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.11.0: explicit data-theme model, DEFAULT DARK so both tabs are unified out of the box; header toggle for light, persisted to localStorage, applied pre-paint (no flash). color-scheme per theme. Browser-verified: default dark, toggle-&gt;light (bg #f6f7f9), persists across reload. Completes all 5 design-audit findings (P1-P6).</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
           <td class="mono">OPP-003</td>
           <td>
             <div class="ftitle">Plain-language chart explainers on Trends widgets</div>
@@ -546,6 +559,12 @@
 <p><strong>First implementation — P2 (briefing broadcast-wire), v1.6.0:</strong></p>
 <ul><li>The briefing is the product&#x27;s synthesized lede; it now renders as one — enlarged lead story with a team-color rule, a dateline, and a team-chip rundown (neutral chips for league-wide lines).</li><li><code>briefing-engine.js</code> exposes <code>teamId</code> per highlight (stays pure); <code>briefing-llm.js</code> preserves it through the optional rephrasing path. 63 tests green; browser-verified.</li><li>Tracked as <code>OPP-005</code> (resolved). <code>maturity_product</code> 8 → 9 (the lede now matches its informational weight).</li></ul>
 <p><strong>Decisions logged for the remaining audit work:</strong> dark unification (P1) will ship as a light/dark <strong>toggle defaulting to dark</strong>, deferred to last. Queue: trend pulse (P3), tabular numerals + run-diff spine (P4), featured matchup card (P6), quadrant chart instruments (P5).</p>
+<hr>
+<h2>2026-06-02 · design audit fully implemented + live scores (v1.6.0 → v1.11.0)</h2>
+<p>All five App-05 design-audit findings are now shipped, plus a net-new live-score feature:</p>
+<ul><li><strong>P2</strong> (v1.6.0) — briefing broadcast-wire. <code>OPP-005</code>.</li><li><strong>P3</strong> (v1.7.0) — trend pulse on first contact. <code>OPP-006</code>.</li><li><strong>P4</strong> (v1.7.0) — tabular numerals + run-diff spine. <code>OPP-007</code>.</li><li><strong>P6</strong> (v1.8.0) — featured matchup hero card. <code>OPP-008</code>.</li><li><strong>Live scoreboard</strong> (v1.9.0, net-new user request) — auto-refreshing today&#x27;s-games panel. <code>OPP-009</code>.</li><li><strong>P5</strong> (v1.10.0) — quadrant chart instruments (inline Chart.js plugin). <code>OPP-010</code>.</li><li><strong>P1</strong> (v1.11.0) — light/dark theme toggle, <strong>default dark</strong>, unifying the tabs. <code>OPP-011</code>.</li></ul>
+<p>Every increment shipped on its own branch → PR → merge → live, each verified in-browser and version-cache-busted. Engine logic stayed pure and tested throughout (suite grew 45 → 75). Ledger: <strong>13 resolved</strong>, scores moved on real evidence (<code>maturity_product</code> 8→9, <code>differentiation</code> 6→8, AI readiness held at 38 — no new AI foundations were added; these were UX/feature wins).</p>
+<p><strong>Honest standing:</strong> the still-open items are the structural ones the checkpoint named on day one — <code>GAP-001</code> (backend, in-progress/opt-in via the Phase-4 worker), <code>GAP-002</code> (persistence), <code>GAP-003</code> (telemetry), <code>RISK-001</code> (single-point MLB-API dependency, now exercised harder by live polling). The product is materially more useful and more coherent; the remaining work is infrastructure, not features.</p>
 <p><strong>Notes for next run:</strong></p>
 <ul><li>If a serverless proxy appears → re-score <code>OPP-002</code> LLM path and reconsider <code>GAP-001</code> toward resolved.</li><li>If unit tests for <code>rankings-engine</code>/<code>trends-engine</code> land → transition <code>GAP-004</code>.</li><li>If any telemetry is added → <code>GAP-003</code> moves; unlocks evidence-based reconsideration of personalization.</li><li>Watch for off-season data sparseness affecting trend widgets (related to <code>RISK-001</code>).</li></ul></section><section class="pane doc-pane" id="tab-implementation-roadmap"><h1>IMPLEMENTATION_ROADMAP — MLB Daily Dashboard</h1>
 <blockquote>Sequenced build plan derived from <code>FEATURE_SCORES.md</code> + <code>AI_OPPORTUNITIES.md</code>. Ordered by <strong>fit ÷ effort ÷ dependency</strong>. Grounded at commit <code>b4c1e6c</code>. Every step names the real files it touches.<br><br>Guiding constraint (from the checkpoint): the <strong>highest-value near-term work needs no backend and no AI vendor</strong> — it&#x27;s deterministic interpretation of data the app already fetches into <code>dailyFetchCache</code> (app.js:79). Phases 1–3 honor that. Phase 4 is the only one that takes on infrastructure, and it&#x27;s explicitly opt-in.</blockquote>
@@ -605,7 +624,7 @@ Phase 4 (L)  [OPT-IN] Backend + LLM phrasing       → only for richer NL; resol
 <p>Building these transitions ledger findings: <code>OPP-001</code>/<code>OPP-002</code>/<code>OPP-003</code> → in-progress→resolved; <code>GAP-004</code> → resolved (Phase 0); <code>GAP-001</code> → resolved only if Phase 4 is taken. Re-run the checkpoint after each phase to move the dashboard.</p></section>
 </main>
 <script>
-const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38, 38, 38, 38], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9, 10, 11, 12], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 6, "in-progress": 1, "resolved": 12, "regressed": 0}};
+const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9, 10, 11, 12, 13], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 6, "in-progress": 1, "resolved": 13, "regressed": 0}};
 const palette = ["#52a9ff","#30a46c","#ffb224","#8e4ec6","#ff6369","#22a3b3","#e6e6e6","#f06ea9"];
 function mkLine(id, labels, seriesObj, opts={}) {
   const el = document.getElementById(id); if (!el || !window.Chart) return;

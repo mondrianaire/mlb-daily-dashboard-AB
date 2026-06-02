@@ -1,7 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
+  <script>
+    /* Apply the saved theme before first paint (default: dark). Prevents a flash
+       when a returning user has chosen light. */
+    (function () {
+      try {
+        var t = localStorage.getItem("mlb-theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MLB Daily Dashboard</title>
   <meta name="description" content="A live daily snapshot of all 30 MLB teams: weekly trends, upcoming games, overall standings, and full season trend widgets." />
@@ -12,7 +22,7 @@
   -->
   <meta name="briefing-llm-endpoint" content="" />
   <!-- Cache-bust assets with the app version so deploys aren't masked by stale caches. -->
-  <link rel="stylesheet" href="styles.css?v=1.10.0" />
+  <link rel="stylesheet" href="styles.css?v=1.11.0" />
 </head>
 <body>
   <header class="site-header">
@@ -24,6 +34,8 @@
           Last updated: <time id="last-updated" datetime="">&mdash;</time>
         </span>
       </p>
+      <button type="button" id="theme-toggle" class="theme-toggle"
+              aria-label="Toggle light or dark theme">&#9728;</button>
     </div>
   </header>
 
@@ -163,10 +175,10 @@
       Bump this (and CHANGELOG.md) on every release.
     -->
     <p class="app-version-strip">
-      <span id="app-version" class="app-version" data-version="1.10.0">v1.10.0</span>
+      <span id="app-version" class="app-version" data-version="1.11.0">v1.11.0</span>
     </p>
   </footer>
 
-  <script type="module" src="app.js?v=1.10.0"></script>
+  <script type="module" src="app.js?v=1.11.0"></script>
 </body>
 </html>

@@ -996,10 +996,37 @@ function scoreLine(team, cls, isLeader) {
 }
 
 // ============================================================
+//                THEME TOGGLE (light / dark — default dark)
+// ============================================================
+function currentTheme() {
+  return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+}
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  try { localStorage.setItem("mlb-theme", theme); } catch (_) { /* ignore */ }
+  updateThemeToggle(theme);
+}
+function updateThemeToggle(theme) {
+  const btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  // Show the icon for the action (sun = switch to light, moon = switch to dark).
+  btn.textContent = theme === "dark" ? "☀" : "☾";
+  btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  btn.title = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+}
+function wireThemeToggle() {
+  const btn = document.getElementById("theme-toggle");
+  if (!btn) return;
+  updateThemeToggle(currentTheme());
+  btn.addEventListener("click", () => applyTheme(currentTheme() === "dark" ? "light" : "dark"));
+}
+
+// ============================================================
 //                BOOTSTRAP
 // ============================================================
 function bootstrap() {
   publishVersion();
+  wireThemeToggle();
   wireTabs();
   init();
   refreshScoreboard(); // independent live loop — self-schedules
