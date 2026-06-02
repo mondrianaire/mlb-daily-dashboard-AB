@@ -28,7 +28,7 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
   <!-- Cache-bust assets with the app version so deploys aren't masked by stale caches. -->
-  <link rel="stylesheet" href="styles.css?v=1.16.0" />
+  <link rel="stylesheet" href="styles.css?v=1.17.0" />
 </head>
 <body>
   <header class="site-header">
@@ -37,7 +37,7 @@
       <p class="site-subtitle">
         Live standings, weekly trends, and upcoming games for all 30 teams.
         <span class="last-updated-wrap">
-          Last updated: <time id="last-updated" datetime="">&mdash;</time>
+          Fetched <time id="last-updated" datetime="">&mdash;</time> on load
         </span>
       </p>
       <button type="button" id="theme-toggle" class="theme-toggle"
@@ -132,7 +132,8 @@
         <div class="trends-card span-8">
           <h2>Standings</h2>
           <div class="desc">Click any column header to sort. Run differential highlighted to surface dominant and struggling clubs.</div>
-          <div class="trends-body"><table class="trends-standings" id="standings-table"></table></div>
+          <button type="button" id="standings-cols-toggle" class="cols-toggle" aria-expanded="false">Show all columns</button>
+          <div class="trends-body trends-body--standings"><table class="trends-standings" id="standings-table"></table></div>
         </div>
 
         <div class="trends-card span-4">
@@ -168,6 +169,7 @@
         <div class="trends-card span-12">
           <h2>14-day form &mdash; W/L heatmap</h2>
           <div class="desc">Each row = team, each column = a day in the trailing 14-day window. Green = win, red = loss, gray = off day.</div>
+          <div class="scroll-hint" aria-hidden="true">Scroll sideways to see all 14 days &rarr;</div>
           <div class="trends-body trends-heatmap" id="heatmap-body"></div>
         </div>
       </section>
@@ -186,10 +188,10 @@
       Bump this (and CHANGELOG.md) on every release.
     -->
     <p class="app-version-strip">
-      <span id="app-version" class="app-version" data-version="1.16.0">v1.16.0</span>
+      <span id="app-version" class="app-version" data-version="1.17.0">v1.17.0</span>
     </p>
   </footer>
 
-  <script type="module" src="app.js?v=1.16.0"></script>
+  <script type="module" src="app.js?v=1.17.0"></script>
 </body>
 </html>

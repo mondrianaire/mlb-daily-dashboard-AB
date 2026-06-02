@@ -11,6 +11,27 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.17.0] — 2026-06-02
+### Fixed — Closing the 2026-05-31 design audit
+- **Mobile Trends overflow (audit Finding 03 — the only true defect).** The
+  Standings table carried 12 columns and clipped narrow viewports. On screens
+  ≤640px it now collapses to a five-column glance set (Team / W / L / GB / Last 10),
+  drops the long club name (abbreviation kept), and exposes a **"Show all columns"**
+  tap-toggle that reveals the full table, which then scrolls horizontally inside
+  its card instead of clipping. The 14-day heatmap gains a "scroll sideways"
+  affordance; the Last-10 leaderboard columns tighten so its bar never overflows.
+  Desktop is unchanged (all 12 columns, no toggle). Verified at 375px and 1280px.
+- **Copy honesty (audit Finding 05).** The header no longer says "Last updated"
+  (which implied a backend cadence the static page doesn't have) — it now reads
+  **"Fetched HH:MM TZ on load"**, matching the footer's "Updates on every page
+  load." Game start times across the scoreboard, upcoming games, and featured
+  matchup now carry the viewer's local timezone label (e.g. "19:10 EDT") instead
+  of an ambiguous bare time.
+
+Audit status: Findings 01 (Today zone) and 04 (pin your team) were already
+shipped; 03 and 05 close here; 02 (tab register) is a deliberate dark-direction
+choice that diverges from this audit's light-register preference. Suite 92, green.
+
 ## [1.16.0] — 2026-06-02
 ### Added — Quick wins
 - **Favorites / "My Team"** — a ★ toggle on each standings row marks favorite
