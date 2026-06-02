@@ -5,7 +5,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  buildSnapshot, diffRanks, mostRecentBefore, createHistoryStore
+  buildSnapshot, diffRanks, mostRecentBefore, createHistoryStore, teamSeries
 } from "../history-engine.js";
 
 function fakeStorage() {
@@ -21,9 +21,9 @@ test("buildSnapshot captures 1-based rank within each division", () => {
     NL_West: div(t(119, 40, 23))
   }, "2026-06-02");
   assert.equal(snap.date, "2026-06-02");
-  assert.deepEqual(snap.ranks[147], { rank: 1, div: "AL_East", w: 41, l: 22 });
-  assert.deepEqual(snap.ranks[111], { rank: 2, div: "AL_East", w: 36, l: 27 });
-  assert.deepEqual(snap.ranks[119], { rank: 1, div: "NL_West", w: 40, l: 23 });
+  assert.deepEqual(snap.ranks[147], { rank: 1, div: "AL_East", w: 41, l: 22, rd: 0 });
+  assert.deepEqual(snap.ranks[111], { rank: 2, div: "AL_East", w: 36, l: 27, rd: 0 });
+  assert.deepEqual(snap.ranks[119], { rank: 1, div: "NL_West", w: 40, l: 23, rd: 0 });
 });
 
 test("diffRanks reports up/down movement (positive = moved up)", () => {
@@ -72,6 +72,17 @@ test("store.previousBefore finds yesterday; today's own save isn't 'previous'", 
   store.save({ date: "2026-06-02", ranks: { 7: { rank: 1, div: "AL_East", w: 3, l: 1 } } });
   const prev = store.previousBefore("2026-06-02");
   assert.equal(prev.date, "2026-06-01");
+});
+
+test("buildSnapshot stores run differential; teamSeries returns it oldest->newest", () => {
+  const s1 = buildSnapshot({ AL_East: [{ teamId: 147, wins: 30, losses: 20, runsScored: 150, runsAllowed: 120 }] }, "2026-06-01");
+  const s2 = buildSnapshot({ AL_East: [{ teamId: 147, wins: 33, losses: 20, runsScored: 170, runsAllowed: 125 }] }, "2026-06-02");
+  assert.equal(s1.ranks[147].rd, 30);
+  assert.equal(s2.ranks[147].rd, 45);
+  // unsorted input -> sorted by date
+  assert.deepEqual(teamSeries([s2, s1], 147, "rd"), [30, 45]);
+  assert.deepEqual(teamSeries([s1, s2], 147, "rank"), [1, 1]);
+  assert.deepEqual(teamSeries([s1, s2], 999, "rd"), []); // absent team
 });
 
 test("works without storage (no memory, never throws)", () => {

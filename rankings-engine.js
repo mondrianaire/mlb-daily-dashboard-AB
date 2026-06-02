@@ -72,6 +72,21 @@ export function computeRankings(standings) {
   return { divisionStandings, leagueStandings, wildCard };
 }
 
+// Magic number for a division/race leader to clinch over the runner-up:
+//   M = (season games + 1) − leaderWins − runnerUpLosses, floored at 0.
+// When M hits 0 the leader has clinched. Pure; season length defaults to 162.
+export function magicNumber(leaderWins, runnerUpLosses, seasonGames = 162) {
+  const m = (Number(seasonGames) || 162) + 1 - (Number(leaderWins) || 0) - (Number(runnerUpLosses) || 0);
+  return Math.max(0, m);
+}
+
+// Leader's magic number for a division list (already sorted by pct desc).
+// null when the division has fewer than two teams.
+export function divisionMagic(entries, seasonGames = 162) {
+  if (!Array.isArray(entries) || entries.length < 2) return null;
+  return magicNumber(entries[0].wins, entries[1].losses, seasonGames);
+}
+
 function sortByPctDesc(a, b) {
   if (b.pct !== a.pct) return b.pct - a.pct;
   // Tiebreaker: more wins ranks higher.

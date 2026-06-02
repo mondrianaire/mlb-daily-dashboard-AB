@@ -25,13 +25,14 @@ import {
   StatsClientError
 } from "./stats-client.js";
 import { computeWeeklyTrends } from "./trends-engine.js";
-import { computeRankings } from "./rankings-engine.js";
+import { computeRankings, divisionMagic } from "./rankings-engine.js";
 import { computeWatchability } from "./watchability-engine.js";
 import { computeBriefing } from "./briefing-engine.js";
 import { computePulse } from "./pulse-engine.js";
 import { onApiHealth } from "./api-cache.js";
 import { telemetry } from "./telemetry.js";
-import { buildSnapshot, diffRanks, historyStore } from "./history-engine.js";
+import { buildSnapshot, diffRanks, historyStore, teamSeries } from "./history-engine.js";
+import { favorites, isFavorite } from "./favorites.js";
 import { TEAM_META, ALL_TEAM_IDS, teamMeta, getLogoUrl } from "./teams.js";
 import { preloadLogos, logoImgHtml } from "./logo-helpers.js";
 
@@ -95,11 +96,13 @@ export async function init() {
     // very first visit (nothing to compare to yet) — they appear once there's a
     // prior day on record.
     let rankDeltas = null;
+    let rankHistory = null;
     try {
       const snap = buildSnapshot(rankings.divisionStandings, today);
       const prev = historyStore.previousBefore(today);
       if (prev) rankDeltas = diffRanks(snap, prev);
       historyStore.save(snap);
+      rankHistory = historyStore.load(); // includes today — for multi-day sparklines
     } catch (e) {
       // eslint-disable-next-line no-console
       console.warn("[MLB Daily Dashboard] standings history skipped:", e);
@@ -147,7 +150,7 @@ export async function init() {
       (standings || []).map((s) => [s.teamId, `${s.wins}-${s.losses}`])
     );
 
-    renderRankings(rankings, teams, rankDeltas);
+    renderRankings(rankings, teams, rankDeltas, rankHistory);
     renderTrends(trends, teams);
     renderUpcoming(schedule, watch, teamRecords);
     updateTimestamp(new Date());
@@ -298,8 +301,9 @@ function formatDateline(d) {
   return `${day} · ${mon} ${d.getDate()} · around the league`;
 }
 
-function renderRankings(rankings, teams, deltas = null) {
+function renderRankings(rankings, teams, deltas = null, history = null) {
   const teamById = new Map(teams.map((t) => [t.id, t]));
+  const favs = favorites.list();
   const container = document.getElementById(ID.rankings);
   if (!container) return;
   const body = container.querySelector(".panel-body") || container;
@@ -311,7 +315,7 @@ function renderRankings(rankings, teams, deltas = null) {
   ]) {
     const division = rankings.divisionStandings[key] || [];
     // Movement is meaningful within a division — pass deltas here only.
-    body.appendChild(renderDivisionBlock(DIVISION_LABELS[key], division, teamById, false, deltas));
+    body.appendChild(renderDivisionBlock(DIVISION_LABELS[key], division, teamById, false, deltas, favs, history));
   }
 
   // Wild card race (cross-division ranking — no day-over-day movement chip).
@@ -320,9 +324,35 @@ function renderRankings(rankings, teams, deltas = null) {
   for (const lg of ["AL", "NL"]) {
     const entries = rankings.wildCard[lg] || [];
     const title = `${lg} Wild Card`;
-    wcBlock.appendChild(renderDivisionBlock(title, entries, teamById, /*compact*/ true));
+    wcBlock.appendChild(renderDivisionBlock(title, entries, teamById, /*compact*/ true, null, favs));
   }
   body.appendChild(wcBlock);
+  refreshFavoriteHighlights();
+}
+
+// Favorites (My Team): toggle the .is-fav class on every team-tagged element so
+// favorites are highlighted across standings, scoreboard, and upcoming at once.
+function refreshFavoriteHighlights() {
+  const favs = favorites.list();
+  document.querySelectorAll("[data-fav-team]").forEach((el) => {
+    el.classList.toggle("is-fav", favs.includes(Number(el.dataset.favTeam)));
+  });
+}
+function wireFavorites() {
+  const panel = document.getElementById(ID.rankings);
+  if (!panel || panel.__favWired) return;
+  panel.__favWired = true;
+  panel.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-fav-toggle]");
+    if (!btn) return;
+    const id = Number(btn.dataset.favToggle);
+    favorites.toggle(id);
+    const nowFav = favorites.has(id);
+    btn.textContent = nowFav ? "★" : "☆";
+    btn.classList.toggle("on", nowFav);
+    refreshFavoriteHighlights();
+    try { telemetry.track("favorite:" + (nowFav ? "add" : "remove")); } catch (_) { /* ignore */ }
+  });
 }
 
 function rankMoveHtml(teamId, deltas) {
@@ -332,7 +362,7 @@ function rankMoveHtml(teamId, deltas) {
   return `<span class="rank-move ${up ? "up" : "down"}" title="Moved ${up ? "up" : "down"} ${Math.abs(mv.rankDelta)} since the last day on record">${up ? "▲" : "▼"}${Math.abs(mv.rankDelta)}</span>`;
 }
 
-function renderDivisionBlock(title, entries, teamById, compact = false, deltas = null) {
+function renderDivisionBlock(title, entries, teamById, compact = false, deltas = null, favs = [], history = null) {
   const wrap = document.createElement("div");
   wrap.className = "division-block";
 
@@ -363,19 +393,32 @@ function renderDivisionBlock(title, entries, teamById, compact = false, deltas =
       </tr>
     </thead>
   `;
+  // Division magic number (shown on the leader's row, late season only).
+  const magic = compact ? null : divisionMagic(entries);
+  const MAGIC_GATE = 50;
+
   const tbody = document.createElement("tbody");
   for (const t of entries) {
     const tr = document.createElement("tr");
+    const isLeader = t === entries[0];
+    const magicHtml = (isLeader && magic != null && (magic === 0 || magic <= MAGIC_GATE))
+      ? (magic === 0
+          ? `<span class="magic-chip clinched" title="Clinched the division">✓ Clinched</span>`
+          : `<span class="magic-chip" title="Magic number to clinch the division">MN ${magic}</span>`)
+      : "";
     const teamInfo = teamById.get(t.teamId) || teamMeta(t.teamId);
     const abbr = teamInfo?.abbreviation || teamInfo?.abbr || t.teamAbbreviation || "—";
     const color = teamInfo?.primaryColor || `var(--team-${abbr})`;
     const logo = logoImgHtml(t.teamId, "cap", 24, "team-logo-sm");
+    const starOn = isFavorite(favs, t.teamId);
     tr.innerHTML = `
       <td>
-        <span class="team-cell" style="color: ${color}">
+        <span class="team-cell" data-fav-team="${t.teamId}" style="color: ${color}">
+          <button type="button" class="fav-star${starOn ? " on" : ""}" data-fav-toggle="${t.teamId}" aria-label="Toggle favorite team" title="Favorite">${starOn ? "★" : "☆"}</button>
           ${logo}
           <span class="team-abbr" style="color: var(--fg)">${escapeHtml(abbr)}</span>
           ${rankMoveHtml(t.teamId, deltas)}
+          ${magicHtml}
         </span>
       </td>
       <td class="numeric">${t.wins}</td>
@@ -384,6 +427,18 @@ function renderDivisionBlock(title, entries, teamById, compact = false, deltas =
       <td class="numeric">${formatGB(t.gb)}</td>
       <td class="numeric diff-cell">${runDiffCellHtml(t.runsScored, t.runsAllowed)}</td>
     `;
+    // Multi-day run-differential trajectory (only once enough days are on record).
+    if (!compact && history) {
+      const series = teamSeries(history, t.teamId, "rd");
+      if (series.length >= 3) {
+        const cell = tr.querySelector(".team-cell");
+        if (cell) {
+          const spark = renderSparkline(series, color);
+          spark.classList.add("history-spark");
+          cell.appendChild(spark);
+        }
+      }
+    }
     tbody.appendChild(tr);
   }
   table.appendChild(tbody);
@@ -573,6 +628,7 @@ function renderUpcoming(schedule, watch = null, teamRecords = null) {
     }
     body.appendChild(group);
   }
+  refreshFavoriteHighlights();
 }
 
 function renderGameRow(game, watchInfo = null) {
@@ -625,6 +681,15 @@ function renderGameRow(game, watchInfo = null) {
     row.appendChild(reason);
   }
 
+  // Probable starters (scheduled games only).
+  const probs = probableMatchup(game);
+  if (probs && isScheduled(game.status)) {
+    const p = document.createElement("div");
+    p.className = "upcoming-probables";
+    p.innerHTML = `<span class="prob-tag">P</span> ${escapeHtml(probs)}`;
+    row.appendChild(p);
+  }
+
   return row;
 }
 
@@ -652,6 +717,14 @@ function renderFeaturedMatchup(game, watchInfo, teamRecords) {
   teamsRow.appendChild(featuredTeam(home, teamRecords));
   card.appendChild(teamsRow);
 
+  const probs = probableMatchup(game);
+  if (probs) {
+    const p = document.createElement("div");
+    p.className = "featured-probables";
+    p.textContent = "Probables: " + probs;
+    card.appendChild(p);
+  }
+
   const meta = document.createElement("div");
   meta.className = "featured-meta";
   const reason = document.createElement("span");
@@ -675,6 +748,7 @@ function renderFeaturedMatchup(game, watchInfo, teamRecords) {
 function featuredTeam(team, teamRecords) {
   const wrap = document.createElement("div");
   wrap.className = "featured-team";
+  if (team.teamId != null) wrap.dataset.favTeam = team.teamId;
   const abbr = team.teamAbbreviation || (team.teamId ? teamMeta(team.teamId)?.abbr : "") || "—";
   if (team.teamId) wrap.innerHTML = logoImgHtml(team.teamId, "cap", 40, "featured-logo");
   const ab = document.createElement("span");
@@ -694,6 +768,7 @@ function featuredTeam(team, teamRecords) {
 function teamChip(abbr, teamId) {
   const span = document.createElement("span");
   span.className = "team-cell";
+  if (teamId != null) span.dataset.favTeam = teamId;
   const safeAbbr = abbr || "—";
   const color = `var(--team-${safeAbbr.toUpperCase()})`;
   span.style.color = color;
@@ -792,6 +867,16 @@ function formatHumanDate(iso) {
   const day = date.toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" });
   const mon = date.toLocaleDateString(undefined, { month: "short", timeZone: "UTC" });
   return `${day}, ${mon} ${d}`;
+}
+// "Cole vs Sale" from probable starters (last names), or "" if neither is set.
+function probableMatchup(game) {
+  const a = game.awayProbable, h = game.homeProbable;
+  if (!a && !h) return "";
+  const ln = (n) => (n ? String(n).split(" ").slice(-1)[0] : "TBD");
+  return `${ln(a)} vs ${ln(h)}`;
+}
+function isScheduled(status) {
+  return !status || status === "Scheduled" || status === "Pre-Game" || status === "Warmup";
 }
 function formatGameTime(iso) {
   if (!iso) return "";
@@ -961,6 +1046,7 @@ function renderScoreboard(sum) {
 
   body.innerHTML = "";
   for (const g of sortForDisplay(sum.games)) body.appendChild(renderScoreGame(g));
+  refreshFavoriteHighlights();
 
   if (statusEl) {
     const t = new Date();
@@ -1009,6 +1095,7 @@ function renderScoreGame(g) {
 function scoreLine(team, cls, isLeader) {
   const line = document.createElement("div");
   line.className = "score-line" + (isLeader ? " is-leader" : "");
+  if (team.teamId != null) line.dataset.favTeam = team.teamId;
   const abbr = team.abbr || (team.teamId ? teamMeta(team.teamId)?.abbr : "") || "—";
   const logo = team.teamId ? logoImgHtml(team.teamId, "cap", 20, "score-logo") : "";
   const showScore = (cls === "live" || cls === "final") && team.score != null;
@@ -1079,11 +1166,22 @@ function bootstrap() {
   // Owner-inspectable local usage counts: run window.__telemetry() in the console.
   try { window.__telemetry = () => telemetry.snapshot(); } catch (_) { /* ignore */ }
   telemetry.track("load");
+  wireFavorites();
   wireThemeToggle();
   wireApiHealth();
   wireTabs();
   init();
   refreshScoreboard(); // independent live loop — self-schedules
+  registerServiceWorker();
+}
+
+// PWA: register the service worker so the app is installable and works offline
+// after the first visit. Never blocks; failures are silent.
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  try {
+    navigator.serviceWorker.register("sw.js").catch(() => { /* ignore */ });
+  } catch (_) { /* ignore */ }
 }
 
 if (document.readyState === "loading") {

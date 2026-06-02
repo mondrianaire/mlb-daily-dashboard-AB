@@ -700,6 +700,136 @@
           "note": "v1.5.3: hardened — chart containers carry an explicit .trends-body--chart class (no :has() dependency), asset URLs are version-cache-busted (styles.css?v=, app.js?v=), and a hard max-height:280px backstop added. Verified in-browser: class rule applies, CSS loads fresh, canvases stable at 280px."
         }
       ]
+    },
+    {
+      "id": "OPP-012",
+      "title": "Favorites / My Team personalization",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "evidence": [
+        "v1.16.0 quick wins"
+      ],
+      "history": [
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.16.0: star toggle (localStorage) marks favorite clubs; highlighted across standings, scoreboard, upcoming, featured. Pure favorites.js, 6 tests; browser-verified."
+        }
+      ]
+    },
+    {
+      "id": "OPP-013",
+      "title": "Probable starters on upcoming games",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "evidence": [
+        "v1.16.0 quick wins"
+      ],
+      "history": [
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.16.0: schedule hydrates probablePitcher; \"Cole vs Sale\" on upcoming + featured. 2 tests; browser-verified."
+        }
+      ]
+    },
+    {
+      "id": "OPP-014",
+      "title": "Division magic numbers / clinch tracker",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "evidence": [
+        "v1.16.0 quick wins"
+      ],
+      "history": [
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.16.0: pure magicNumber/divisionMagic; leader shows MN late season, Clinched at 0. 3 tests; browser-verified (MN 8)."
+        }
+      ]
+    },
+    {
+      "id": "OPP-015",
+      "title": "Multi-day position trend from snapshots",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "evidence": [
+        "v1.16.0 quick wins"
+      ],
+      "history": [
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.16.0: history-engine stores run-diff per day; per-team trajectory sparkline in standings once >=3 days recorded. Tests; browser-verified."
+        }
+      ]
+    },
+    {
+      "id": "OPP-016",
+      "title": "Installable PWA + offline",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "evidence": [
+        "v1.16.0 quick wins"
+      ],
+      "history": [
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.16.0: web manifest + SVG icon + service worker caching the app shell; installable, works offline after first load. Browser-verified (SW registered)."
+        }
+      ]
     }
   ]
 }

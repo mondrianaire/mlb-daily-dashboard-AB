@@ -305,6 +305,32 @@ a:hover { text-decoration: underline; }
   gap: 0.5rem;
   font-weight: 500;
 }
+/* Favorites (My Team) */
+.fav-star {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0 0.1rem 0 0;
+  margin: 0;
+  cursor: pointer;
+  line-height: 1;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  opacity: 0.55;
+  transition: color 0.12s, opacity 0.12s;
+}
+.fav-star:hover { opacity: 1; color: var(--watch-gold); }
+.fav-star.on { color: var(--watch-gold); opacity: 1; }
+.fav-star:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 3px; }
+[data-fav-team].is-fav {
+  background: var(--watch-gold-bg);
+  border-radius: 5px;
+  box-shadow: inset 2px 0 0 var(--watch-gold);
+  padding-left: 4px;
+}
+[data-fav-team].is-fav .team-abbr,
+[data-fav-team].is-fav .score-abbr,
+[data-fav-team].is-fav .team-abbr { font-weight: 800; }
 .team-swatch {
   display: inline-block;
   width: 6px;
@@ -329,6 +355,29 @@ a:hover { text-decoration: underline; }
 }
 .rank-move.up { color: var(--rd-pos); }
 .rank-move.down { color: var(--rd-neg); }
+/* Division magic number (late-season clinch tracker) */
+.magic-chip {
+  font-family: var(--mono-stack);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--watch-gold);
+  border: 1px solid var(--watch-gold);
+  border-radius: 4px;
+  padding: 0 3px;
+  margin-left: 0.15rem;
+  white-space: nowrap;
+}
+.magic-chip.clinched { color: var(--rd-pos); border-color: var(--rd-pos); }
+/* Multi-day run-diff trajectory sparkline in the standings */
+.history-spark {
+  width: 34px;
+  height: 14px;
+  margin-left: 0.2rem;
+  opacity: 0.85;
+  flex: none;
+}
 .numeric { font-variant-numeric: tabular-nums; font-family: var(--mono-stack); font-size: 0.86rem; }
 
 .wildcard-block {
@@ -462,6 +511,31 @@ a:hover { text-decoration: underline; }
   font-size: 0.74rem;
   color: var(--fg-muted);
   padding-top: 0.05rem;
+}
+/* Probable starters */
+.upcoming-probables {
+  grid-column: 1 / -1;
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+  font-family: var(--mono-stack);
+  padding-top: 0.05rem;
+}
+.prob-tag {
+  display: inline-block;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 0 3px;
+  margin-right: 0.25rem;
+}
+.featured-probables {
+  font-size: 0.76rem;
+  color: var(--fg-muted);
+  font-family: var(--mono-stack);
+  margin-top: 0.45rem;
 }
 
 /* ----------- Featured matchup hero (audit P6) ----------- */

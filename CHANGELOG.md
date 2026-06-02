@@ -11,6 +11,28 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.16.0] — 2026-06-02
+### Added — Quick wins
+- **Favorites / "My Team"** — a ★ toggle on each standings row marks favorite
+  clubs (localStorage); favorites are highlighted everywhere they appear at once —
+  standings, live scoreboard, upcoming games, and the featured matchup. New pure
+  `favorites.js` (store + ordering) with 6 tests.
+- **Probable starters** — upcoming games (and the featured matchup) now show the
+  probable pitching matchup, e.g. "Cole vs Sale", via the schedule's
+  `probablePitcher` hydrate. 2 tests.
+- **Magic numbers** — division leaders show a clinch magic number ("MN 8") late
+  in the season (gated so it's hidden when not yet meaningful), and "✓ Clinched"
+  at zero. New pure `magicNumber` / `divisionMagic` in rankings-engine; 3 tests.
+- **Multi-day position trend** — building on the daily standings snapshots, each
+  team's run-differential trajectory is drawn as a small sparkline in the
+  standings once ≥3 days are on record. `history-engine.teamSeries`; tests added.
+- **Installable PWA + offline** — a web manifest, an SVG app icon, and a service
+  worker that caches the app shell. Installable to a phone home screen and works
+  offline after the first visit (the MLB API still goes to the network; the app's
+  cache handles data resilience). Theme-color matches the dark default.
+
+Suite now 92, green.
+
 ## [1.15.0] — 2026-06-02
 ### Removed
 - **All LLM / Cloudflare scaffolding** — the dashboard is now purely static again.

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="MLB Daily Dashboard">
+  <rect width="512" height="512" rx="96" fill="#0f1216"/>
+  <rect x="40" y="40" width="432" height="432" rx="72" fill="#131c2e"/>
+  <circle cx="256" cy="256" r="150" fill="#f6f7f9"/>
+  <g fill="none" stroke="#c1121f" stroke-width="9" stroke-linecap="round">
+    <path d="M168 150 q34 106 0 212"/>
+    <path d="M344 150 q-34 106 0 212"/>
+    <g stroke-width="7">
+      <path d="M150 196 l22 -10 M150 226 l24 -8 M150 256 l25 -6 M150 286 l24 8 M150 316 l22 10"/>
+      <path d="M362 196 l-22 -10 M362 226 l-24 -8 M362 256 l-25 -6 M362 286 l-24 8 M362 316 l-22 10"/>
+    </g>
+  </g>
+  <text x="256" y="430" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="56" font-weight="700" fill="#4f9cf9" letter-spacing="4">MLB</text>
+</svg>
