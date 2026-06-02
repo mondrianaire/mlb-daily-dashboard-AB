@@ -13,7 +13,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 3
       },
-      "counts": { "open": 11, "in_progress": 0, "resolved": 0, "regressed": 0 }
+      "counts": {
+        "open": 11,
+        "in_progress": 0,
+        "resolved": 0,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-05-31",
@@ -27,7 +32,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 4
       },
-      "counts": { "open": 9, "in_progress": 0, "resolved": 2, "regressed": 0 }
+      "counts": {
+        "open": 9,
+        "in_progress": 0,
+        "resolved": 2,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-05-31",
@@ -41,7 +51,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 5
       },
-      "counts": { "open": 8, "in_progress": 0, "resolved": 3, "regressed": 0 }
+      "counts": {
+        "open": 8,
+        "in_progress": 0,
+        "resolved": 3,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-05-31",
@@ -55,7 +70,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 5
       },
-      "counts": { "open": 7, "in_progress": 0, "resolved": 4, "regressed": 0 }
+      "counts": {
+        "open": 7,
+        "in_progress": 0,
+        "resolved": 4,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-05-31",
@@ -69,7 +89,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 6
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 4, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 4,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-05-31",
@@ -83,7 +108,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 6
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 5, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 5,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-05-31",
@@ -97,7 +127,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 6
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 6, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 6,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-05-31",
@@ -111,7 +146,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 6
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 6, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 6,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-06-02",
@@ -125,7 +165,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 6
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 7, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 7,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-06-02",
@@ -139,7 +184,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 7
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 9, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 9,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-06-02",
@@ -153,7 +203,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 7
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 10, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 10,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-06-02",
@@ -167,7 +222,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 7
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 11, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 11,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-06-02",
@@ -181,7 +241,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 7
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 12, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 12,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-06-02",
@@ -195,7 +260,12 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 8
       },
-      "counts": { "open": 6, "in_progress": 1, "resolved": 13, "regressed": 0 }
+      "counts": {
+        "open": 6,
+        "in_progress": 1,
+        "resolved": 13,
+        "regressed": 0
+      }
     },
     {
       "date": "2026-06-02",
@@ -209,7 +279,31 @@
         "maturity_monetization": 0,
         "maturity_differentiation": 8
       },
-      "counts": { "open": 5, "in_progress": 2, "resolved": 13, "regressed": 0 }
+      "counts": {
+        "open": 5,
+        "in_progress": 2,
+        "resolved": 13,
+        "regressed": 0
+      }
+    },
+    {
+      "date": "2026-06-02",
+      "commit": "964a981",
+      "scores": {
+        "ai_readiness": 42,
+        "maturity_product": 9,
+        "maturity_ai": 5,
+        "maturity_infra": 9,
+        "maturity_enterprise": 0,
+        "maturity_monetization": 0,
+        "maturity_differentiation": 8
+      },
+      "counts": {
+        "open": 4,
+        "in_progress": 3,
+        "resolved": 13,
+        "regressed": 0
+      }
     }
   ]
 }

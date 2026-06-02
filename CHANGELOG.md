@@ -11,6 +11,18 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.13.0] — 2026-06-02
+### Added
+- **Privacy-light, default-off telemetry** (`GAP-003`). The app keeps **local
+  per-feature counts** in localStorage — inspect them anytime with
+  `window.__telemetry()` in the console — so there's finally a signal for *what
+  gets used* (tab switches, theme choice, live-games seen). It is **off for the
+  network by default**: no cookies, no PII, no fingerprinting, no requests. To
+  enable aggregate analytics, point a `telemetry-endpoint` meta tag at a collector
+  that accepts a tiny `{ e, t }` JSON beacon (sent via `navigator.sendBeacon`).
+- New `telemetry.js` (injectable storage/beacon/clock) with 8 tests; wired to
+  load, tab, theme, and live-scoreboard events. Suite now 90, green.
+
 ## [1.12.0] — 2026-06-02
 ### Added
 - **API resilience — network-first cache with stale fallback** (`RISK-001`

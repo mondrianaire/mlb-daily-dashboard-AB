@@ -21,8 +21,15 @@
     server/briefing-worker.js (see server/README.md) and put its URL here.
   -->
   <meta name="briefing-llm-endpoint" content="" />
+  <!--
+    Optional privacy-light telemetry collector (GAP-003). Empty = OFF: the app
+    keeps local feature counts only (inspect with window.__telemetry()) and makes
+    no network call. To enable aggregate analytics, point this at a collector that
+    accepts a small JSON beacon { e: event, t: timestamp }. No PII is sent.
+  -->
+  <meta name="telemetry-endpoint" content="" />
   <!-- Cache-bust assets with the app version so deploys aren't masked by stale caches. -->
-  <link rel="stylesheet" href="styles.css?v=1.12.0" />
+  <link rel="stylesheet" href="styles.css?v=1.13.0" />
 </head>
 <body>
   <header class="site-header">
@@ -180,10 +187,10 @@
       Bump this (and CHANGELOG.md) on every release.
     -->
     <p class="app-version-strip">
-      <span id="app-version" class="app-version" data-version="1.12.0">v1.12.0</span>
+      <span id="app-version" class="app-version" data-version="1.13.0">v1.13.0</span>
     </p>
   </footer>
 
-  <script type="module" src="app.js?v=1.12.0"></script>
+  <script type="module" src="app.js?v=1.13.0"></script>
 </body>
 </html>

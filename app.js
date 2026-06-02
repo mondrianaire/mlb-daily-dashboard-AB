@@ -31,6 +31,7 @@ import { computeBriefing } from "./briefing-engine.js";
 import { maybeEnhanceBriefing } from "./briefing-llm.js";
 import { computePulse } from "./pulse-engine.js";
 import { onApiHealth } from "./api-cache.js";
+import { telemetry } from "./telemetry.js";
 import { TEAM_META, ALL_TEAM_IDS, teamMeta, getLogoUrl } from "./teams.js";
 import { preloadLogos, logoImgHtml } from "./logo-helpers.js";
 
@@ -877,6 +878,7 @@ function activateTab(targetId) {
     const on = p.id === targetId;
     p.hidden = !on;
   });
+  telemetry.track(targetId === "tab-trends" ? "tab:trends" : "tab:daily");
   if (targetId === "tab-trends") {
     // Fire-and-forget; ensureTrendsView is idempotent.
     ensureTrendsView();
@@ -907,7 +909,7 @@ function publishVersion() {
 // ============================================================
 //                LIVE SCOREBOARD
 // ============================================================
-const SCOREBOARD = { timer: null, LIVE_MS: 30000, IDLE_MS: 120000 };
+const SCOREBOARD = { timer: null, LIVE_MS: 30000, IDLE_MS: 120000, liveTracked: false };
 
 export async function refreshScoreboard() {
   try {
@@ -935,6 +937,11 @@ function renderScoreboard(sum) {
   if (!section || !body) return;
 
   if (!sum || sum.total === 0) { section.hidden = true; return; }
+
+  if (sum.liveCount > 0 && !SCOREBOARD.liveTracked) {
+    SCOREBOARD.liveTracked = true; // once per session — avoid per-poll inflation
+    telemetry.track("scoreboard:live", sum.liveCount);
+  }
 
   body.innerHTML = "";
   for (const g of sortForDisplay(sum.games)) body.appendChild(renderScoreGame(g));
@@ -1031,6 +1038,7 @@ function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   try { localStorage.setItem("mlb-theme", theme); } catch (_) { /* ignore */ }
   updateThemeToggle(theme);
+  telemetry.track("theme:" + theme);
 }
 function updateThemeToggle(theme) {
   const btn = document.getElementById("theme-toggle");
@@ -1052,6 +1060,9 @@ function wireThemeToggle() {
 // ============================================================
 function bootstrap() {
   publishVersion();
+  // Owner-inspectable local usage counts: run window.__telemetry() in the console.
+  try { window.__telemetry = () => telemetry.snapshot(); } catch (_) { /* ignore */ }
+  telemetry.track("load");
   wireThemeToggle();
   wireApiHealth();
   wireTabs();

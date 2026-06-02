@@ -7,8 +7,14 @@
       "category": "opportunity",
       "priority": "high",
       "status": "resolved",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "watchability-engine.js — pure scoring module (form/quality/stakes/streak + division bonus)",
         "app.js renderUpcoming/renderGameRow — top-3 badges, reasons, lead-ordering",
@@ -16,8 +22,18 @@
         "verified in-browser via mocked fetch: 3 of 4 games badged, marquee leads"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 7/10. Deterministic ranking over already-fetched data; no backend/LLM needed. Highest-feasibility recommendation." },
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 1 (v1.2.0): built + unit-tested + browser-verified. Deterministic, no backend, no new fetches. Shipped to working tree; pending deploy." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Strategic Fit 7/10. Deterministic ranking over already-fetched data; no backend/LLM needed. Highest-feasibility recommendation."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "resolved",
+          "note": "Phase 1 (v1.2.0): built + unit-tested + browser-verified. Deterministic, no backend, no new fetches. Shipped to working tree; pending deploy."
+        }
       ]
     },
     {
@@ -26,8 +42,14 @@
       "category": "opportunity",
       "priority": "high",
       "status": "resolved",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "briefing-engine.js — pure rule-based engine (record/streak/rundiff/lead/race/skid/slate)",
         "app.js renderBriefing + #briefing card in index.html",
@@ -35,9 +57,24 @@
         "verified in-browser via mocked fetch: 5 grounded highlights rendered, all traceable to real numbers"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 7/10. Template version ships with no backend; LLM upgrade gated on serverless key-proxy (see GAP-001)." },
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 2 (v1.3.0): template version built + unit-tested + browser-verified. Deterministic, no backend, no new fetches, no fabricated stats. LLM phrasing upgrade remains a future Phase-4 option gated on GAP-001." },
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 4 (v1.5.0): the optional LLM-phrasing upgrade is now built (default-off) via the GAP-001 backend. Stays resolved — deterministic version is the source of truth; LLM only rewords behind a triple numeric guard." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Strategic Fit 7/10. Template version ships with no backend; LLM upgrade gated on serverless key-proxy (see GAP-001)."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "resolved",
+          "note": "Phase 2 (v1.3.0): template version built + unit-tested + browser-verified. Deterministic, no backend, no new fetches, no fabricated stats. LLM phrasing upgrade remains a future Phase-4 option gated on GAP-001."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "resolved",
+          "note": "Phase 4 (v1.5.0): the optional LLM-phrasing upgrade is now built (default-off) via the GAP-001 backend. Stays resolved — deterministic version is the source of truth; LLM only rewords behind a triple numeric guard."
+        }
       ]
     },
     {
@@ -46,8 +83,14 @@
       "category": "opportunity",
       "priority": "low",
       "status": "resolved",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "trends-explainers.js — pure caption helpers for 4 charts (RSRA, OPS/ERA, home/road, power/discipline)",
         "trends-charts.js setExplainer() injects captions into each card, refreshed on filter change",
@@ -55,8 +98,18 @@
         "verified in-browser via stubbed Chart.js: all 4 captions render with correct leaders + styling"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Strategic Fit 5/10. Cheap polish; template fill, no dependency. Lower ceiling because static descriptions already orient users." },
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 3 (v1.4.0): built + unit-tested + browser-verified. Deterministic captions over already-merged Trends data; no backend, no new fetches; updates with filters." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Strategic Fit 5/10. Cheap polish; template fill, no dependency. Lower ceiling because static descriptions already orient users."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "resolved",
+          "note": "Phase 3 (v1.4.0): built + unit-tested + browser-verified. Deterministic captions over already-merged Trends data; no backend, no new fetches; updates with filters."
+        }
       ]
     },
     {
@@ -65,8 +118,14 @@
       "category": "gap",
       "priority": "high",
       "status": "in-progress",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "server/briefing-worker.js — Cloudflare Worker proxy (Anthropic Claude), default-off",
         "briefing-llm.js — client enhancer with deterministic fallback",
@@ -74,8 +133,18 @@
         "key held as a Wrangler secret, never in the repo or browser"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition." },
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "in-progress", "note": "Phase 4 (v1.5.0): a deployable serverless backend path now EXISTS in the repo (Cloudflare Worker + client integration + runbook + cost model), unblocking keyed AI. Marked in-progress not resolved because it is default-off and not deployed — activation needs the owner's Cloudflare account + ANTHROPIC_API_KEY. Resolves once deployed." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "in-progress",
+          "note": "Phase 4 (v1.5.0): a deployable serverless backend path now EXISTS in the repo (Cloudflare Worker + client integration + runbook + cost model), unblocking keyed AI. Marked in-progress not resolved because it is default-off and not deployed — activation needs the owner's Cloudflare account + ANTHROPIC_API_KEY. Resolves once deployed."
+        }
       ]
     },
     {
@@ -84,15 +153,26 @@
       "category": "gap",
       "priority": "medium",
       "status": "open",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "no DB/ORM in repo",
         "currentSeason() data-client.js:20 single current year",
         "dailyFetchCache app.js:36 is per-session only"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Removes the basis for predictive AI (no owned training data) and multi-season browsing." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Removes the basis for predictive AI (no owned training data) and multi-season browsing."
+        }
       ]
     },
     {
@@ -100,14 +180,33 @@
       "title": "No telemetry / analytics — zero signal on what users view",
       "category": "gap",
       "priority": "medium",
-      "status": "open",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "status": "in-progress",
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
       "evidence": [
-        "no analytics/tracking calls anywhere in repo"
+        "telemetry.js — local per-feature counts (localStorage) + optional default-off beacon",
+        "wired to load/tab/theme/scoreboard events; window.__telemetry() inspector",
+        "no aggregate collector deployed (static site has no default backend)"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Prerequisite for personalization/recommendations and for evidence-based prioritization of OPP-004 (Q&A)." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Prerequisite for personalization/recommendations and for evidence-based prioritization of OPP-004 (Q&A)."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "in-progress",
+          "note": "v1.13.0: privacy-light instrumentation layer added (telemetry.js, 8 tests). Always-on LOCAL counts via window.__telemetry() give immediate per-feature signal; network beaconing is default-OFF (no PII/cookies) and lights up only when a telemetry-endpoint meta tag points at a collector. In-progress not resolved: aggregate analytics still needs a deployed collector (same backend gap as GAP-001)."
+        }
       ]
     },
     {
@@ -116,16 +215,37 @@
       "category": "gap",
       "priority": "medium",
       "status": "resolved",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "tests/rankings-engine.test.js, tests/trends-engine.test.js, tests/watchability-engine.test.js — 23 cases passing via node:test",
         "package.json adds type:module + test script; no runtime deps added"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Low-cost, high-confidence win: the two pure engines are trivially unit-testable and underpin every view." },
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "in-progress", "note": "Phase 0: node:test harness stood up; both existing pure engines (rankings, trends) now unit-tested, 15 cases green." },
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "resolved", "note": "Phase 1: watchability engine added with 8 tests; all current pure compute engines now covered (23 cases). New engines should ship with tests per this established practice." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Low-cost, high-confidence win: the two pure engines are trivially unit-testable and underpin every view."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "in-progress",
+          "note": "Phase 0: node:test harness stood up; both existing pure engines (rankings, trends) now unit-tested, 15 cases green."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "resolved",
+          "note": "Phase 1: watchability engine added with 8 tests; all current pure compute engines now covered (23 cases). New engines should ship with tests per this established practice."
+        }
       ]
     },
     {
@@ -134,16 +254,32 @@
       "category": "risk",
       "priority": "high",
       "status": "in-progress",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-06-02", "commit": "964a981" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
       "evidence": [
         "data-client.js:17 API_BASE statsapi.mlb.com",
         "api-cache.js — network-first sessionStorage cache with stale fallback (≤6h)",
         "degraded 'showing cached data' notice; still no secondary data source"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data." },
-        { "date": "2026-06-02", "commit": "964a981", "status": "in-progress", "note": "v1.12.0: materially MITIGATED — network-first cache with stale fallback (api-cache.js) means a transient failure serves the last good data instead of blanking the page (covers the new live-polling path too), with an auto-clearing degraded notice. 7 tests + browser-verified. Residual risk remains: a permanent/long (>6h) outage or a breaking API change still has no second source. Kept in-progress (mitigated, not eliminated)." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "in-progress",
+          "note": "v1.12.0: materially MITIGATED — network-first cache with stale fallback (api-cache.js) means a transient failure serves the last good data instead of blanking the page (covers the new live-polling path too), with an auto-clearing degraded notice. 7 tests + browser-verified. Residual risk remains: a permanent/long (>6h) outage or a breaking API change still has no second source. Kept in-progress (mitigated, not eliminated)."
+        }
       ]
     },
     {
@@ -152,14 +288,25 @@
       "category": "risk",
       "priority": "low",
       "status": "open",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "GAP-002 (no training data)",
         "Layer 3 category sweep — Predictive AI cut"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Logged as a guardrail: resist adding 'win probability' numbers that look authoritative but aren't backed by a real model. A wrong number on a stats product discredits the whole site." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Logged as a guardrail: resist adding 'win probability' numbers that look authoritative but aren't backed by a real model. A wrong number on a stats product discredits the whole site."
+        }
       ]
     },
     {
@@ -168,15 +315,26 @@
       "category": "asset",
       "priority": "high",
       "status": "open",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "manifest.json:54 contracts_satisfied",
         "pure compute layer: rankings-engine.js, trends-engine.js",
         "DOM isolated to app.js (app.js:3)"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. The product's strongest durable asset: separation of data/compute/view makes every recommended feature cheap to add. Drives the +30 cleanliness credit in AI Readiness." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. The product's strongest durable asset: separation of data/compute/view makes every recommended feature cheap to add. Drives the +30 cleanliness credit in AI Readiness."
+        }
       ]
     },
     {
@@ -185,15 +343,26 @@
       "category": "asset",
       "priority": "medium",
       "status": "open",
-      "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
       "evidence": [
         "DataClientError data-client.js:25",
         "showError/setPanelEmpty app.js:415-449",
         "ALL_TEAM_IDS fill data-client.js:96"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. Production-grade resilience uncommon at this scale; renders 30 teams even on partial API responses." }
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Baseline. Production-grade resilience uncommon at this scale; renders 30 teams even on partial API responses."
+        }
       ]
     },
     {
@@ -202,8 +371,14 @@
       "category": "tech-debt",
       "priority": "high",
       "status": "resolved",
-      "first_seen": { "date": "2026-05-31", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-05-31", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "logo-helpers.js loadOne created marker Image() with no width/height",
         "MLB cap SVGs have viewBox 0 0 300 300 but no intrinsic width/height -> bare <img> defaults to 150px",
@@ -211,8 +386,18 @@
         "reproduced in-browser: ~150px markers overflowing the OPS-vs-ERA / RS-vs-RA / Power-vs-Discipline scatters"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "aac7cf0", "status": "open", "note": "Reported by user post-ship: logos too large, throwing off charts/graphs. Root-caused to dimensionless SVGs + Chart.js image point-style sizing." },
-        { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.1: pinned preloaded marker images to 22x22 in logo-helpers.js. Verified in-browser (markers 22px vs 150px before; mechanism + fresh-module render confirmed). Inline DOM logos were never affected." }
+        {
+          "date": "2026-05-31",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Reported by user post-ship: logos too large, throwing off charts/graphs. Root-caused to dimensionless SVGs + Chart.js image point-style sizing."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.5.1: pinned preloaded marker images to 22x22 in logo-helpers.js. Verified in-browser (markers 22px vs 150px before; mechanism + fresh-module render confirmed). Inline DOM logos were never affected."
+        }
       ]
     },
     {
@@ -221,15 +406,31 @@
       "category": "opportunity",
       "priority": "medium",
       "status": "resolved",
-      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "Design audit App 05, Finding 03 / Priority 2 (Documents/Claude/Design Audits/app-05-mlb-daily-dashboard)",
         "briefing was a flat equal-weight bullet list"
       ],
       "history": [
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Surfaced by the App 05 design audit: the briefing is the product's lede but was dressed as a footnote (uniform bullets)." },
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.6.0: broadcast-wire treatment — enlarged lead story with team-color rule + dateline + team-chip rundown. Engine exposes teamId (stays pure); LLM path preserves it. 63 tests green; browser-verified (lead rule = lead team's color, chips = team primaries, neutral for league-wide lines)." }
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Surfaced by the App 05 design audit: the briefing is the product's lede but was dressed as a footnote (uniform bullets)."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.6.0: broadcast-wire treatment — enlarged lead story with team-color rule + dateline + team-chip rundown. Engine exposes teamId (stays pure); LLM path preserves it. 63 tests green; browser-verified (lead rule = lead team's color, chips = team primaries, neutral for league-wide lines)."
+        }
       ]
     },
     {
@@ -238,15 +439,31 @@
       "category": "opportunity",
       "priority": "medium",
       "status": "resolved",
-      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "Design audit App 05, Finding 01 / Priority 3",
         "pulse-engine.js + renderPulse; data reused from already-computed trends, no new fetch"
       ],
       "history": [
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P3/F1: the product is named for trends but opens on a static standings table." },
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.7.0: trend-pulse strip (hottest/coldest, logo+L7 record+sparkline+run diff) on the Daily view. Pure pulse-engine with 5 tests; browser-verified (NYY rising +20, BOS cooling -31)." }
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Audit P3/F1: the product is named for trends but opens on a static standings table."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.7.0: trend-pulse strip (hottest/coldest, logo+L7 record+sparkline+run diff) on the Daily view. Pure pulse-engine with 5 tests; browser-verified (NYY rising +20, BOS cooling -31)."
+        }
       ]
     },
     {
@@ -255,15 +472,31 @@
       "category": "opportunity",
       "priority": "medium",
       "status": "resolved",
-      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "Design audit App 05, Finding 04 / Priority 4",
         "Daily division standings Diff column + diverging bar; Trends table Diff bar; tabular-nums globally"
       ],
       "history": [
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P4/F4: proportional digits wander; run differential — the truest form signal — was a faint number, not the table's spine." },
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.7.0: tabular-lining mono numerals across standings; run differential promoted to a colored tabular value with a diverging bar in both the Daily division tables and the Trends standings table. Browser-verified (NYY +78 with green bar)." }
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Audit P4/F4: proportional digits wander; run differential — the truest form signal — was a faint number, not the table's spine."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.7.0: tabular-lining mono numerals across standings; run differential promoted to a colored tabular value with a diverging bar in both the Daily division tables and the Trends standings table. Browser-verified (NYY +78 with green bar)."
+        }
       ]
     },
     {
@@ -272,15 +505,31 @@
       "category": "opportunity",
       "priority": "medium",
       "status": "resolved",
-      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "Design audit App 05, Priority 6",
         "renderFeaturedMatchup over watchability scored[0]; excluded from the day list"
       ],
       "history": [
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P6: 'what should I watch tonight' sat as a small inline pill rather than a featured element." },
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.8.0: featured matchup hero atop the Upcoming panel (big logos, W-L records, reason, first pitch); de-duplicated from the day list. Browser-verified (NYY 41-22 @ BOS 36-27, reason + time, removed from list)." }
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Audit P6: 'what should I watch tonight' sat as a small inline pill rather than a featured element."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.8.0: featured matchup hero atop the Upcoming panel (big logos, W-L records, reason, first pitch); de-duplicated from the day list. Browser-verified (NYY 41-22 @ BOS 36-27, reason + time, removed from list)."
+        }
       ]
     },
     {
@@ -289,15 +538,31 @@
       "category": "opportunity",
       "priority": "high",
       "status": "resolved",
-      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "User request; directly serves the second-screen-during-games telos",
         "scoreboard-engine.js (pure) + data-client.fetchScoreboard (linescore hydrate) + polling loop in app.js"
       ],
       "history": [
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Requested: live score functionality. Strong telos fit (read-only second-screen companion during games), previously absent — the dashboard only showed schedule + final results." },
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.9.0: live scoreboard on the Daily tab (running score, inning/outs, pulsing live dot; finals + start times), ordered live-first, auto-refresh 30s live / 120s idle and stops with no games. Pure engine with 7 tests; browser-verified across live/final/scheduled states." }
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Requested: live score functionality. Strong telos fit (read-only second-screen companion during games), previously absent — the dashboard only showed schedule + final results."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.9.0: live scoreboard on the Daily tab (running score, inning/outs, pulsing live dot; finals + start times), ordered live-first, auto-refresh 30s live / 120s idle and stops with no games. Pure engine with 7 tests; browser-verified across live/final/scheduled states."
+        }
       ]
     },
     {
@@ -306,15 +571,31 @@
       "category": "opportunity",
       "priority": "low",
       "status": "resolved",
-      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "Design audit App 05, Finding 05 / Priority 5",
         "inline Chart.js quadrant/diagonal plugins in trends-charts.js (no new dependency)"
       ],
       "history": [
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P5/F5: the scatter panels carried stock axes and unlabeled quadrants; meaning lived in the caption, not the chart." },
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.10.0: median-crosshair shaded+labeled quadrants on OPS/ERA and Power/Discipline; shaded+labeled break-even diagonal on RS/RA. Inline Chart.js plugin, no new dependency. Verified plugin geometry (elite=top-right) + hooks fire on draw. Also fixed the RS/RA caption that described the diagonal backwards." }
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Audit P5/F5: the scatter panels carried stock axes and unlabeled quadrants; meaning lived in the caption, not the chart."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.10.0: median-crosshair shaded+labeled quadrants on OPS/ERA and Power/Discipline; shaded+labeled break-even diagonal on RS/RA. Inline Chart.js plugin, no new dependency. Verified plugin geometry (elite=top-right) + hooks fire on draw. Also fixed the RS/RA caption that described the diagonal backwards."
+        }
       ]
     },
     {
@@ -323,15 +604,31 @@
       "category": "opportunity",
       "priority": "medium",
       "status": "resolved",
-      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "Design audit App 05, Finding 02 / Priority 1",
         "data-theme attribute model + header toggle + localStorage persistence + pre-paint head script"
       ],
       "history": [
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P1/F2: a light Daily tab flipped to a dark Trends tab — the product read as two apps. The default was OS-driven, so on light OS the discontinuity was visible." },
-        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.11.0: explicit data-theme model, DEFAULT DARK so both tabs are unified out of the box; header toggle for light, persisted to localStorage, applied pre-paint (no flash). color-scheme per theme. Browser-verified: default dark, toggle->light (bg #f6f7f9), persists across reload. Completes all 5 design-audit findings (P1-P6)." }
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Audit P1/F2: a light Daily tab flipped to a dark Trends tab — the product read as two apps. The default was OS-driven, so on light OS the discontinuity was visible."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.11.0: explicit data-theme model, DEFAULT DARK so both tabs are unified out of the box; header toggle for light, persisted to localStorage, applied pre-paint (no flash). color-scheme per theme. Browser-verified: default dark, toggle->light (bg #f6f7f9), persists across reload. Completes all 5 design-audit findings (P1-P6)."
+        }
       ]
     },
     {
@@ -340,18 +637,44 @@
       "category": "tech-debt",
       "priority": "high",
       "status": "resolved",
-      "first_seen": { "date": "2026-05-31", "commit": "aac7cf0" },
-      "last_seen": { "date": "2026-05-31", "commit": "aac7cf0" },
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "aac7cf0"
+      },
+      "last_seen": {
+        "date": "2026-05-31",
+        "commit": "aac7cf0"
+      },
       "evidence": [
         "Chart.js responsive:true + maintainAspectRatio:false in a flex .trends-body with indeterminate height",
         "canvas height fed back into layout -> collapse (58px) or unbounded growth",
         "home-road logo strip lived inside the canvas container, compounding the issue"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "aac7cf0", "status": "open", "note": "Reported by user: Trends UI bug causing an infinitely growing chart." },
-        { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.2: gave chart bodies a definite 280px height with the canvas absolutely filling it (Chart.js's documented container requirement); moved the home/road strip to a sibling below the body. Verified in-browser: canvas stable at 280px across 0-4.7s samples, no growth/collapse. Scoped via :has(> canvas) so table/heatmap bodies are untouched." },
-        { "date": "2026-05-31", "commit": "aac7cf0", "status": "regressed", "note": "User still saw growth after 1.5.2: the fix was masked by (a) stale CSS cache — styles.css had no cache-busting, so the old stylesheet kept loading while the HTML version marker updated; and (b) reliance on the :has() selector. The code fix was correct but didn't reach the browser." },
-        { "date": "2026-05-31", "commit": "aac7cf0", "status": "resolved", "note": "v1.5.3: hardened — chart containers carry an explicit .trends-body--chart class (no :has() dependency), asset URLs are version-cache-busted (styles.css?v=, app.js?v=), and a hard max-height:280px backstop added. Verified in-browser: class rule applies, CSS loads fresh, canvases stable at 280px." }
+        {
+          "date": "2026-05-31",
+          "commit": "aac7cf0",
+          "status": "open",
+          "note": "Reported by user: Trends UI bug causing an infinitely growing chart."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.5.2: gave chart bodies a definite 280px height with the canvas absolutely filling it (Chart.js's documented container requirement); moved the home/road strip to a sibling below the body. Verified in-browser: canvas stable at 280px across 0-4.7s samples, no growth/collapse. Scoped via :has(> canvas) so table/heatmap bodies are untouched."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "aac7cf0",
+          "status": "regressed",
+          "note": "User still saw growth after 1.5.2: the fix was masked by (a) stale CSS cache — styles.css had no cache-busting, so the old stylesheet kept loading while the HTML version marker updated; and (b) reliance on the :has() selector. The code fix was correct but didn't reach the browser."
+        },
+        {
+          "date": "2026-05-31",
+          "commit": "aac7cf0",
+          "status": "resolved",
+          "note": "v1.5.3: hardened — chart containers carry an explicit .trends-body--chart class (no :has() dependency), asset URLs are version-cache-busted (styles.css?v=, app.js?v=), and a hard max-height:280px backstop added. Verified in-browser: class rule applies, CSS loads fresh, canvases stable at 280px."
+        }
       ]
     }
   ]
