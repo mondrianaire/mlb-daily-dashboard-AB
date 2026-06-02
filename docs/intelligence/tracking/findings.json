@@ -830,6 +830,72 @@
           "note": "v1.16.0: web manifest + SVG icon + service worker caching the app shell; installable, works offline after first load. Browser-verified (SW registered)."
         }
       ]
+    },
+    {
+      "id": "UX-001",
+      "title": "Mobile Trends overflow — widgets clip narrow viewports",
+      "category": "defect",
+      "priority": "high",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "evidence": [
+        "audit-2026-05-31 Finding 03 (the audit's only true defect, ranked P1)",
+        "12-column Standings table, Last-10 leaderboard, and 14-day heatmap pushed past a 390px viewport"
+      ],
+      "history": [
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Audit-2026-05-31 Finding 03: at 390px the Standings table, Last-10 leaderboard, and 14-day heatmap clip the viewport — content the user cannot read. The one finding that is a defect rather than a priorities debate."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.17.0: at <=640px Standings collapses to a glance set (Team/W/L/GB/Last 10) with a 'Show all columns' tap-toggle that reveals the full table and scrolls it horizontally; long club name dropped (abbr kept); heatmap gains a scroll affordance; leaderboard columns tightened. Desktop unchanged. Browser-verified at 375px (5 cols) and 1280px (12 cols, toggle hidden)."
+        }
+      ]
+    },
+    {
+      "id": "UX-002",
+      "title": "Copy honesty — 'Last updated' overclaim + untimezoned game times",
+      "category": "defect",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "evidence": [
+        "audit-2026-05-31 Finding 05",
+        "header 'Last updated' implied a backend cadence the static page lacks; schedule times shown with no timezone"
+      ],
+      "history": [
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Audit-2026-05-31 Finding 05: 'Last updated' promises a cadence the page doesn't have (it fetches on every load), and '8:10 PM'-style times carry no timezone — ambiguous for a data product."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.17.0: header now reads 'Fetched HH:MM TZ on load' (matches footer); all game times across scoreboard/upcoming/featured carry the viewer's local timezone abbreviation (e.g. '19:10 EDT') via Intl.DateTimeFormat. Browser-verified (tz resolved EDT)."
+        }
+      ]
     }
   ]
 }

@@ -66,6 +66,7 @@ let initialized = false;
 export function initTrendsView({ teams, standings, hitting, pitching, recentGames }) {
   MLB_DATA = buildMergedData({ teams, standings, hitting, pitching, recentGames });
   wireFilterChips();
+  wireColsToggle();
   // Render once immediately (charts may show colored bubbles until logos load).
   renderAll();
   initialized = true;
@@ -282,12 +283,12 @@ function renderStandings() {
   const rows = sorted.map((t) => {
     const cells = COLS.map((c) => {
       if (c.key === "team") {
-        return `<td class="team-cell-wrap"><div class="trends-team-cell">${logoImgHtml(t.id, "cap", 24, "trends-team-logo")}<span class="trends-abbr">${t.abbr}</span><span class="trends-name">${t.name}</span></div></td>`;
+        return `<td class="team-cell-wrap" data-key="team"><div class="trends-team-cell">${logoImgHtml(t.id, "cap", 24, "trends-team-logo")}<span class="trends-abbr">${t.abbr}</span><span class="trends-name">${t.name}</span></div></td>`;
       }
       const v = c.get(t);
       const cls = (c.numeric ? "numeric " : "") + (c.classify ? c.classify(t[c.key] ?? v, t) : "");
       const display = c.fmt ? c.fmt(v, t) : v;
-      return `<td class="${cls.trim()}">${display}</td>`;
+      return `<td class="${cls.trim()}" data-key="${c.key}">${display}</td>`;
     }).join("");
     return `<tr>${cells}</tr>`;
   }).join("");
@@ -301,6 +302,19 @@ function renderStandings() {
       else { sortKey = k; sortAsc = false; }
       renderStandings();
     });
+  });
+}
+
+// Mobile-only "Show all columns" toggle. On narrow viewports the standings
+// table collapses to a glance set (Team/W/L/GB/Last 10); this reveals the rest.
+function wireColsToggle() {
+  const btn = document.getElementById("standings-cols-toggle");
+  const table = document.getElementById("standings-table");
+  if (!btn || !table) return;
+  btn.addEventListener("click", () => {
+    const expanded = table.classList.toggle("cols-all");
+    btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+    btn.textContent = expanded ? "Show fewer columns" : "Show all columns";
   });
 }
 

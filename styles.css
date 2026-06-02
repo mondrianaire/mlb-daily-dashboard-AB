@@ -1182,6 +1182,52 @@ table.trends-standings .streak-l { color: var(--trends-bad); font-weight: 700; }
 .trends-surface canvas { max-width: 100%; }
 
 /* ====================================================================
+   Mobile Trends responsive pass (audit-2026-05-31 Finding 03)
+   The standings table carried 12 columns and clipped narrow viewports.
+   On mobile it collapses to a glance set (Team / W / L / GB / Last 10)
+   with a tap-to-expand toggle; the heatmap gains a scroll affordance.
+   ==================================================================== */
+.cols-toggle {
+  display: none; /* desktop: full table already fits */
+  margin: 2px 0 10px;
+  padding: 5px 12px;
+  background: var(--trends-panel-2);
+  color: var(--trends-text);
+  border: 1px solid var(--trends-line);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cols-toggle:hover { border-color: var(--trends-accent); color: var(--trends-accent); }
+.scroll-hint {
+  display: none; /* desktop: full heatmap fits */
+  color: var(--trends-text-3);
+  font-size: 11px;
+  font-style: italic;
+  margin: 0 0 6px;
+}
+
+@media (max-width: 640px) {
+  .cols-toggle { display: inline-block; }
+  .scroll-hint { display: block; }
+
+  /* Collapse standings to the four-plus-team glance columns until expanded. */
+  table.trends-standings:not(.cols-all) th:not([data-key="team"]):not([data-key="w"]):not([data-key="l"]):not([data-key="gb"]):not([data-key="last10"]),
+  table.trends-standings:not(.cols-all) td:not([data-key="team"]):not([data-key="w"]):not([data-key="l"]):not([data-key="gb"]):not([data-key="last10"]) {
+    display: none;
+  }
+  /* Drop the long club name; keep the abbreviation so the row stays scannable. */
+  table.trends-standings .trends-name { display: none; }
+  /* When expanded, the full table scrolls inside its card instead of clipping. */
+  .trends-body--standings { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.trends-standings.cols-all { min-width: 560px; }
+
+  /* Last-10 leaderboard: tighten the fixed columns so the bar never overflows. */
+  .trends-lb-row { grid-template-columns: 24px 38px 1fr 76px; gap: 6px; }
+}
+
+/* ====================================================================
    Team logos (rev-2) — sourced from https://www.mlbstatic.com/team-logos/
    ==================================================================== */
 .logo-img {

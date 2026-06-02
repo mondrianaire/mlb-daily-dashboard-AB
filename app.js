@@ -788,11 +788,9 @@ function updateTimestamp(date) {
   const iso = date.toISOString();
   const hh = String(date.getHours()).padStart(2, "0");
   const mm = String(date.getMinutes()).padStart(2, "0");
-  const y = date.getFullYear();
-  const mo = String(date.getMonth() + 1).padStart(2, "0");
-  const da = String(date.getDate()).padStart(2, "0");
+  const tz = tzAbbr(date);
   el.setAttribute("datetime", iso);
-  el.textContent = `${y}-${mo}-${da} ${hh}:${mm}`;
+  el.textContent = tz ? `${hh}:${mm} ${tz}` : `${hh}:${mm}`;
 }
 
 // ============================================================
@@ -878,13 +876,31 @@ function probableMatchup(game) {
 function isScheduled(status) {
   return !status || status === "Scheduled" || status === "Pre-Game" || status === "Warmup";
 }
+// Browser-local timezone abbreviation (e.g. "EDT", "PST", "GMT+2").
+// Cached per session — the zone does not change while the page is open.
+let _tzAbbrCache;
+function tzAbbr(date) {
+  if (_tzAbbrCache !== undefined) return _tzAbbrCache;
+  try {
+    const parts = new Intl.DateTimeFormat(undefined, {
+      timeZoneName: "short",
+    }).formatToParts(date || new Date());
+    const p = parts.find((x) => x.type === "timeZoneName");
+    _tzAbbrCache = p ? p.value : "";
+  } catch {
+    _tzAbbrCache = "";
+  }
+  return _tzAbbrCache;
+}
+
 function formatGameTime(iso) {
   if (!iso) return "";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
   const hh = String(d.getHours()).padStart(2, "0");
   const mm = String(d.getMinutes()).padStart(2, "0");
-  return `${hh}:${mm}`;
+  const tz = tzAbbr(d);
+  return tz ? `${hh}:${mm} ${tz}` : `${hh}:${mm}`;
 }
 function escapeHtml(s) {
   return String(s ?? "")
