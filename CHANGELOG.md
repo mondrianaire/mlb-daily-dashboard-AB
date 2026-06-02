@@ -10,14 +10,20 @@ there together on every release — they are the single source of truth used for
 deploy/testing verification.
 
 ## [Unreleased]
-### Tooling
-- **One-command briefing-worker deploy** (`npm run deploy:briefing`) — a guided
-  `server/deploy.mjs` that handles wrangler auth, the API-key secret, the optional
-  KV cache, the deploy, **auto-wires the worker URL into `index.html`**, and offers
-  to commit + push. You only authorize Cloudflare (browser) and paste your key.
-- Optional `.github/workflows/deploy-briefing-worker.yml` for fully-automated CI
-  redeploys (no-op until you add `CLOUDFLARE_API_TOKEN` + `ANTHROPIC_API_KEY` repo
-  secrets). No app behavior change.
+
+## [1.15.0] — 2026-06-02
+### Removed
+- **All LLM / Cloudflare scaffolding** — the dashboard is now purely static again.
+  The serverless worker existed only to safely hold an API key for *optional*
+  LLM rephrasing of the briefing; that's over-engineered for a read-only data
+  dashboard that already refreshes itself live from the MLB API on every load.
+  Deleted: `server/` (worker, `wrangler.toml`, deploy script, runbook),
+  `briefing-llm.js` + its tests, the CI deploy workflow, `docs/intelligence/AI_STACK.md`,
+  the `briefing-llm-endpoint` meta tag, the `deploy:briefing` npm script, and the
+  client enhancement call.
+- **No functional change.** The deterministic briefing is generated fresh on each
+  load and remains the source of truth — exactly what was already showing, since
+  the LLM path was default-off and never enabled. Suite trimmed to 80, green.
 
 ## [1.14.0] — 2026-06-02
 ### Added

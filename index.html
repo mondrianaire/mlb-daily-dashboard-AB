@@ -16,12 +16,6 @@
   <title>MLB Daily Dashboard</title>
   <meta name="description" content="A live daily snapshot of all 30 MLB teams: weekly trends, upcoming games, overall standings, and full season trend widgets." />
   <!--
-    Optional daily-briefing LLM rephrasing proxy (Phase 4). Empty = OFF: the
-    deterministic briefing is used and no network call is made. To enable, deploy
-    server/briefing-worker.js (see server/README.md) and put its URL here.
-  -->
-  <meta name="briefing-llm-endpoint" content="" />
-  <!--
     Optional privacy-light telemetry collector (GAP-003). Empty = OFF: the app
     keeps local feature counts only (inspect with window.__telemetry()) and makes
     no network call. To enable aggregate analytics, point this at a collector that
@@ -29,7 +23,7 @@
   -->
   <meta name="telemetry-endpoint" content="" />
   <!-- Cache-bust assets with the app version so deploys aren't masked by stale caches. -->
-  <link rel="stylesheet" href="styles.css?v=1.14.0" />
+  <link rel="stylesheet" href="styles.css?v=1.15.0" />
 </head>
 <body>
   <header class="site-header">
@@ -187,10 +181,10 @@
       Bump this (and CHANGELOG.md) on every release.
     -->
     <p class="app-version-strip">
-      <span id="app-version" class="app-version" data-version="1.14.0">v1.14.0</span>
+      <span id="app-version" class="app-version" data-version="1.15.0">v1.15.0</span>
     </p>
   </footer>
 
-  <script type="module" src="app.js?v=1.14.0"></script>
+  <script type="module" src="app.js?v=1.15.0"></script>
 </body>
 </html>

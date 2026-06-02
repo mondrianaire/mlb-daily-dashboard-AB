@@ -28,7 +28,6 @@ import { computeWeeklyTrends } from "./trends-engine.js";
 import { computeRankings } from "./rankings-engine.js";
 import { computeWatchability } from "./watchability-engine.js";
 import { computeBriefing } from "./briefing-engine.js";
-import { maybeEnhanceBriefing } from "./briefing-llm.js";
 import { computePulse } from "./pulse-engine.js";
 import { onApiHealth } from "./api-cache.js";
 import { telemetry } from "./telemetry.js";
@@ -142,16 +141,7 @@ export async function init() {
 
     renderBriefing(briefing);
     renderPulse(computePulse(trends), teams);
-    // (rankDeltas flows into renderRankings below)
-    // Optional LLM phrasing (Phase 4): default-OFF. If an endpoint is configured,
-    // this fire-and-forget call rephrases the highlights in place; on anything
-    // less than success the deterministic briefing above simply stands.
-    if (briefing?.highlights?.length) {
-      maybeEnhanceBriefing(
-        briefing.highlights,
-        (enhanced) => renderBriefing({ highlights: enhanced })
-      );
-    }
+
     // Team W–L lookup for the featured matchup card.
     const teamRecords = new Map(
       (standings || []).map((s) => [s.teamId, `${s.wins}-${s.losses}`])
