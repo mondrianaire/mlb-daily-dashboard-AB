@@ -2,7 +2,13 @@
 
 > A web-based daily dashboard that, when opened in a browser, shows current Major League Baseball team standings, weekly performance trends, and upcoming game schedules for all teams.
 
+**▶ Live: https://mondrianaire.github.io/mlb-daily-dashboard-AB/**
+
 This standalone repository is the production deliverable from AutoBuilder run **`mlb-daily-dashboard`**, forked here on 2026-05-31T03:30:41Z for ongoing product development.
+
+## What's here (product life)
+
+A static, zero-build site (vanilla ES modules + Chart.js via CDN) that reads live from the public MLB Stats API. Beyond the original standings/trends/schedule, product-life development has added: a **live scoreboard** (auto-refreshing in-game scores), a **daily briefing**, a **watchability ranker** with a featured-matchup hero, a **trend pulse**, **self-explaining quadrant charts**, a **light/dark theme** (default dark), and a **network-first cache** so transient API hiccups don't blank the page. See `CHANGELOG.md` for the full history and `docs/intelligence/` for the product-intelligence ledger and design audit.
 
 ## Original prompt
 
