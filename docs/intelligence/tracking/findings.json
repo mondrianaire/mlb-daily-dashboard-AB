@@ -300,6 +300,23 @@
       ]
     },
     {
+      "id": "OPP-010",
+      "title": "Charts read as default plots — make the quadrants self-explaining instruments",
+      "category": "opportunity",
+      "priority": "low",
+      "status": "resolved",
+      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "evidence": [
+        "Design audit App 05, Finding 05 / Priority 5",
+        "inline Chart.js quadrant/diagonal plugins in trends-charts.js (no new dependency)"
+      ],
+      "history": [
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P5/F5: the scatter panels carried stock axes and unlabeled quadrants; meaning lived in the caption, not the chart." },
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.10.0: median-crosshair shaded+labeled quadrants on OPS/ERA and Power/Discipline; shaded+labeled break-even diagonal on RS/RA. Inline Chart.js plugin, no new dependency. Verified plugin geometry (elite=top-right) + hooks fire on draw. Also fixed the RS/RA caption that described the diagonal backwards." }
+      ]
+    },
+    {
       "id": "DEBT-002",
       "title": "Trends chart canvas grew/collapsed unbounded (Chart.js responsive feedback loop)",
       "category": "tech-debt",

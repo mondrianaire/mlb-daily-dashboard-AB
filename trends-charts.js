@@ -345,6 +345,96 @@ function destroyChart(id) {
 }
 
 // ============================================================
+//        QUADRANT / DIAGONAL INSTRUMENT PLUGINS (audit P5)
+// ============================================================
+// Inline Chart.js plugins (no extra dependency) that draw shaded, labeled
+// quadrants and a break-even diagonal directly in chart-area coordinates, so
+// each scatter explains its own meaning instead of leaning on the caption.
+const Q_GREEN = "rgba(46,204,113,0.09)";
+const Q_RED = "rgba(231,76,60,0.07)";
+const Q_LINE = "rgba(147,164,193,0.30)";
+const Q_LABEL_GOOD = "rgba(72,209,140,0.9)";
+const Q_LABEL_BAD = "rgba(231,76,60,0.78)";
+const Q_FONT = "700 9px ui-monospace, 'SF Mono', Menlo, Consolas, monospace";
+
+function clampPx(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function median(vals) {
+  const a = vals.filter((v) => Number.isFinite(v)).slice().sort((x, y) => x - y);
+  if (!a.length) return null;
+  const m = Math.floor(a.length / 2);
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+}
+
+// RS-vs-RA: shade above the y=x diagonal (RS>RA = outscoring) green, below red.
+function rsraDiagonalPlugin() {
+  return {
+    id: "rsra_diagonal",
+    beforeDatasetsDraw(chart) {
+      const ca = chart.chartArea; if (!ca) return;
+      const ctx = chart.ctx; ctx.save();
+      ctx.fillStyle = Q_GREEN;
+      ctx.beginPath(); ctx.moveTo(ca.left, ca.top); ctx.lineTo(ca.right, ca.top); ctx.lineTo(ca.left, ca.bottom); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = Q_RED;
+      ctx.beginPath(); ctx.moveTo(ca.right, ca.top); ctx.lineTo(ca.right, ca.bottom); ctx.lineTo(ca.left, ca.bottom); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    },
+    afterDatasetsDraw(chart) {
+      const ca = chart.chartArea; if (!ca) return;
+      const ctx = chart.ctx; ctx.save(); ctx.font = Q_FONT;
+      ctx.fillStyle = Q_LABEL_GOOD; ctx.textAlign = "left"; ctx.textBaseline = "top";
+      ctx.fillText("OUTSCORING", ca.left + 6, ca.top + 5);
+      ctx.fillStyle = Q_LABEL_BAD; ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+      ctx.fillText("OUTSCORED", ca.right - 6, ca.bottom - 5);
+      ctx.restore();
+    }
+  };
+}
+
+// Generic median-crosshair quadrant: shade the good corner green, the opposite
+// corner red, draw a dashed crosshair at the dividing medians, and label both.
+function quadrantPlugin(id, divX, divY, goodX, goodY, goodLabel, badLabel) {
+  function side(scale, divVal, dir, lo, hi) {
+    const pDiv = clampPx(scale.getPixelForValue(divVal), lo, hi);
+    const pExt = scale.getPixelForValue(dir === "hi" ? divVal + 1e6 : divVal - 1e6);
+    const towardHi = pExt > pDiv;
+    return { pDiv, good: towardHi ? [pDiv, hi] : [lo, pDiv], bad: towardHi ? [lo, pDiv] : [pDiv, hi] };
+  }
+  return {
+    id,
+    beforeDatasetsDraw(chart) {
+      const ca = chart.chartArea; if (!ca || divX == null || divY == null) return;
+      const sx = chart.scales.x, sy = chart.scales.y, ctx = chart.ctx;
+      const X = side(sx, divX, goodX, ca.left, ca.right);
+      const Y = side(sy, divY, goodY, ca.top, ca.bottom);
+      chart._qX = X; chart._qY = Y;
+      ctx.save();
+      ctx.fillStyle = Q_GREEN; ctx.fillRect(X.good[0], Y.good[0], X.good[1] - X.good[0], Y.good[1] - Y.good[0]);
+      ctx.fillStyle = Q_RED; ctx.fillRect(X.bad[0], Y.bad[0], X.bad[1] - X.bad[0], Y.bad[1] - Y.bad[0]);
+      ctx.strokeStyle = Q_LINE; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(X.pDiv, ca.top); ctx.lineTo(X.pDiv, ca.bottom); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ca.left, Y.pDiv); ctx.lineTo(ca.right, Y.pDiv); ctx.stroke();
+      ctx.restore();
+    },
+    afterDatasetsDraw(chart) {
+      const ca = chart.chartArea, X = chart._qX, Y = chart._qY;
+      if (!ca || !X || !Y) return;
+      const ctx = chart.ctx; ctx.save(); ctx.font = Q_FONT; ctx.setLineDash([]);
+      const gRight = (X.good[0] + X.good[1]) / 2 > X.pDiv;
+      const gTop = (Y.good[0] + Y.good[1]) / 2 < Y.pDiv;
+      ctx.fillStyle = Q_LABEL_GOOD;
+      ctx.textAlign = gRight ? "right" : "left";
+      ctx.textBaseline = gTop ? "top" : "bottom";
+      ctx.fillText(goodLabel, gRight ? ca.right - 6 : ca.left + 6, gTop ? ca.top + 5 : ca.bottom - 5);
+      ctx.fillStyle = Q_LABEL_BAD;
+      ctx.textAlign = gRight ? "left" : "right";
+      ctx.textBaseline = gTop ? "bottom" : "top";
+      ctx.fillText(badLabel, gRight ? ca.left + 6 : ca.right - 6, gTop ? ca.bottom - 5 : ca.top + 5);
+      ctx.restore();
+    }
+  };
+}
+
+// ============================================================
 //                    RS vs RA SCATTER
 // ============================================================
 function renderRSRA() {
@@ -380,6 +470,7 @@ function renderRSRA() {
   charts.rsra = new window.Chart(document.getElementById("rsra-chart"), {
     type: "bubble",
     data: { datasets },
+    plugins: [rsraDiagonalPlugin()],
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
@@ -422,9 +513,12 @@ function renderOpsEra() {
     }
     return ds;
   });
+  const divEra = median(teams.map((t) => t.era).filter((v) => v > 0));
+  const divOps = median(teams.map((t) => t.ops).filter((v) => v > 0));
   charts.opsera = new window.Chart(document.getElementById("ops-era-chart"), {
     type: "bubble",
     data: { datasets },
+    plugins: [quadrantPlugin("opsera_q", divEra, divOps, "lo", "hi", "ELITE · BOTH SIDES", "REBUILDING")],
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
@@ -523,9 +617,12 @@ function renderPowerDisc() {
     }
     return ds;
   });
+  const divKbb = median(teams.map((t) => t.kp9 / Math.max(t.bbp9, 0.1)).filter((v) => v > 0));
+  const divHr = median(teams.map((t) => t.hr).filter((v) => v > 0));
   charts.powerdisc = new window.Chart(document.getElementById("power-disc-chart"), {
     type: "bubble",
     data: { datasets },
+    plugins: [quadrantPlugin("powerdisc_q", divKbb, divHr, "hi", "hi", "POWER + COMMAND", "REBUILDING")],
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
