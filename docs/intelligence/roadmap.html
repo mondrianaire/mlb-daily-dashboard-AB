@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>MLB Daily Dashboard — Roadmap</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --bg:#0b1220; --panel:#131c2e; --panel-2:#1a2540; --line:#1f2a44;
+    --text:#e6edf7; --text-2:#93a4c1; --text-3:#607093;
+    --accent:#4f9cf9; --good:#2ecc71; --bad:#e74c3c; --gold:#e8b84b; --mag:#ff5db1;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    color:var(--text); background:var(--bg);
+    padding:30px 32px 70px; max-width:1180px; margin:0 auto;
+    background-image:radial-gradient(1100px 520px at 82% -12%, #122038 0%, transparent 60%);
+  }
+  a{color:var(--accent); text-decoration:none}
+  .stamp{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    font:11px/1.4 var(--mono); text-transform:uppercase; letter-spacing:.16em; color:var(--text-3);
+    padding-bottom:12px; border-bottom:1px solid var(--line)}
+  .eyebrow{font:600 11px/1.4 var(--mono); text-transform:uppercase; letter-spacing:.2em; color:var(--accent)}
+  h1{font-size:34px; line-height:1.05; letter-spacing:-.02em; margin:18px 0 6px}
+  .deck{font:italic 17px/1.5 Georgia,serif; color:var(--text-2); margin:0 0 22px; max-width:760px}
+
+  /* KPI row */
+  .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin:0 0 26px}
+  .kpi{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+  .kpi .v{font:700 22px var(--mono); letter-spacing:-.01em}
+  .kpi .l{font:600 9.5px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--text-3); margin-top:3px}
+  .kpi .v.good{color:var(--good)} .kpi .v.gold{color:var(--gold)} .kpi .v.acc{color:var(--accent)}
+
+  .lbl{font:600 11px var(--mono); letter-spacing:.18em; text-transform:uppercase; color:var(--accent); display:block; margin:30px 0 12px}
+
+  /* Board */
+  .board{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:900px){.board{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.board{grid-template-columns:1fr}}
+  .col{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 13px; min-height:120px}
+  .col h2{display:flex; align-items:center; gap:7px; margin:0 0 10px; font-size:13px; letter-spacing:.02em}
+  .col.shipped{border-top:3px solid var(--good)}
+  .col.now{border-top:3px solid var(--gold)}
+  .col.next{border-top:3px solid var(--accent)}
+  .col.cut{border-top:3px solid var(--text-3)}
+  .pill{font:700 9px var(--mono); letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:20px}
+  .pill.shipped{background:rgba(46,204,113,.14); color:var(--good)}
+  .pill.now{background:rgba(232,184,75,.14); color:var(--gold)}
+  .pill.next{background:rgba(79,156,249,.14); color:var(--accent)}
+  .pill.cut{background:#0f1828; color:var(--text-3); border:1px solid var(--line)}
+
+  .card{background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:9px 10px; margin-bottom:8px}
+  .card .t{font-weight:600; font-size:12.5px}
+  .card .m{font:11px/1.4 var(--text-2); color:var(--text-2); margin-top:2px}
+  .card .badges{display:flex; gap:5px; flex-wrap:wrap; margin-top:6px}
+  .b{font:700 8.5px var(--mono); letter-spacing:.06em; text-transform:uppercase; padding:1px 6px; border-radius:4px; border:1px solid var(--line); color:var(--text-3)}
+  .b.imp-high{color:var(--good); border-color:rgba(46,204,113,.5)}
+  .b.imp-med{color:var(--gold); border-color:rgba(232,184,75,.5)}
+  .b.eff{color:var(--accent); border-color:rgba(79,156,249,.5)}
+  .b.ver{color:var(--text-2)}
+  .b.x{color:var(--bad); border-color:rgba(231,76,60,.4)}
+
+  .col.shipped .grp{font:600 9.5px var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--text-3); margin:10px 0 5px}
+  .col.shipped ul{margin:0; padding:0; list-style:none}
+  .col.shipped li{font-size:11.5px; color:var(--text-2); padding:2.5px 0 2.5px 14px; position:relative}
+  .col.shipped li::before{content:"✓"; position:absolute; left:0; color:var(--good); font-size:10px}
+  .col.shipped li b{color:var(--text); font-weight:600}
+  .col.shipped li .v{font:var(--mono); color:var(--text-3); font-size:10px}
+
+  /* score trajectory */
+  .traj{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:10px}
+  .score{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+  .score .name{font:600 10px var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--text-3)}
+  .score .nums{font:700 16px var(--mono); margin:4px 0 7px}
+  .score .nums .from{color:var(--text-3); font-size:13px}
+  .score .nums .arrow{color:var(--text-3)}
+  .bar{height:7px; background:var(--line); border-radius:4px; overflow:hidden; position:relative}
+  .bar i{position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:linear-gradient(90deg,#2a3a5e,var(--accent))}
+  .bar i.g{background:linear-gradient(90deg,#1c5e38,var(--good))}
+  .bar .was{position:absolute; top:-2px; bottom:-2px; width:2px; background:var(--text-3)}
+
+  .note{font-size:12px; color:var(--text-2); background:var(--panel); border:1px solid var(--line);
+    border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:10px 13px; margin-top:22px; max-width:880px}
+  .colophon{margin-top:40px; padding-top:16px; border-top:1px solid var(--line); font:11px/1.6 var(--mono); color:var(--text-3)}
+  .colophon a{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="stamp">
+  <span>MLB Daily Dashboard · roadmap</span>
+  <span>Evaluated 2026-06-02 · live v1.16.0</span>
+</div>
+
+<span class="eyebrow">Roadmap · evaluated</span>
+<h1>Every planned line is shipped. The product is a fully-static, installable MLB companion.</h1>
+<p class="deck">The original checkpoint roadmap, the design audit, and the quick-win batch are all delivered and live. What's left is deliberate: a few bigger bets, and a short list of things chosen <em>not</em> to build.</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="v acc">1.16.0</div><div class="l">live version</div></div>
+  <div class="kpi"><div class="v good">92</div><div class="l">tests · 0 fail</div></div>
+  <div class="kpi"><div class="v">18</div><div class="l">PRs merged</div></div>
+  <div class="kpi"><div class="v good">18</div><div class="l">findings resolved</div></div>
+  <div class="kpi"><div class="v gold">3</div><div class="l">in progress</div></div>
+  <div class="kpi"><div class="v">17</div><div class="l">client modules · 0 server</div></div>
+</div>
+
+<span class="lbl">The board</span>
+<div class="board">
+
+  <!-- SHIPPED -->
+  <div class="col shipped">
+    <h2><span class="pill shipped">Shipped</span></h2>
+
+    <div class="grp">Foundation &amp; interpretive</div>
+    <ul>
+      <li><b>Test harness + version marker</b> <span class="v">1.1</span></li>
+      <li><b>Watchability ranker</b> <span class="v">1.2</span></li>
+      <li><b>Daily briefing</b> (deterministic) <span class="v">1.3</span></li>
+      <li><b>Chart explainers</b> <span class="v">1.4</span></li>
+    </ul>
+
+    <div class="grp">Stability fixes</div>
+    <ul>
+      <li><b>Chart logo size · infinite-growth · cache-bust</b> <span class="v">1.5.1–1.5.3</span></li>
+    </ul>
+
+    <div class="grp">Design audit (App 05) · P1–P6</div>
+    <ul>
+      <li><b>Briefing broadcast-wire</b> <span class="v">1.6</span></li>
+      <li><b>Trend pulse + run-diff spine</b> <span class="v">1.7</span></li>
+      <li><b>Featured matchup hero</b> <span class="v">1.8</span></li>
+      <li><b>Quadrant chart instruments</b> <span class="v">1.10</span></li>
+      <li><b>Dark unification + theme toggle</b> <span class="v">1.11</span></li>
+    </ul>
+
+    <div class="grp">Capability + hardening</div>
+    <ul>
+      <li><b>Live scoreboard</b> (auto-refresh) <span class="v">1.9</span></li>
+      <li><b>API resilience</b> (cache fallback) <span class="v">1.12</span></li>
+      <li><b>Telemetry</b> (local, default-off) <span class="v">1.13</span></li>
+      <li><b>Day-over-day memory</b> <span class="v">1.14</span></li>
+      <li><b>Removed LLM backend → purely static</b> <span class="v">1.15</span></li>
+    </ul>
+
+    <div class="grp">Quick wins</div>
+    <ul>
+      <li><b>Favorites / My Team</b> <span class="v">1.16</span></li>
+      <li><b>Probable starters</b> <span class="v">1.16</span></li>
+      <li><b>Magic numbers</b> <span class="v">1.16</span></li>
+      <li><b>Multi-day trend sparkline</b> <span class="v">1.16</span></li>
+      <li><b>Installable PWA + offline</b> <span class="v">1.16</span></li>
+    </ul>
+  </div>
+
+  <!-- NOW / IN PROGRESS -->
+  <div class="col now">
+    <h2><span class="pill now">In progress</span></h2>
+    <div class="card">
+      <div class="t">Day-over-day memory — deepen</div>
+      <div class="m">Rank movement + multi-day sparkline ship now. Durable multi-season accumulation would need a datastore.</div>
+      <div class="badges"><span class="b">GAP-002</span><span class="b imp-med">partial</span></div>
+    </div>
+    <div class="card">
+      <div class="t">Telemetry — aggregate</div>
+      <div class="m">Local per-feature counts are live (window.__telemetry()). Real aggregate needs an opt-in collector.</div>
+      <div class="badges"><span class="b">GAP-003</span><span class="b imp-med">partial</span></div>
+    </div>
+    <div class="card">
+      <div class="t">API dependency — mitigated</div>
+      <div class="m">Network-first cache rides through blips; no second data source exists for a permanent outage.</div>
+      <div class="badges"><span class="b">RISK-001</span><span class="b imp-med">mitigated</span></div>
+    </div>
+  </div>
+
+  <!-- NEXT -->
+  <div class="col next">
+    <h2><span class="pill next">Next · bigger bets</span></h2>
+    <div class="card">
+      <div class="t">Game box-score detail</div>
+      <div class="m">Click any game → line score by inning (R/H/E), team lines, scoring plays. Deepens the live experience.</div>
+      <div class="badges"><span class="b imp-high">Impact High</span><span class="b eff">~1 day</span></div>
+    </div>
+    <div class="card">
+      <div class="t">Player leaders</div>
+      <div class="m">A League Leaders surface (HR, AVG, ERA, K, SB) — adds the player layer the team-only dashboard lacks.</div>
+      <div class="badges"><span class="b imp-high">Impact Med-High</span><span class="b eff">~½–1 day</span></div>
+    </div>
+    <div class="card">
+      <div class="t">Accessibility + mobile pass</div>
+      <div class="m">Keyboard nav, ARIA, contrast/touch-target audit, responsive refinement. Quality + reach.</div>
+      <div class="badges"><span class="b imp-med">Impact Med</span><span class="b eff">~½–1 day</span></div>
+    </div>
+    <div class="card">
+      <div class="t">PNG app icons</div>
+      <div class="m">Add 192/512 PNGs for maximum install fidelity on older Android (SVG icon already ships).</div>
+      <div class="badges"><span class="b imp-med">Impact Low</span><span class="b eff">~1 hr</span></div>
+    </div>
+  </div>
+
+  <!-- CUT -->
+  <div class="col cut">
+    <h2><span class="pill cut">Deliberately not</span></h2>
+    <div class="card">
+      <div class="t">LLM / serverless backend</div>
+      <div class="m">Removed by choice. The product is purely static and self-updates from the MLB API on load. Revisitable as a build-time JSON precompute if ever wanted.</div>
+      <div class="badges"><span class="b x">GAP-001 · wontfix</span></div>
+    </div>
+    <div class="card">
+      <div class="t">Predictive win / playoff odds</div>
+      <div class="m">A made-up number on a stats product erodes trust; no owned data to back a real model.</div>
+      <div class="badges"><span class="b x">RISK-002 · guardrail</span></div>
+    </div>
+    <div class="card">
+      <div class="t">Real push notifications</div>
+      <div class="m">Needs a backend/push service — against the static stance. Local-only alerts are too weak to bother.</div>
+      <div class="badges"><span class="b x">out of scope</span></div>
+    </div>
+  </div>
+
+</div>
+
+<span class="lbl">Score trajectory · checkpoint → now (17 snapshots)</span>
+<div class="traj">
+  <div class="score">
+    <div class="name">Product maturity</div>
+    <div class="nums"><span class="from">7</span> <span class="arrow">→</span> <span style="color:var(--good)">9</span> <span style="color:var(--text-3)">/10</span></div>
+    <div class="bar"><i class="g" style="width:90%"></i><span class="was" style="left:70%"></span></div>
+  </div>
+  <div class="score">
+    <div class="name">Differentiation</div>
+    <div class="nums"><span class="from">3</span> <span class="arrow">→</span> <span style="color:var(--good)">9</span> <span style="color:var(--text-3)">/10</span></div>
+    <div class="bar"><i class="g" style="width:90%"></i><span class="was" style="left:30%"></span></div>
+  </div>
+  <div class="score">
+    <div class="name">Infra resilience</div>
+    <div class="nums"><span class="from">8</span> <span class="arrow">→</span> <span style="color:var(--accent)">9</span> <span style="color:var(--text-3)">/10</span></div>
+    <div class="bar"><i style="width:90%"></i><span class="was" style="left:80%"></span></div>
+  </div>
+  <div class="score">
+    <div class="name">AI readiness</div>
+    <div class="nums"><span class="from">18</span> <span class="arrow">→</span> <span class="acc" style="color:var(--accent)">38</span> <span style="color:var(--text-3)">/100</span></div>
+    <div class="bar"><i style="width:38%"></i><span class="was" style="left:18%"></span></div>
+  </div>
+</div>
+
+<div class="note">
+  <b>Honest read:</b> the open items that remain are not a backlog of unfinished work — they're 2 standing <b>assets</b> (clean architecture, resilient UX) and 1 <b>guardrail</b> (no fake odds). The three “in progress” are mitigated-or-opt-in by design. There is no required next step; the bigger bets are optional depth, and the “deliberately not” column is a feature decision, not a gap. AI scores are intentionally modest — the product has no AI surface, by choice.
+</div>
+
+<div class="colophon">
+  Source: git history (18 PRs) + <a href="./tracking/findings.json">findings.json</a> (25 findings) + <a href="./tracking/snapshots.json">snapshots.json</a> (17).
+  Live build: <a href="https://mondrianaire.github.io/mlb-daily-dashboard-AB/">mondrianaire.github.io/mlb-daily-dashboard-AB</a>.
+  Full history in <a href="../../CHANGELOG.md">CHANGELOG.md</a>; tracking dashboard at <a href="./dashboard.html">dashboard.html</a>.
+</div>
+
+</body>
+</html>
