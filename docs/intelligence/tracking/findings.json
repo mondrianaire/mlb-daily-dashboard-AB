@@ -266,6 +266,23 @@
       ]
     },
     {
+      "id": "OPP-008",
+      "title": "Most decision-useful element under-weighted — feature tonight's top game as a hero",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "evidence": [
+        "Design audit App 05, Priority 6",
+        "renderFeaturedMatchup over watchability scored[0]; excluded from the day list"
+      ],
+      "history": [
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Audit P6: 'what should I watch tonight' sat as a small inline pill rather than a featured element." },
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.8.0: featured matchup hero atop the Upcoming panel (big logos, W-L records, reason, first pitch); de-duplicated from the day list. Browser-verified (NYY 41-22 @ BOS 36-27, reason + time, removed from list)." }
+      ]
+    },
+    {
       "id": "DEBT-002",
       "title": "Trends chart canvas grew/collapsed unbounded (Chart.js responsive feedback loop)",
       "category": "tech-debt",

@@ -126,9 +126,14 @@ export async function init() {
         (enhanced) => renderBriefing({ highlights: enhanced })
       );
     }
+    // Team W–L lookup for the featured matchup card.
+    const teamRecords = new Map(
+      (standings || []).map((s) => [s.teamId, `${s.wins}-${s.losses}`])
+    );
+
     renderRankings(rankings, teams);
     renderTrends(trends, teams);
-    renderUpcoming(schedule, watch);
+    renderUpcoming(schedule, watch, teamRecords);
     updateTimestamp(new Date());
   } catch (err) {
     const msg = err instanceof DataClientError
@@ -479,7 +484,7 @@ function renderSparkline(points, color) {
   return svg;
 }
 
-function renderUpcoming(schedule, watch = null) {
+function renderUpcoming(schedule, watch = null, teamRecords = null) {
   const container = document.getElementById(ID.upcoming);
   if (!container) return;
   const body = container.querySelector(".panel-body") || container;
@@ -493,9 +498,24 @@ function renderUpcoming(schedule, watch = null) {
   const byGameId = watch?.byGameId || null;
   const topIds = new Set(watch?.topIds || []);
 
+  // Featured matchup (audit P6): promote tonight's single most-watchable game to
+  // a hero card above the list. It is then excluded from the day groups so it
+  // isn't shown twice.
+  let featuredId = null;
+  const topScored = watch?.scored?.[0];
+  if (topScored) {
+    const game = schedule.find((g) => g.gameId === topScored.gameId);
+    if (game) {
+      const info = byGameId ? byGameId.get(game.gameId) : null;
+      const hero = renderFeaturedMatchup(game, info, teamRecords);
+      if (hero) { body.appendChild(hero); featuredId = game.gameId; }
+    }
+  }
+
   // Group by ISO date (UTC date for stability).
   const groups = new Map();
   for (const g of schedule) {
+    if (featuredId != null && g.gameId === featuredId) continue; // shown as the hero
     const key = (g.gameDate || "").slice(0, 10);
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(g);
@@ -581,6 +601,69 @@ function renderGameRow(game, watchInfo = null) {
   }
 
   return row;
+}
+
+// Featured matchup hero (audit P6) — tonight's #1 watchable game, enlarged.
+function renderFeaturedMatchup(game, watchInfo, teamRecords) {
+  const away = game.awayTeam || {};
+  const home = game.homeTeam || {};
+  if (!away.teamId && !home.teamId) return null;
+
+  const card = document.createElement("div");
+  card.className = "featured-matchup";
+
+  const label = document.createElement("div");
+  label.className = "featured-label";
+  label.textContent = "★ Tonight's top game";
+  card.appendChild(label);
+
+  const teamsRow = document.createElement("div");
+  teamsRow.className = "featured-teams";
+  teamsRow.appendChild(featuredTeam(away, teamRecords));
+  const at = document.createElement("span");
+  at.className = "featured-at";
+  at.textContent = "@";
+  teamsRow.appendChild(at);
+  teamsRow.appendChild(featuredTeam(home, teamRecords));
+  card.appendChild(teamsRow);
+
+  const meta = document.createElement("div");
+  meta.className = "featured-meta";
+  const reason = document.createElement("span");
+  reason.className = "featured-reason";
+  reason.textContent =
+    (watchInfo?.reasons && watchInfo.reasons.join(" · ")) || "Top matchup on tonight's slate";
+  meta.appendChild(reason);
+  const time = document.createElement("span");
+  time.className = "featured-time";
+  if (game.status && game.status !== "Scheduled" && game.status !== "Pre-Game") {
+    time.textContent = game.status;
+  } else {
+    time.textContent = formatGameTime(game.gameDate);
+  }
+  meta.appendChild(time);
+  card.appendChild(meta);
+
+  return card;
+}
+
+function featuredTeam(team, teamRecords) {
+  const wrap = document.createElement("div");
+  wrap.className = "featured-team";
+  const abbr = team.teamAbbreviation || (team.teamId ? teamMeta(team.teamId)?.abbr : "") || "—";
+  if (team.teamId) wrap.innerHTML = logoImgHtml(team.teamId, "cap", 40, "featured-logo");
+  const ab = document.createElement("span");
+  ab.className = "featured-abbr";
+  ab.textContent = abbr;
+  wrap.appendChild(ab);
+  const rec = teamRecords && teamRecords.get && teamRecords.get(team.teamId);
+  if (rec) {
+    const r = document.createElement("span");
+    r.className = "featured-record";
+    r.textContent = rec;
+    wrap.appendChild(r);
+  }
+  return wrap;
 }
 
 function teamChip(abbr, teamId) {
