@@ -108,6 +108,21 @@
 
 **Honest status:** the feature is *built and safe* but *not active*. By default the product behaves exactly as v1.4.0. Real activation is a deliberate owner decision (deploy + key + cost), which is correct — Phase 4 was always the opt-in one. Remaining open: `GAP-002` (persistence), `GAP-003` (telemetry), `RISK-001` (single-point API dependency), `RISK-002` (guardrail, now reinforced in code).
 
+---
+
+## 2026-06-02 · design audit → first implementation (v1.6.0)
+
+**Mode:** design audit (external, telos-only) → engineering implementation.
+
+A standalone **design audit** (App 05 in the user's `Documents/Claude/Design Audits` system) critiqued the live dashboard in design language only — no code read, no code output. Five findings: trends hidden behind a tab; light/dark register split between tabs; **briefing dressed as a footnote**; numerals without tabular rhythm or a run-diff spine; quadrant charts that aren't self-explaining instruments. Deliverable styled in the project's own dark "instrument" register (R2).
+
+**First implementation — P2 (briefing broadcast-wire), v1.6.0:**
+- The briefing is the product's synthesized lede; it now renders as one — enlarged lead story with a team-color rule, a dateline, and a team-chip rundown (neutral chips for league-wide lines).
+- `briefing-engine.js` exposes `teamId` per highlight (stays pure); `briefing-llm.js` preserves it through the optional rephrasing path. 63 tests green; browser-verified.
+- Tracked as `OPP-005` (resolved). `maturity_product` 8 → 9 (the lede now matches its informational weight).
+
+**Decisions logged for the remaining audit work:** dark unification (P1) will ship as a light/dark **toggle defaulting to dark**, deferred to last. Queue: trend pulse (P3), tabular numerals + run-diff spine (P4), featured matchup card (P6), quadrant chart instruments (P5).
+
 **Notes for next run:**
 - If a serverless proxy appears → re-score `OPP-002` LLM path and reconsider `GAP-001` toward resolved.
 - If unit tests for `rankings-engine`/`trends-engine` land → transition `GAP-004`.

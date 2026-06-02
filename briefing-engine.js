@@ -186,7 +186,9 @@ export function computeBriefing({ rankings, trends, schedule, today } = {}) {
     if (highlights.length >= MAX_HIGHLIGHTS) break;
     if (c.team != null && usedTeams.has(c.team)) continue;
     if (c.team != null) usedTeams.add(c.team);
-    highlights.push({ text: c.text, kind: c.kind });
+    // teamId is exposed so the renderer can show a team-color chip; the engine
+    // stays free of any color/DOM concern (it only knows which team a line is about).
+    highlights.push({ text: c.text, kind: c.kind, teamId: c.team ?? null });
   }
 
   return { highlights };

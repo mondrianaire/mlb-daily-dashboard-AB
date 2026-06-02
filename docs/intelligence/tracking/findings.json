@@ -215,6 +215,23 @@
       ]
     },
     {
+      "id": "OPP-005",
+      "title": "Daily briefing under-weighted — render the synthesized lede as a broadcast wire",
+      "category": "opportunity",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "last_seen": { "date": "2026-06-02", "commit": "aac7cf0" },
+      "evidence": [
+        "Design audit App 05, Finding 03 / Priority 2 (Documents/Claude/Design Audits/app-05-mlb-daily-dashboard)",
+        "briefing was a flat equal-weight bullet list"
+      ],
+      "history": [
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "open", "note": "Surfaced by the App 05 design audit: the briefing is the product's lede but was dressed as a footnote (uniform bullets)." },
+        { "date": "2026-06-02", "commit": "aac7cf0", "status": "resolved", "note": "v1.6.0: broadcast-wire treatment — enlarged lead story with team-color rule + dateline + team-chip rundown. Engine exposes teamId (stays pure); LLM path preserves it. 63 tests green; browser-verified (lead rule = lead team's color, chips = team primaries, neutral for league-wide lines)." }
+      ]
+    },
+    {
       "id": "DEBT-002",
       "title": "Trends chart canvas grew/collapsed unbounded (Chart.js responsive feedback loop)",
       "category": "tech-debt",

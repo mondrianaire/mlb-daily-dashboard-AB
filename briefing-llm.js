@@ -57,9 +57,9 @@ export function validateRephrased(originalHighlights, modelItems) {
     const text = typeof cand === "string" ? cand.trim()
       : (cand && typeof cand.text === "string" ? cand.text.trim() : "");
     if (text && preservesNumbers(h.text, text)) {
-      return { text, kind: h.kind, enhanced: true };
+      return { text, kind: h.kind, teamId: h.teamId ?? null, enhanced: true };
     }
-    return { text: h.text, kind: h.kind, enhanced: false };
+    return { text: h.text, kind: h.kind, teamId: h.teamId ?? null, enhanced: false };
   });
 }
 
