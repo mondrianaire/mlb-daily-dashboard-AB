@@ -160,6 +160,31 @@ a:hover { text-decoration: underline; }
   color: var(--fg-muted);
 }
 
+/* ----------- API "showing cached data" notice (RISK-001) ----------- */
+.stale-note {
+  max-width: var(--max-width);
+  margin: 0.6rem auto 0;
+  padding: 0.5rem 0.9rem;
+  background: var(--watch-gold-bg);
+  color: var(--watch-gold);
+  border: 1px solid var(--watch-gold);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.stale-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--watch-gold);
+  flex: none;
+  animation: stale-pulse 1.4s ease-in-out infinite;
+}
+@keyframes stale-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+@media (prefers-reduced-motion: reduce) { .stale-dot { animation: none; } }
+
 /* ----------- Error banner ----------- */
 .error-banner {
   max-width: var(--max-width);

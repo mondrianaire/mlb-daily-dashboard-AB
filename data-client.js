@@ -13,6 +13,7 @@
 //   DataClientError               : named error class for non-200 / network failures
 
 import { TEAM_META, ALL_TEAM_IDS, teamMeta } from "./teams.js";
+import { apiCache } from "./api-cache.js";
 
 const API_BASE = "https://statsapi.mlb.com/api/v1";
 
@@ -33,7 +34,9 @@ export class DataClientError extends Error {
 }
 
 // ---------- Internal helper ----------
-async function getJSON(url) {
+// The raw fetch (throws typed errors). getJSON wraps it with the network-first
+// cache so a transient failure serves the last good response instead of blanking.
+async function rawGetJSON(url) {
   let res;
   try {
     res = await fetch(url, { headers: { Accept: "application/json" } });
@@ -57,6 +60,11 @@ async function getJSON(url) {
       { cause: parseErr, url }
     );
   }
+}
+
+async function getJSON(url) {
+  const { data } = await apiCache.getJSON(url, rawGetJSON);
+  return data;
 }
 
 // ---------- Date helpers (UTC-safe ISO YYYY-MM-DD) ----------

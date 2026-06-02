@@ -30,6 +30,7 @@ import { computeWatchability } from "./watchability-engine.js";
 import { computeBriefing } from "./briefing-engine.js";
 import { maybeEnhanceBriefing } from "./briefing-llm.js";
 import { computePulse } from "./pulse-engine.js";
+import { onApiHealth } from "./api-cache.js";
 import { TEAM_META, ALL_TEAM_IDS, teamMeta, getLogoUrl } from "./teams.js";
 import { preloadLogos, logoImgHtml } from "./logo-helpers.js";
 
@@ -996,6 +997,31 @@ function scoreLine(team, cls, isLeader) {
 }
 
 // ============================================================
+//          API HEALTH NOTICE (RISK-001 — cache fallback)
+// ============================================================
+// Show a quiet notice while the dashboard is serving cached data after a
+// transient API failure; clear it once a fresh fetch succeeds. Debounced so a
+// single mixed batch of fetches doesn't flicker the notice.
+let lastDegradedAt = 0;
+function showStaleNote(on) {
+  const el = document.getElementById("stale-note");
+  if (el) el.hidden = !on;
+}
+function wireApiHealth() {
+  onApiHealth((state) => {
+    if (state === "degraded") {
+      lastDegradedAt = Date.now();
+      showStaleNote(true);
+    } else {
+      // Healthy — hide only if nothing has been degraded very recently.
+      setTimeout(() => {
+        if (Date.now() - lastDegradedAt > 800) showStaleNote(false);
+      }, 850);
+    }
+  });
+}
+
+// ============================================================
 //                THEME TOGGLE (light / dark — default dark)
 // ============================================================
 function currentTheme() {
@@ -1027,6 +1053,7 @@ function wireThemeToggle() {
 function bootstrap() {
   publishVersion();
   wireThemeToggle();
+  wireApiHealth();
   wireTabs();
   init();
   refreshScoreboard(); // independent live loop — self-schedules

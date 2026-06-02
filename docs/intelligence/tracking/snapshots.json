@@ -196,6 +196,20 @@
         "maturity_differentiation": 8
       },
       "counts": { "open": 6, "in_progress": 1, "resolved": 13, "regressed": 0 }
+    },
+    {
+      "date": "2026-06-02",
+      "commit": "964a981",
+      "scores": {
+        "ai_readiness": 38,
+        "maturity_product": 9,
+        "maturity_ai": 5,
+        "maturity_infra": 9,
+        "maturity_enterprise": 0,
+        "maturity_monetization": 0,
+        "maturity_differentiation": 8
+      },
+      "counts": { "open": 5, "in_progress": 2, "resolved": 13, "regressed": 0 }
     }
   ]
 }
