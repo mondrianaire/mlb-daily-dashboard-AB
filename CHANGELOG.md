@@ -11,6 +11,19 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.12.0] — 2026-06-02
+### Added
+- **API resilience — network-first cache with stale fallback** (`RISK-001`
+  hardening). The dashboard depends on a single public API; a transient blip used
+  to blank the page. Now every request tries the network first and caches
+  successes (`sessionStorage`); when a fetch fails, the **last good response** is
+  served (up to 6h old) instead of throwing — so live polling and reloads ride
+  through hiccups. A quiet, auto-clearing **"showing the last loaded data —
+  reconnecting…"** notice appears while degraded. A genuine first-load failure
+  with nothing cached still shows the existing error banner + retry.
+- New pure-ish `api-cache.js` (injectable storage + clock) with 7 tests; wired
+  into both `data-client.js` and `stats-client.js`. Suite now 82, green.
+
 ## [1.11.0] — 2026-06-02
 ### Added
 - **Light / dark theme toggle, default dark** (design audit P1, completes the audit).

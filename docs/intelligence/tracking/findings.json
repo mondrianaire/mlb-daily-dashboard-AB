@@ -133,16 +133,17 @@
       "title": "Hard dependency on unauthenticated public MLB Stats API (single point of failure)",
       "category": "risk",
       "priority": "high",
-      "status": "open",
+      "status": "in-progress",
       "first_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
-      "last_seen": { "date": "2026-05-31", "commit": "b4c1e6c" },
+      "last_seen": { "date": "2026-06-02", "commit": "964a981" },
       "evidence": [
         "data-client.js:17 API_BASE statsapi.mlb.com",
-        "no caching across loads; every visit re-hits the API",
-        "no fallback data source"
+        "api-cache.js — network-first sessionStorage cache with stale fallback (≤6h)",
+        "degraded 'showing cached data' notice; still no secondary data source"
       ],
       "history": [
-        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data." }
+        { "date": "2026-05-31", "commit": "b4c1e6c", "status": "open", "note": "Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data." },
+        { "date": "2026-06-02", "commit": "964a981", "status": "in-progress", "note": "v1.12.0: materially MITIGATED — network-first cache with stale fallback (api-cache.js) means a transient failure serves the last good data instead of blanking the page (covers the new live-polling path too), with an auto-clearing degraded notice. 7 tests + browser-verified. Residual risk remains: a permanent/long (>6h) outage or a breaking API change still has no second source. Kept in-progress (mitigated, not eliminated)." }
       ]
     },
     {

@@ -10,6 +10,7 @@
 //   StatsClientError                -> named error class
 
 import { ALL_TEAM_IDS, teamMeta } from "./teams.js";
+import { apiCache } from "./api-cache.js";
 
 const API_BASE = "https://statsapi.mlb.com/api/v1";
 
@@ -28,7 +29,7 @@ export class StatsClientError extends Error {
   }
 }
 
-async function getJSON(url) {
+async function rawGetJSON(url) {
   let res;
   try {
     res = await fetch(url, { headers: { Accept: "application/json" } });
@@ -52,6 +53,11 @@ async function getJSON(url) {
       { cause: parseErr, url }
     );
   }
+}
+
+async function getJSON(url) {
+  const { data } = await apiCache.getJSON(url, rawGetJSON);
+  return data;
 }
 
 // ---------- Date helpers (UTC) ----------

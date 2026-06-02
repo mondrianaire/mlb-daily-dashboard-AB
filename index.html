@@ -22,7 +22,7 @@
   -->
   <meta name="briefing-llm-endpoint" content="" />
   <!-- Cache-bust assets with the app version so deploys aren't masked by stale caches. -->
-  <link rel="stylesheet" href="styles.css?v=1.11.0" />
+  <link rel="stylesheet" href="styles.css?v=1.12.0" />
 </head>
 <body>
   <header class="site-header">
@@ -51,6 +51,11 @@
   <div id="error-banner" class="error-banner" hidden role="alert" aria-live="assertive">
     <span class="error-banner-text">Unable to load live MLB data.</span>
     <button type="button" class="error-banner-retry" id="error-banner-retry">Retry</button>
+  </div>
+
+  <div id="stale-note" class="stale-note" hidden role="status" aria-live="polite">
+    <span class="stale-dot"></span>
+    Network hiccup — showing the last loaded data. Reconnecting&hellip;
   </div>
 
   <section id="tab-daily" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-daily">
@@ -175,10 +180,10 @@
       Bump this (and CHANGELOG.md) on every release.
     -->
     <p class="app-version-strip">
-      <span id="app-version" class="app-version" data-version="1.11.0">v1.11.0</span>
+      <span id="app-version" class="app-version" data-version="1.12.0">v1.12.0</span>
     </p>
   </footer>
 
-  <script type="module" src="app.js?v=1.11.0"></script>
+  <script type="module" src="app.js?v=1.12.0"></script>
 </body>
 </html>

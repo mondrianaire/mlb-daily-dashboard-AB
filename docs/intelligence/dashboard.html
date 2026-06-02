@@ -73,13 +73,13 @@
 <body>
 <header>
   <h1>MLB Daily Dashboard — Product Intelligence</h1>
-  <div class="sub">Generated 2026-06-02 17:18 · last run 2026-06-02
-    (commit aac7cf0) · 14 run(s) tracked</div>
+  <div class="sub">Generated 2026-06-02 17:35 · last run 2026-06-02
+    (commit 964a981) · 15 run(s) tracked</div>
 </header>
 <nav class="tabs"><button class="tab active" data-tab="tab-tracker">Tracker</button><button class="tab" data-tab="tab-summary">Summary</button><button class="tab" data-tab="tab-scores">Scores</button><button class="tab" data-tab="tab-ai-opportunities">AI Opportunities</button><button class="tab" data-tab="tab-product-graph">Product Graph</button><button class="tab" data-tab="tab-maturity">Maturity</button><button class="tab" data-tab="tab-ai-stack">AI Stack</button><button class="tab" data-tab="tab-evolution-log">Evolution Log</button><button class="tab" data-tab="tab-implementation-roadmap">Implementation Roadmap</button></nav>
 <main>
   <section class="pane active" id="tab-tracker">
-    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>6</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>1</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>13</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>7</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>7</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>20</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>14</div><div class='tlabel'>Runs</div></div></div>
+    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>5</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>2</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>13</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>7</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>7</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>20</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>15</div><div class='tlabel'>Runs</div></div></div>
     <div class="charts">
       <div class="card"><h2>Score trajectory</h2><canvas id="scoreChart" height="120"></canvas></div>
       <div class="card"><h2>Current status</h2><canvas id="statusDoughnut" height="120"></canvas></div>
@@ -96,19 +96,6 @@
       </div>
       <table><thead><tr><th>ID</th><th>Finding</th><th>Priority</th><th>Status</th></tr></thead>
       <tbody id="ftbody">
-        <tr class="frow" data-status="open">
-          <td class="mono">RISK-001</td>
-          <td>
-            <div class="ftitle">Hard dependency on unauthenticated public MLB Stats API (single point of failure)</div>
-            <div class="fmeta">Risk
-              · first seen 2026-05-31
-              · last seen 2026-05-31</div>
-            <div class="fev">data-client.js:17 API_BASE statsapi.mlb.com, no caching across loads; every visit re-hits the API, no fallback data source</div>
-            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data.</li></ul></details>
-          </td>
-          <td><span class="pri pri-high">high</span></td>
-          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
-        </tr>
         <tr class="frow" data-status="open">
           <td class="mono">ASSET-001</td>
           <td>
@@ -183,6 +170,19 @@
               · last seen 2026-05-31</div>
             <div class="fev">server/briefing-worker.js — Cloudflare Worker proxy (Anthropic Claude), default-off, briefing-llm.js — client enhancer with deterministic fallback, server/README.md deploy runbook; docs/intelligence/AI_STACK.md architecture+cost, key held as a Wrangler secret, never in the repo or browser</div>
             <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Hard prerequisite for the LLM path of OPP-002 and for OPP-004. A static site cannot safely hold a model key. Not a bug — a boundary condition.</li><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#f5a623'>in-progress</span> — Phase 4 (v1.5.0): a deployable serverless backend path now EXISTS in the repo (Cloudflare Worker + client integration + runbook + cost model), unblocking keyed AI. Marked in-progress not resolved because it is default-off and not deployed — activation needs the owner&#x27;s Cloudflare account + ANTHROPIC_API_KEY. Resolves once deployed.</li></ul></details>
+          </td>
+          <td><span class="pri pri-high">high</span></td>
+          <td><span class="badge" style="background:#f5a6231a;color:#f5a623;border:1px solid #f5a62355">in-progress</span></td>
+        </tr>
+        <tr class="frow" data-status="in-progress">
+          <td class="mono">RISK-001</td>
+          <td>
+            <div class="ftitle">Hard dependency on unauthenticated public MLB Stats API (single point of failure)</div>
+            <div class="fmeta">Risk
+              · first seen 2026-05-31
+              · last seen 2026-06-02</div>
+            <div class="fev">data-client.js:17 API_BASE statsapi.mlb.com, api-cache.js — network-first sessionStorage cache with stale fallback (≤6h), degraded &#x27;showing cached data&#x27; notice; still no secondary data source</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data.</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#f5a623'>in-progress</span> — v1.12.0: materially MITIGATED — network-first cache with stale fallback (api-cache.js) means a transient failure serves the last good data instead of blanking the page (covers the new live-polling path too), with an auto-clearing degraded notice. 7 tests + browser-verified. Residual risk remains: a permanent/long (&gt;6h) outage or a breaking API change still has no second source. Kept in-progress (mitigated, not eliminated).</li></ul></details>
           </td>
           <td><span class="pri pri-high">high</span></td>
           <td><span class="badge" style="background:#f5a6231a;color:#f5a623;border:1px solid #f5a62355">in-progress</span></td>
@@ -624,7 +624,7 @@ Phase 4 (L)  [OPT-IN] Backend + LLM phrasing       → only for richer NL; resol
 <p>Building these transitions ledger findings: <code>OPP-001</code>/<code>OPP-002</code>/<code>OPP-003</code> → in-progress→resolved; <code>GAP-004</code> → resolved (Phase 0); <code>GAP-001</code> → resolved only if Phase 4 is taken. Re-run the checkpoint after each phase to move the dashboard.</p></section>
 </main>
 <script>
-const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9, 10, 11, 12, 13], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 6, "in-progress": 1, "resolved": 13, "regressed": 0}};
+const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9, 10, 11, 12, 13, 13], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 5, "in-progress": 2, "resolved": 13, "regressed": 0}};
 const palette = ["#52a9ff","#30a46c","#ffb224","#8e4ec6","#ff6369","#22a3b3","#e6e6e6","#f06ea9"];
 function mkLine(id, labels, seriesObj, opts={}) {
   const el = document.getElementById(id); if (!el || !window.Chart) return;
