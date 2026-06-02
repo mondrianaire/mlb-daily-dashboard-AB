@@ -318,6 +318,17 @@ a:hover { text-decoration: underline; }
   font-size: 0.82rem;
   letter-spacing: 0.04em;
 }
+/* Day-over-day rank movement chip (GAP-002) */
+.rank-move {
+  font-family: var(--mono-stack);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin-left: 0.1rem;
+}
+.rank-move.up { color: var(--rd-pos); }
+.rank-move.down { color: var(--rd-neg); }
 .numeric { font-variant-numeric: tabular-nums; font-family: var(--mono-stack); font-size: 0.86rem; }
 
 .wildcard-block {

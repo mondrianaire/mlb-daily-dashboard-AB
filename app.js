@@ -32,6 +32,7 @@ import { maybeEnhanceBriefing } from "./briefing-llm.js";
 import { computePulse } from "./pulse-engine.js";
 import { onApiHealth } from "./api-cache.js";
 import { telemetry } from "./telemetry.js";
+import { buildSnapshot, diffRanks, historyStore } from "./history-engine.js";
 import { TEAM_META, ALL_TEAM_IDS, teamMeta, getLogoUrl } from "./teams.js";
 import { preloadLogos, logoImgHtml } from "./logo-helpers.js";
 
@@ -90,6 +91,21 @@ export async function init() {
     const rankings = computeRankings(standings);
     const trends = computeWeeklyTrends(recentResults);
 
+    // Day-over-day memory (GAP-002): diff today's standings against the most
+    // recent day we recorded, then store today. Deltas are null on a browser's
+    // very first visit (nothing to compare to yet) — they appear once there's a
+    // prior day on record.
+    let rankDeltas = null;
+    try {
+      const snap = buildSnapshot(rankings.divisionStandings, today);
+      const prev = historyStore.previousBefore(today);
+      if (prev) rankDeltas = diffRanks(snap, prev);
+      historyStore.save(snap);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn("[MLB Daily Dashboard] standings history skipped:", e);
+    }
+
     // Watchability ranking (OPP-001): score tonight's games from data we already
     // have in memory. Pure + deterministic; never throws fatally — guard anyway
     // so a ranking hiccup can't blank the schedule panel.
@@ -126,6 +142,7 @@ export async function init() {
 
     renderBriefing(briefing);
     renderPulse(computePulse(trends), teams);
+    // (rankDeltas flows into renderRankings below)
     // Optional LLM phrasing (Phase 4): default-OFF. If an endpoint is configured,
     // this fire-and-forget call rephrases the highlights in place; on anything
     // less than success the deterministic briefing above simply stands.
@@ -140,7 +157,7 @@ export async function init() {
       (standings || []).map((s) => [s.teamId, `${s.wins}-${s.losses}`])
     );
 
-    renderRankings(rankings, teams);
+    renderRankings(rankings, teams, rankDeltas);
     renderTrends(trends, teams);
     renderUpcoming(schedule, watch, teamRecords);
     updateTimestamp(new Date());
@@ -291,7 +308,7 @@ function formatDateline(d) {
   return `${day} · ${mon} ${d.getDate()} · around the league`;
 }
 
-function renderRankings(rankings, teams) {
+function renderRankings(rankings, teams, deltas = null) {
   const teamById = new Map(teams.map((t) => [t.id, t]));
   const container = document.getElementById(ID.rankings);
   if (!container) return;
@@ -303,10 +320,11 @@ function renderRankings(rankings, teams) {
     "NL_East", "NL_Central", "NL_West"
   ]) {
     const division = rankings.divisionStandings[key] || [];
-    body.appendChild(renderDivisionBlock(DIVISION_LABELS[key], division, teamById));
+    // Movement is meaningful within a division — pass deltas here only.
+    body.appendChild(renderDivisionBlock(DIVISION_LABELS[key], division, teamById, false, deltas));
   }
 
-  // Wild card race
+  // Wild card race (cross-division ranking — no day-over-day movement chip).
   const wcBlock = document.createElement("div");
   wcBlock.className = "wildcard-block";
   for (const lg of ["AL", "NL"]) {
@@ -317,7 +335,14 @@ function renderRankings(rankings, teams) {
   body.appendChild(wcBlock);
 }
 
-function renderDivisionBlock(title, entries, teamById, compact = false) {
+function rankMoveHtml(teamId, deltas) {
+  const mv = deltas && deltas[String(teamId)];
+  if (!mv || mv.isNew || !mv.rankDelta) return "";
+  const up = mv.rankDelta > 0;
+  return `<span class="rank-move ${up ? "up" : "down"}" title="Moved ${up ? "up" : "down"} ${Math.abs(mv.rankDelta)} since the last day on record">${up ? "▲" : "▼"}${Math.abs(mv.rankDelta)}</span>`;
+}
+
+function renderDivisionBlock(title, entries, teamById, compact = false, deltas = null) {
   const wrap = document.createElement("div");
   wrap.className = "division-block";
 
@@ -360,6 +385,7 @@ function renderDivisionBlock(title, entries, teamById, compact = false) {
         <span class="team-cell" style="color: ${color}">
           ${logo}
           <span class="team-abbr" style="color: var(--fg)">${escapeHtml(abbr)}</span>
+          ${rankMoveHtml(t.teamId, deltas)}
         </span>
       </td>
       <td class="numeric">${t.wins}</td>

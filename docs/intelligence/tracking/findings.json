@@ -152,19 +152,19 @@
       "title": "No data persistence / historical accumulation — no day-over-day memory",
       "category": "gap",
       "priority": "medium",
-      "status": "open",
+      "status": "in-progress",
       "first_seen": {
         "date": "2026-05-31",
         "commit": "b4c1e6c"
       },
       "last_seen": {
-        "date": "2026-05-31",
-        "commit": "b4c1e6c"
+        "date": "2026-06-02",
+        "commit": "964a981"
       },
       "evidence": [
-        "no DB/ORM in repo",
-        "currentSeason() data-client.js:20 single current year",
-        "dailyFetchCache app.js:36 is per-session only"
+        "history-engine.js — daily standings snapshots in localStorage (rolling ~30d)",
+        "diffRanks shows rank movement (up/down) vs the most recent prior day in the Daily standings",
+        "per-browser, client-side; no durable/server-side accumulation for ML"
       ],
       "history": [
         {
@@ -172,6 +172,12 @@
           "commit": "b4c1e6c",
           "status": "open",
           "note": "Baseline. Removes the basis for predictive AI (no owned training data) and multi-season browsing."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "in-progress",
+          "note": "v1.14.0: day-over-day MEMORY shipped (history-engine.js, 7 tests). Standings are snapshotted daily to localStorage and diffed against the prior day to show rank movement (▲/▼) in the Daily standings; browser-verified (NYY ▲1 / BOS ▼1 from a seeded yesterday). In-progress not resolved: the *day-over-day* need is met, but durable/multi-season historical accumulation for predictive AI (per RISK-002) is still absent — that needs the GAP-001 backend / a real datastore."
         }
       ]
     },
