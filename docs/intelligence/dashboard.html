@@ -73,13 +73,13 @@
 <body>
 <header>
   <h1>MLB Daily Dashboard — Product Intelligence</h1>
-  <div class="sub">Generated 2026-06-02 17:43 · last run 2026-06-02
-    (commit 964a981) · 16 run(s) tracked</div>
+  <div class="sub">Generated 2026-06-02 17:51 · last run 2026-06-02
+    (commit 964a981) · 17 run(s) tracked</div>
 </header>
 <nav class="tabs"><button class="tab active" data-tab="tab-tracker">Tracker</button><button class="tab" data-tab="tab-summary">Summary</button><button class="tab" data-tab="tab-scores">Scores</button><button class="tab" data-tab="tab-ai-opportunities">AI Opportunities</button><button class="tab" data-tab="tab-product-graph">Product Graph</button><button class="tab" data-tab="tab-maturity">Maturity</button><button class="tab" data-tab="tab-ai-stack">AI Stack</button><button class="tab" data-tab="tab-evolution-log">Evolution Log</button><button class="tab" data-tab="tab-implementation-roadmap">Implementation Roadmap</button></nav>
 <main>
   <section class="pane active" id="tab-tracker">
-    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>4</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>3</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>13</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>7</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>7</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>20</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>16</div><div class='tlabel'>Runs</div></div></div>
+    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>3</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>4</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>13</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>7</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>7</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>20</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>17</div><div class='tlabel'>Runs</div></div></div>
     <div class="charts">
       <div class="card"><h2>Score trajectory</h2><canvas id="scoreChart" height="120"></canvas></div>
       <div class="card"><h2>Current status</h2><canvas id="statusDoughnut" height="120"></canvas></div>
@@ -107,19 +107,6 @@
             <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. The product&#x27;s strongest durable asset: separation of data/compute/view makes every recommended feature cheap to add. Drives the +30 cleanliness credit in AI Readiness.</li></ul></details>
           </td>
           <td><span class="pri pri-high">high</span></td>
-          <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
-        </tr>
-        <tr class="frow" data-status="open">
-          <td class="mono">GAP-002</td>
-          <td>
-            <div class="ftitle">No data persistence / historical accumulation — no day-over-day memory</div>
-            <div class="fmeta">Gap
-              · first seen 2026-05-31
-              · last seen 2026-05-31</div>
-            <div class="fev">no DB/ORM in repo, currentSeason() data-client.js:20 single current year, dailyFetchCache app.js:36 is per-session only</div>
-            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Removes the basis for predictive AI (no owned training data) and multi-season browsing.</li></ul></details>
-          </td>
-          <td><span class="pri pri-medium">medium</span></td>
           <td><span class="badge" style="background:#e5484d1a;color:#e5484d;border:1px solid #e5484d55">open</span></td>
         </tr>
         <tr class="frow" data-status="open">
@@ -172,6 +159,19 @@
             <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. If MLB changes/rate-limits/retires the undocumented public endpoints, the whole app goes dark. Mitigated only by a graceful error banner (app.js:429), not by resilience. Off-season also yields sparse/empty data.</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#f5a623'>in-progress</span> — v1.12.0: materially MITIGATED — network-first cache with stale fallback (api-cache.js) means a transient failure serves the last good data instead of blanking the page (covers the new live-polling path too), with an auto-clearing degraded notice. 7 tests + browser-verified. Residual risk remains: a permanent/long (&gt;6h) outage or a breaking API change still has no second source. Kept in-progress (mitigated, not eliminated).</li></ul></details>
           </td>
           <td><span class="pri pri-high">high</span></td>
+          <td><span class="badge" style="background:#f5a6231a;color:#f5a623;border:1px solid #f5a62355">in-progress</span></td>
+        </tr>
+        <tr class="frow" data-status="in-progress">
+          <td class="mono">GAP-002</td>
+          <td>
+            <div class="ftitle">No data persistence / historical accumulation — no day-over-day memory</div>
+            <div class="fmeta">Gap
+              · first seen 2026-05-31
+              · last seen 2026-06-02</div>
+            <div class="fev">history-engine.js — daily standings snapshots in localStorage (rolling ~30d), diffRanks shows rank movement (up/down) vs the most recent prior day in the Daily standings, per-browser, client-side; no durable/server-side accumulation for ML</div>
+            <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-05-31</span> <span class='hs' style='color:#e5484d'>open</span> — Baseline. Removes the basis for predictive AI (no owned training data) and multi-season browsing.</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#f5a623'>in-progress</span> — v1.14.0: day-over-day MEMORY shipped (history-engine.js, 7 tests). Standings are snapshotted daily to localStorage and diffed against the prior day to show rank movement (▲/▼) in the Daily standings; browser-verified (NYY ▲1 / BOS ▼1 from a seeded yesterday). In-progress not resolved: the *day-over-day* need is met, but durable/multi-season historical accumulation for predictive AI (per RISK-002) is still absent — that needs the GAP-001 backend / a real datastore.</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
           <td><span class="badge" style="background:#f5a6231a;color:#f5a623;border:1px solid #f5a62355">in-progress</span></td>
         </tr>
         <tr class="frow" data-status="in-progress">
@@ -624,7 +624,7 @@ Phase 4 (L)  [OPT-IN] Backend + LLM phrasing       → only for richer NL; resol
 <p>Building these transitions ledger findings: <code>OPP-001</code>/<code>OPP-002</code>/<code>OPP-003</code> → in-progress→resolved; <code>GAP-004</code> → resolved (Phase 0); <code>GAP-001</code> → resolved only if Phase 4 is taken. Re-run the checkpoint after each phase to move the dashboard.</p></section>
 </main>
 <script>
-const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 42], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 4], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9, 10, 11, 12, 13, 13, 13], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 4, "in-progress": 3, "resolved": 13, "regressed": 0}};
+const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 42, 44], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 4, 3], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9, 10, 11, 12, 13, 13, 13, 13], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 3, "in-progress": 4, "resolved": 13, "regressed": 0}};
 const palette = ["#52a9ff","#30a46c","#ffb224","#8e4ec6","#ff6369","#22a3b3","#e6e6e6","#f06ea9"];
 function mkLine(id, labels, seriesObj, opts={}) {
   const el = document.getElementById(id); if (!el || !window.Chart) return;

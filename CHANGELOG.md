@@ -11,6 +11,17 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.14.0] — 2026-06-02
+### Added
+- **Day-over-day memory** (`GAP-002`) — the dashboard now remembers. Each day's
+  division standings are snapshotted to localStorage (rolling ~30 days), and
+  today's standings are diffed against the most recent prior day to show **rank
+  movement** (▲/▼N) next to each team in the Daily standings. Client-side only —
+  no backend, no PII, per-browser. Deltas appear once there's a prior day on
+  record (nothing on a brand-new visit, by design).
+- New pure `history-engine.js` (`buildSnapshot` / `diffRanks` / `mostRecentBefore`)
+  + injectable store, with 7 tests. Suite now 97, green.
+
 ## [1.13.0] — 2026-06-02
 ### Added
 - **Privacy-light, default-off telemetry** (`GAP-003`). The app keeps **local
