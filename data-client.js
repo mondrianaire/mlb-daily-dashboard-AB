@@ -188,7 +188,7 @@ export async function fetchSchedule(
   startDate = todayISO(),
   endDate = daysAheadISO(7)
 ) {
-  const url = `${API_BASE}/schedule?sportId=1&startDate=${startDate}&endDate=${endDate}`;
+  const url = `${API_BASE}/schedule?sportId=1&startDate=${startDate}&endDate=${endDate}&hydrate=probablePitcher`;
   const json = await getJSON(url);
   const dates = Array.isArray(json.dates) ? json.dates : [];
 
@@ -215,7 +215,9 @@ export async function fetchSchedule(
         status: game.status?.detailedState ?? game.status?.abstractGameState ?? "Scheduled",
         // Internal fields useful to consumers but not in contract surface:
         awayScore: game.teams?.away?.score ?? null,
-        homeScore: game.teams?.home?.score ?? null
+        homeScore: game.teams?.home?.score ?? null,
+        awayProbable: game.teams?.away?.probablePitcher?.fullName ?? null,
+        homeProbable: game.teams?.home?.probablePitcher?.fullName ?? null
       });
     }
   }

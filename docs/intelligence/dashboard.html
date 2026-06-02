@@ -73,13 +73,13 @@
 <body>
 <header>
   <h1>MLB Daily Dashboard — Product Intelligence</h1>
-  <div class="sub">Generated 2026-06-02 18:11 · last run 2026-06-02
-    (commit 964a981) · 18 run(s) tracked</div>
+  <div class="sub">Generated 2026-06-02 18:47 · last run 2026-06-02
+    (commit 964a981) · 19 run(s) tracked</div>
 </header>
 <nav class="tabs"><button class="tab active" data-tab="tab-tracker">Tracker</button><button class="tab" data-tab="tab-summary">Summary</button><button class="tab" data-tab="tab-scores">Scores</button><button class="tab" data-tab="tab-ai-opportunities">AI Opportunities</button><button class="tab" data-tab="tab-product-graph">Product Graph</button><button class="tab" data-tab="tab-maturity">Maturity</button><button class="tab" data-tab="tab-evolution-log">Evolution Log</button><button class="tab" data-tab="tab-implementation-roadmap">Implementation Roadmap</button></nav>
 <main>
   <section class="pane active" id="tab-tracker">
-    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>3</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>3</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>13</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>7</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>8</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>20</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>18</div><div class='tlabel'>Runs</div></div></div>
+    <div class="tiles"><div class='tile'><div class='tval' style='color:#e5484d'>3</div><div class='tlabel'>Open</div></div><div class='tile'><div class='tval' style='color:#f5a623'>3</div><div class='tlabel'>In progress</div></div><div class='tile'><div class='tval' style='color:#30a46c'>18</div><div class='tlabel'>Resolved</div></div><div class='tile'><div class='tval' style='color:#8e4ec6'>0</div><div class='tlabel'>Regressed</div></div><div class='tile'><div class='tval' style='color:#0091ff'>12</div><div class='tlabel'>New this run</div></div><div class='tile'><div class='tval' style='color:#30a46c'>13</div><div class='tlabel'>Resolved this run</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>25</div><div class='tlabel'>Total tracked</div></div><div class='tile'><div class='tval' style='color:#e6e6e6'>19</div><div class='tlabel'>Runs</div></div></div>
     <div class="charts">
       <div class="card"><h2>Score trajectory</h2><canvas id="scoreChart" height="120"></canvas></div>
       <div class="card"><h2>Current status</h2><canvas id="statusDoughnut" height="120"></canvas></div>
@@ -313,6 +313,71 @@
               · last seen 2026-06-02</div>
             <div class="fev">Design audit App 05, Finding 02 / Priority 1, data-theme attribute model + header toggle + localStorage persistence + pre-paint head script</div>
             <details class="fhist"><summary>history (2)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#e5484d'>open</span> — Audit P1/F2: a light Daily tab flipped to a dark Trends tab — the product read as two apps. The default was OS-driven, so on light OS the discontinuity was visible.</li><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.11.0: explicit data-theme model, DEFAULT DARK so both tabs are unified out of the box; header toggle for light, persisted to localStorage, applied pre-paint (no flash). color-scheme per theme. Browser-verified: default dark, toggle-&gt;light (bg #f6f7f9), persists across reload. Completes all 5 design-audit findings (P1-P6).</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-012</td>
+          <td>
+            <div class="ftitle">Favorites / My Team personalization</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-06-02
+              · last seen 2026-06-02</div>
+            <div class="fev">v1.16.0 quick wins</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.16.0: star toggle (localStorage) marks favorite clubs; highlighted across standings, scoreboard, upcoming, featured. Pure favorites.js, 6 tests; browser-verified.</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-013</td>
+          <td>
+            <div class="ftitle">Probable starters on upcoming games</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-06-02
+              · last seen 2026-06-02</div>
+            <div class="fev">v1.16.0 quick wins</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.16.0: schedule hydrates probablePitcher; &quot;Cole vs Sale&quot; on upcoming + featured. 2 tests; browser-verified.</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-014</td>
+          <td>
+            <div class="ftitle">Division magic numbers / clinch tracker</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-06-02
+              · last seen 2026-06-02</div>
+            <div class="fev">v1.16.0 quick wins</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.16.0: pure magicNumber/divisionMagic; leader shows MN late season, Clinched at 0. 3 tests; browser-verified (MN 8).</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-015</td>
+          <td>
+            <div class="ftitle">Multi-day position trend from snapshots</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-06-02
+              · last seen 2026-06-02</div>
+            <div class="fev">v1.16.0 quick wins</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.16.0: history-engine stores run-diff per day; per-team trajectory sparkline in standings once &gt;=3 days recorded. Tests; browser-verified.</li></ul></details>
+          </td>
+          <td><span class="pri pri-medium">medium</span></td>
+          <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
+        </tr>
+        <tr class="frow" data-status="resolved">
+          <td class="mono">OPP-016</td>
+          <td>
+            <div class="ftitle">Installable PWA + offline</div>
+            <div class="fmeta">Opportunity
+              · first seen 2026-06-02
+              · last seen 2026-06-02</div>
+            <div class="fev">v1.16.0 quick wins</div>
+            <details class="fhist"><summary>history (1)</summary><ul><li><span class='hd'>2026-06-02</span> <span class='hs' style='color:#30a46c'>resolved</span> — v1.16.0: web manifest + SVG icon + service worker caching the app shell; installable, works offline after first load. Browser-verified (SW registered).</li></ul></details>
           </td>
           <td><span class="pri pri-medium">medium</span></td>
           <td><span class="badge" style="background:#30a46c1a;color:#30a46c;border:1px solid #30a46c55">resolved</span></td>
@@ -595,7 +660,7 @@ Phase 4 (L)  [OPT-IN] Backend + LLM phrasing       → only for richer NL; resol
 <p>Building these transitions ledger findings: <code>OPP-001</code>/<code>OPP-002</code>/<code>OPP-003</code> → in-progress→resolved; <code>GAP-004</code> → resolved (Phase 0); <code>GAP-001</code> → resolved only if Phase 4 is taken. Re-run the checkpoint after each phase to move the dashboard.</p></section>
 </main>
 <script>
-const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 42, 44, 38], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 3], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 4, 3, 3], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 3], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9, 10, 11, 12, 13, 13, 13, 13, 13], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 3, "in-progress": 3, "resolved": 13, "regressed": 0}};
+const D = {"labels": ["2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-05-31", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02", "2026-06-02"], "scores": {"ai_readiness": [18, 22, 24, 25, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 42, 44, 38, 38], "maturity_product": [7, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9], "maturity_ai": [2, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 3, 3], "maturity_infra": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9], "maturity_enterprise": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_monetization": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "maturity_differentiation": [3, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9]}, "status": {"open": [11, 9, 8, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 4, 3, 3, 3], "in-progress": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 3, 3], "resolved": [0, 2, 3, 4, 4, 5, 6, 6, 7, 9, 10, 11, 12, 13, 13, 13, 13, 13, 18], "regressed": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}, "doughnut": {"open": 3, "in-progress": 3, "resolved": 18, "regressed": 0}};
 const palette = ["#52a9ff","#30a46c","#ffb224","#8e4ec6","#ff6369","#22a3b3","#e6e6e6","#f06ea9"];
 function mkLine(id, labels, seriesObj, opts={}) {
   const el = document.getElementById(id); if (!el || !window.Chart) return;

@@ -22,8 +22,13 @@
     accepts a small JSON beacon { e: event, t: timestamp }. No PII is sent.
   -->
   <meta name="telemetry-endpoint" content="" />
+  <!-- Installable PWA (works offline after first load). -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0f1216" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <!-- Cache-bust assets with the app version so deploys aren't masked by stale caches. -->
-  <link rel="stylesheet" href="styles.css?v=1.15.0" />
+  <link rel="stylesheet" href="styles.css?v=1.16.0" />
 </head>
 <body>
   <header class="site-header">
@@ -181,10 +186,10 @@
       Bump this (and CHANGELOG.md) on every release.
     -->
     <p class="app-version-strip">
-      <span id="app-version" class="app-version" data-version="1.15.0">v1.15.0</span>
+      <span id="app-version" class="app-version" data-version="1.16.0">v1.16.0</span>
     </p>
   </footer>
 
-  <script type="module" src="app.js?v=1.15.0"></script>
+  <script type="module" src="app.js?v=1.16.0"></script>
 </body>
 </html>

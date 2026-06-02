@@ -1,0 +1,14 @@
+{
+  "name": "MLB Daily Dashboard",
+  "short_name": "MLB Daily",
+  "description": "Live daily snapshot of all 30 MLB teams: scoreboard, standings, weekly trends, and upcoming games.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1216",
+  "theme_color": "#0f1216",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

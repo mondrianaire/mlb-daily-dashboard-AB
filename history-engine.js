@@ -18,11 +18,27 @@ export function buildSnapshot(divisionStandings, dateISO) {
   for (const [div, list] of Object.entries(divisionStandings || {})) {
     (Array.isArray(list) ? list : []).forEach((t, i) => {
       if (t && t.teamId != null) {
-        ranks[t.teamId] = { rank: i + 1, div, w: Number(t.wins) || 0, l: Number(t.losses) || 0 };
+        ranks[t.teamId] = {
+          rank: i + 1, div,
+          w: Number(t.wins) || 0,
+          l: Number(t.losses) || 0,
+          rd: (Number(t.runsScored) || 0) - (Number(t.runsAllowed) || 0)
+        };
       }
     });
   }
   return { date: dateISO, ranks };
+}
+
+// A team's series for one field ("rank" | "rd" | "w" | "l") across the recorded
+// history, oldest → newest, skipping days where the team isn't present.
+export function teamSeries(history, teamId, field = "rd") {
+  const id = String(teamId);
+  return (Array.isArray(history) ? history : [])
+    .slice()
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))
+    .map((s) => s?.ranks?.[id]?.[field])
+    .filter((v) => typeof v === "number");
 }
 
 // Per-team movement of `current` vs `previous`. rankDelta > 0 means moved UP
