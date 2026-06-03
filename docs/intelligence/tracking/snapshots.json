@@ -399,6 +399,25 @@
         "resolved": 21,
         "regressed": 0
       }
+    },
+    {
+      "date": "2026-06-02",
+      "commit": "v1.19.0",
+      "scores": {
+        "ai_readiness": 38,
+        "maturity_product": 10,
+        "maturity_ai": 3,
+        "maturity_infra": 9,
+        "maturity_enterprise": 0,
+        "maturity_monetization": 0,
+        "maturity_differentiation": 10
+      },
+      "counts": {
+        "open": 3,
+        "in_progress": 3,
+        "resolved": 21,
+        "regressed": 0
+      }
     }
   ]
 }
