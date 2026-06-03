@@ -11,6 +11,33 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.19.0] — 2026-06-02
+### Changed — Bold redesign: modern stat-site identity
+A full visual redesign of the entire app, in a clean, data-forward "stat-site"
+register (think FanGraphs / Baseball-Savant): crisp tables, restrained accents,
+strong numeric typography, airy spacing. Structure and behavior are unchanged —
+the redesign lives in the token layer plus targeted component restyling, so it
+applies everywhere at once and across both themes. Dark stays the default.
+
+- **New design system.** Rebuilt the color, type, elevation, and radius tokens
+  for both light and dark. Light is white cards on cool paper; dark is a near-
+  black slate. A single confident blue accent (`#1f6feb` / `#4d9bff`) replaces
+  the old navy, with semantic green/red kept for run-diff and live states.
+- **Typography.** Adopted **Inter** for the UI and **JetBrains Mono** for stat
+  columns (loaded from Google Fonts with a full system-font fallback so offline /
+  PWA use is unaffected). Tabular figures are enforced wherever a number changes
+  width, so columns stay rock-steady.
+- **Components.** Masthead gains an accent top-rule and a bolder wordmark; tabs
+  became a segmented pill control; every panel/card picks up soft elevation, a
+  larger corner radius, and an uppercase section header with a short accent
+  underline; standings and Trends tables/KPIs were tightened with airier rows
+  and bigger, bolder numerics.
+- **Unified across tabs + themes.** The Trends surface palette was re-pointed at
+  the same tokens, so Daily and Trends are one coherent product in both light and
+  dark. Verified in-browser: Daily + Trends, light + dark, desktop + 390px mobile.
+
+Suite 92, green.
+
 ## [1.18.0] — 2026-06-02
 ### Changed — One register across both tabs (audit Finding 02 close-out)
 - **Trends now follows the theme.** The Trends tab previously stayed dark in

@@ -3,13 +3,13 @@
 // and Chart.js CDN are cross-origin and always go to the network (the app's own
 // api-cache handles data resilience). Bump CACHE on each release to invalidate.
 
-const CACHE = "mlb-dash-v1.18.0";
+const CACHE = "mlb-dash-v1.19.0";
 const PRECACHE = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./styles.css?v=1.18.0",
-  "./app.js?v=1.18.0",
+  "./styles.css?v=1.19.0",
+  "./app.js?v=1.19.0",
   "./icon.svg"
 ];
 
