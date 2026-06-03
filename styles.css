@@ -905,11 +905,13 @@ a:hover { text-decoration: underline; }
 .tab-panel[hidden] { display: none !important; }
 
 /* ====================================================================
-   Trends tab — dark surface, kept visually distinct from Daily.
-   All class names are namespaced with .trends- to avoid collisions
-   with the existing daily styles.
+   Trends tab — themed surface. Dark is the default register; in light
+   mode the whole tab follows the Daily light palette so the two views
+   are one product, not two. All class names are namespaced with
+   .trends- to avoid collisions with the existing daily styles.
    ==================================================================== */
 .trends-surface {
+  /* Dark register (default). Overridden under [data-theme="light"] below. */
   --trends-bg: #0b1220;
   --trends-panel: #131c2e;
   --trends-panel-2: #1a2540;
@@ -927,6 +929,24 @@ a:hover { text-decoration: underline; }
   color: var(--trends-text);
   font-size: 14px;
   line-height: 1.4;
+}
+
+/* Light register — Trends follows the Daily light theme (audit Finding 02:
+   one register across both tabs). Mirrors the base :root light tokens. */
+:root[data-theme="light"] .trends-surface {
+  --trends-bg: #eef1f5;
+  --trends-panel: #ffffff;
+  --trends-panel-2: #f0f2f6;
+  --trends-line: #e3e6eb;
+  --trends-text: #1a1d22;
+  --trends-text-2: #5b6573;
+  --trends-text-3: #8a93a0;
+  --trends-accent: #0c2340;
+  --trends-good: #1c8e3f;
+  --trends-bad: #c43a3a;
+  --trends-warn: #b07c14;
+  --trends-al: #d50032;
+  --trends-nl: #002d72;
 }
 
 .trends-filterbar {

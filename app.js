@@ -1158,6 +1158,12 @@ function applyTheme(theme) {
   try { localStorage.setItem("mlb-theme", theme); } catch (_) { /* ignore */ }
   updateThemeToggle(theme);
   telemetry.track("theme:" + theme);
+  // Re-color the Trends charts/tables to the new register (no-op until loaded).
+  if (TRENDS.loaded) {
+    import("./trends-charts.js")
+      .then((m) => m.refreshTrendsTheme && m.refreshTrendsTheme())
+      .catch(() => { /* trends not available — ignore */ });
+  }
 }
 function updateThemeToggle(theme) {
   const btn = document.getElementById("theme-toggle");
