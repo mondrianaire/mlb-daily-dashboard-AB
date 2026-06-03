@@ -84,3 +84,19 @@ test("emits health: healthy on success, degraded on cache fallback", async () =>
   off();
   assert.deepEqual(seen, ["healthy", "degraded"]);
 });
+
+test("degraded carries the served cache age + url so the UI can gate on staleness", async () => {
+  const storage = fakeStorage();
+  let t = 1000;
+  const cache = createApiCache({ storage, now: () => t, maxAgeMs: 60_000 });
+  const events = [];
+  const off = onApiHealth((s, detail) => events.push({ s, detail }));
+  await cache.getJSON("/z", async () => ({ v: 1 }));                 // cached at t=1000
+  t = 4200;                                                          // 3.2s later
+  await cache.getJSON("/z", async () => { throw new Error("x"); });  // degraded, age 3200ms
+  off();
+  const degraded = events.find((e) => e.s === "degraded");
+  assert.ok(degraded, "a degraded event is emitted");
+  assert.equal(degraded.detail.url, "/z");
+  assert.equal(degraded.detail.ageMs, 3200);
+});

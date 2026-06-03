@@ -1125,24 +1125,34 @@ function scoreLine(team, cls, isLeader) {
 // ============================================================
 //          API HEALTH NOTICE (RISK-001 — cache fallback)
 // ============================================================
-// Show a quiet notice while the dashboard is serving cached data after a
-// transient API failure; clear it once a fresh fetch succeeds. Debounced so a
-// single mixed batch of fetches doesn't flicker the notice.
-let lastDegradedAt = 0;
+// Show a quiet notice ONLY while the dashboard is actually serving meaningfully
+// stale data. The cache serves a fallback on any failed fetch — including a
+// momentary blip on the recurring scoreboard poll that returns a cache only
+// seconds old. Surfacing that as "Network hiccup" is noise: the data on screen
+// is essentially current. So we gate the notice on the *age* of the served
+// cache, and clear it the instant any fetch succeeds.
+const STALE_GRACE_MS = 5 * 60 * 1000; // only nag when served data is >5 min old
 function showStaleNote(on) {
   const el = document.getElementById("stale-note");
   if (el) el.hidden = !on;
 }
 function wireApiHealth() {
-  onApiHealth((state) => {
+  onApiHealth((state, detail) => {
     if (state === "degraded") {
-      lastDegradedAt = Date.now();
+      const ageMs = detail && typeof detail.ageMs === "number" ? detail.ageMs : Infinity;
+      // A fallback that's still near-current is not worth a banner.
+      if (ageMs < STALE_GRACE_MS) return;
+      // Make it diagnosable (the cache layer otherwise fails silently).
+      // eslint-disable-next-line no-console
+      console.debug(
+        "[MLB Daily Dashboard] serving cached data (" +
+          Math.round(ageMs / 1000) + "s old)" +
+          (detail && detail.url ? " for " + detail.url : "")
+      );
       showStaleNote(true);
     } else {
-      // Healthy — hide only if nothing has been degraded very recently.
-      setTimeout(() => {
-        if (Date.now() - lastDegradedAt > 800) showStaleNote(false);
-      }, 850);
+      // Any fresh success means we're back on live data — clear immediately.
+      showStaleNote(false);
     }
   });
 }

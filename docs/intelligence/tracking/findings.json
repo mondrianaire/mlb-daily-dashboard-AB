@@ -929,6 +929,39 @@
           "note": "v1.18.0: dark remains default but light mode now unifies ALL views. A [data-theme=light] .trends-surface block mirrors the Daily light tokens so every --trends-* re-resolves on toggle; Chart.js axis/grid/label colors read those vars at render time (dark byte-identical, no regression) and charts re-render on toggle. Browser-verified light #eef1f5/#1a1d22 vs dark #0b1220/#e6edf7."
         }
       ]
+    },
+    {
+      "id": "BUG-001",
+      "title": "'Network hiccup' degraded banner showing almost constantly",
+      "category": "defect",
+      "priority": "high",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-06-02",
+        "commit": "b0bc162"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "b0bc162"
+      },
+      "evidence": [
+        "User report: banner shows all the time regardless of console output",
+        "api-cache emits 'degraded' on every cache fallback, even a fresh-cache blip on the 30-120s scoreboard poll; error caught silently so no console trace"
+      ],
+      "history": [
+        {
+          "date": "2026-06-02",
+          "commit": "b0bc162",
+          "status": "open",
+          "note": "The resilience cache serves a fallback (and emits 'degraded') on ANY failed fetch, including a momentary blip on the recurring live-scoreboard poll that returns a cache only seconds old. The fetch error is swallowed inside the cache layer, so nothing logs, yet the banner fires — and with the poll looping it never clears."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "b0bc162",
+          "status": "resolved",
+          "note": "v1.20.0: 'degraded' now carries the served cache age + url. The banner shows only when data is meaningfully stale (>5 min) and clears the instant any fetch succeeds; sub-minute fallbacks are silent. A console.debug names the stale url/age when it does appear. New unit test pins the degraded(age,url) contract; suite 93. Browser-verified: fresh-blip stays hidden, 10-min-stale shows, recovery clears."
+        }
+      ]
     }
   ]
 }
