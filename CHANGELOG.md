@@ -11,6 +11,23 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.18.0] — 2026-06-02
+### Changed — One register across both tabs (audit Finding 02 close-out)
+- **Trends now follows the theme.** The Trends tab previously stayed dark in
+  every mode, so switching the app to light mode left a navy island behind. The
+  whole tab — standings table, leaderboard, heatmap, KPI strip, filter chips,
+  and all Chart.js scatter/bar charts — now adopts a light "paper" palette under
+  light mode and the original dark "instrument" palette under dark. Dark remains
+  the default; light mode is fully available and now genuinely unified.
+- Implemented purely with CSS custom properties: a `[data-theme="light"]
+  .trends-surface` block mirrors the Daily light tokens, so every namespaced
+  `--trends-*` value re-resolves on toggle. Chart.js axis/grid/label colors are
+  read from those vars at render time (dark output is byte-identical to before —
+  no regression), and the theme toggle re-renders the charts so they re-color
+  live. Verified in-browser: dark `#0b1220/#e6edf7`, light `#eef1f5/#1a1d22`.
+
+This resolves the last open item from the 2026-05-31 audit. Suite 92, green.
+
 ## [1.17.0] — 2026-06-02
 ### Fixed — Closing the 2026-05-31 design audit
 - **Mobile Trends overflow (audit Finding 03 — the only true defect).** The

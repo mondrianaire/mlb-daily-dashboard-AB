@@ -91,6 +91,14 @@ export function isTrendsInitialized() {
   return initialized;
 }
 
+// Re-render the whole Trends view so charts, tables and the heatmap re-read the
+// active theme's --trends-* vars. Called by the app's theme toggle. No-op until
+// the tab has been initialized (charts only exist after first open).
+export function refreshTrendsTheme() {
+  if (!initialized) return;
+  renderAll();
+}
+
 // ============================================================
 //                    DATA MERGE
 // ============================================================
@@ -345,9 +353,23 @@ function renderLast10() {
 //                    CHART HELPERS
 // ============================================================
 const chartFont = { family: "-apple-system, BlinkMacSystemFont, Inter, sans-serif", size: 11 };
+// Live-mutated from the active theme's CSS vars in configureChartDefaults so the
+// charts follow light/dark. Dark values are the fallback if vars can't be read.
 const chartColors = { grid: "#1f2a44", text: "#93a4c1", label: "#e6edf7" };
 
 function configureChartDefaults() {
+  // Pull axis/grid/label colors from the themed --trends-* vars so a light/dark
+  // toggle re-colors every chart on the next render (renderAll calls this first).
+  if (typeof document !== "undefined") {
+    const surf = document.querySelector(".trends-surface") || document.documentElement;
+    const cs = getComputedStyle(surf);
+    const grid = cs.getPropertyValue("--trends-line").trim();
+    const text = cs.getPropertyValue("--trends-text-2").trim();
+    const label = cs.getPropertyValue("--trends-text").trim();
+    if (grid) chartColors.grid = grid;
+    if (text) chartColors.text = text;
+    if (label) chartColors.label = label;
+  }
   if (typeof window === "undefined" || !window.Chart) return;
   window.Chart.defaults.color = chartColors.text;
   window.Chart.defaults.font = chartFont;

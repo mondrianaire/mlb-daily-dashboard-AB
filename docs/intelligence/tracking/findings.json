@@ -896,6 +896,39 @@
           "note": "v1.17.0: header now reads 'Fetched HH:MM TZ on load' (matches footer); all game times across scoreboard/upcoming/featured carry the viewer's local timezone abbreviation (e.g. '19:10 EDT') via Intl.DateTimeFormat. Browser-verified (tz resolved EDT)."
         }
       ]
+    },
+    {
+      "id": "UX-003",
+      "title": "Tab register schism — Trends stayed dark in light mode",
+      "category": "defect",
+      "priority": "medium",
+      "status": "resolved",
+      "first_seen": {
+        "date": "2026-05-31",
+        "commit": "b4c1e6c"
+      },
+      "last_seen": {
+        "date": "2026-06-02",
+        "commit": "964a981"
+      },
+      "evidence": [
+        "audit-2026-05-31 Finding 02",
+        "Daily tab themed light/dark; Trends tab was hardcoded dark, so light mode left a navy island"
+      ],
+      "history": [
+        {
+          "date": "2026-05-31",
+          "commit": "b4c1e6c",
+          "status": "open",
+          "note": "Audit-2026-05-31 Finding 02: Daily and Trends read as two products — Daily themed, Trends fixed-dark. Audit preferred a single light/paper register; product owner chose dark-default with light available."
+        },
+        {
+          "date": "2026-06-02",
+          "commit": "964a981",
+          "status": "resolved",
+          "note": "v1.18.0: dark remains default but light mode now unifies ALL views. A [data-theme=light] .trends-surface block mirrors the Daily light tokens so every --trends-* re-resolves on toggle; Chart.js axis/grid/label colors read those vars at render time (dark byte-identical, no regression) and charts re-render on toggle. Browser-verified light #eef1f5/#1a1d22 vs dark #0b1220/#e6edf7."
+        }
+      ]
     }
   ]
 }
