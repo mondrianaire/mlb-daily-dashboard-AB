@@ -18,9 +18,11 @@ export function onApiHealth(cb) {
   healthListeners.add(cb);
   return () => healthListeners.delete(cb);
 }
-function emitHealth(state) {
+// detail (optional): { url, ageMs } on "degraded" so the UI can decide whether
+// the served cache is stale enough to be worth surfacing.
+function emitHealth(state, detail) {
   for (const cb of [...healthListeners]) {
-    try { cb(state); } catch (_) { /* listener errors never break a fetch */ }
+    try { cb(state, detail); } catch (_) { /* listener errors never break a fetch */ }
   }
 }
 
@@ -66,7 +68,7 @@ export function createApiCache({
     } catch (err) {
       const entry = read(url);
       if (entry && withinMaxAge(entry.ts, maxAgeMs, now())) {
-        emitHealth("degraded");
+        emitHealth("degraded", { url, ageMs: now() - entry.ts });
         return { data: entry.data, fromCache: true, cachedAt: entry.ts };
       }
       throw err;

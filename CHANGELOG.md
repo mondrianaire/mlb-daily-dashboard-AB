@@ -11,6 +11,27 @@ deploy/testing verification.
 
 ## [Unreleased]
 
+## [1.20.0] — 2026-06-02
+### Fixed — "Network hiccup" banner showing constantly
+The "Network hiccup — showing the last loaded data" notice appeared almost all
+the time, with **no matching console errors**. Root cause: the resilience cache
+(`api-cache`) emits a `"degraded"` signal **every** time it serves a cached
+response after *any* failed fetch — including a momentary blip on the recurring
+30–120s live-scoreboard poll that returns a cache only seconds old. The fetch
+error is caught silently inside the cache layer, so the caller's `try` succeeds
+(nothing logged), yet the banner fired. With the scoreboard polling on a loop,
+the banner effectively never cleared.
+
+- The `"degraded"` health signal now carries the **age of the served cache** and
+  the URL. The banner only appears when the data on screen is **meaningfully
+  stale (>5 minutes old)** — a real, sustained outage — and **clears the instant
+  any fetch succeeds**. A sub-minute fallback (the common case) is now silent.
+- When the banner does appear, the cache layer now logs a `console.debug` naming
+  the stale URL and its age, so the condition is diagnosable (it previously
+  failed completely silently).
+- Added a unit test pinning the new `degraded` detail contract (age + url).
+  Suite now 93, green.
+
 ## [1.19.0] — 2026-06-02
 ### Changed — Bold redesign: modern stat-site identity
 A full visual redesign of the entire app, in a clean, data-forward "stat-site"
